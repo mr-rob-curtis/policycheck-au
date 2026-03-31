@@ -1,0 +1,882 @@
+
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Privacy Compliance Report - Independent Pharmacies Australia</title>
+            
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+                line-height: 1.6;
+                color: #34495e;
+                background: #ffffff;
+                padding: 0;
+            }
+
+            .container {
+                max-width: 900px;
+                margin: 0 auto;
+                padding: 40px 20px;
+            }
+
+            header {
+                background: linear-gradient(135deg, #1a1a2e 0%, #16a085 100%);
+                color: #ffffff;
+                padding: 48px 20px;
+                margin: -40px -20px 40px -20px;
+                text-align: center;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            }
+
+            header h1 {
+                font-size: 32px;
+                margin-bottom: 8px;
+                font-weight: 600;
+            }
+
+            header p {
+                font-size: 16px;
+                opacity: 0.9;
+                margin-bottom: 4px;
+            }
+
+            header .meta {
+                font-size: 13px;
+                opacity: 0.8;
+                margin-top: 12px;
+            }
+
+            .score-section {
+                background: #ecf0f1;
+                border-radius: 12px;
+                padding: 40px 20px;
+                margin: 32px 0;
+                text-align: center;
+            }
+
+            .score-section h2 {
+                font-size: 18px;
+                color: #1a1a2e;
+                margin-bottom: 20px;
+                text-transform: uppercase;
+                font-weight: 600;
+            }
+
+            .summary {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+                gap: 16px;
+                margin: 32px 0;
+                text-align: center;
+            }
+
+            .summary-item {
+                padding: 16px;
+                background: #ecf0f1;
+                border-radius: 8px;
+            }
+
+            .summary-item .number {
+                font-size: 28px;
+                font-weight: bold;
+                color: #16a085;
+            }
+
+            .summary-item .label {
+                font-size: 13px;
+                color: #34495e;
+                margin-top: 8px;
+                text-transform: uppercase;
+            }
+
+            .disclaimer {
+                background: #1a1a2e;
+                color: #ffffff;
+                padding: 20px;
+                border-radius: 8px;
+                margin: 32px 0;
+                font-size: 13px;
+                line-height: 1.8;
+            }
+
+            .disclaimer strong {
+                color: #16a085;
+            }
+
+            h2 {
+                font-size: 24px;
+                color: #1a1a2e;
+                margin: 40px 0 20px 0;
+                padding-bottom: 12px;
+                border-bottom: 2px solid #16a085;
+                font-weight: 600;
+            }
+
+            h3 {
+                color: #1a1a2e;
+            }
+
+            .paywall {
+                text-align: center;
+                padding: 40px 20px;
+                background: linear-gradient(135deg, #ecf0f1 0%, #ffffff 100%);
+                border-radius: 12px;
+                margin: 32px 0;
+            }
+
+            .paywall-amount {
+                font-size: 36px;
+                font-weight: bold;
+                color: #16a085;
+                margin: 16px 0;
+            }
+
+            .paywall-button {
+                display: inline-block;
+                background: linear-gradient(135deg, #16a085 0%, #1a1a2e 100%);
+                color: #ffffff;
+                padding: 16px 32px;
+                border-radius: 8px;
+                font-size: 16px;
+                font-weight: bold;
+                text-decoration: none;
+                border: none;
+                cursor: pointer;
+                margin-top: 16px;
+                box-shadow: 0 4px 12px rgba(22, 160, 133, 0.3);
+                transition: transform 0.2s ease, box-shadow 0.2s ease;
+            }
+
+            .paywall-button:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 6px 16px rgba(22, 160, 133, 0.4);
+            }
+
+            .code-block {
+                background: #1a1a2e;
+                color: #ecf0f1;
+                padding: 20px;
+                border-radius: 8px;
+                overflow-x: auto;
+                font-family: 'Monaco', 'Courier New', monospace;
+                font-size: 12px;
+                line-height: 1.6;
+                margin: 20px 0;
+            }
+
+            .copy-button {
+                background: #16a085;
+                color: #ffffff;
+                padding: 8px 16px;
+                border-radius: 4px;
+                border: none;
+                cursor: pointer;
+                font-size: 12px;
+                margin-bottom: 12px;
+            }
+
+            footer {
+                margin-top: 60px;
+                padding-top: 20px;
+                border-top: 1px solid #ecf0f1;
+                text-align: center;
+                font-size: 12px;
+                color: #34495e;
+            }
+
+            @media (max-width: 768px) {
+                header h1 {
+                    font-size: 24px;
+                }
+
+                h2 {
+                    font-size: 20px;
+                }
+
+                .summary {
+                    grid-template-columns: 1fr;
+                }
+
+                .container {
+                    padding: 20px 16px;
+                }
+
+                header {
+                    margin: -20px -16px 30px -16px;
+                    padding: 32px 16px;
+                }
+            }
+
+            @media print {
+                body {
+                    background: #ffffff;
+                }
+
+                .paywall {
+                    display: none;
+                }
+
+                .code-block {
+                    page-break-inside: avoid;
+                }
+            }
+        </style>
+        
+        </head>
+        <body>
+            <div class="container">
+                
+        <header>
+            <h1>Independent Pharmacies Australia</h1>
+            <p>Pharmacy & Health</p>
+            <div class="meta">Privacy Compliance Report • 1 April 2026</div>
+        </header>
+        
+                
+        <div class="score-section">
+            <h2>Overall Compliance Score</h2>
+            
+        <svg width="200" height="200" viewBox="0 0 200 200" style="margin: 0 auto; display: block;">
+            <circle cx="100" cy="100" r="70" fill="none" stroke="#ecf0f1" stroke-width="12"></circle>
+            <circle cx="100" cy="100" r="70" fill="none" stroke="#f39c12" stroke-width="12"
+                    stroke-dasharray="202.31856689118268,237.50440461138834" stroke-linecap="round" transform="rotate(-90 100 100)"
+                    style="transition: stroke-dasharray 0.5s ease;"></circle>
+            <text x="100" y="100" text-anchor="middle" dy="0.3em" font-size="48" font-weight="bold" fill="#f39c12">46%</text>
+            <text x="100" y="130" text-anchor="middle" font-size="14" fill="#34495e">Compliance</text>
+        </svg>
+        
+        </div>
+        
+                
+        <h2>Compliance Summary</h2>
+        <div class="summary">
+            <div class="summary-item">
+                <div class="number">1</div>
+                <div class="label">Compliant</div>
+            </div>
+            <div class="summary-item">
+                <div class="number">10</div>
+                <div class="label">Partially Compliant</div>
+            </div>
+            <div class="summary-item">
+                <div class="number">2</div>
+                <div class="label">Non-Compliant</div>
+            </div>
+        </div>
+        
+                
+        <h2>All 13 Australian Privacy Principles</h2>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)); gap: 12px; margin: 24px 0;">
+            <div style="background: #f39c12; color: white; padding: 16px; border-radius: 8px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                <div style="font-size: 20px; font-weight: bold;">APP 1</div>
+                <div style="font-size: 11px; margin-top: 8px; opacity: 0.9;">Partially Compliant</div>
+            </div>
+            
+            <div style="background: #f39c12; color: white; padding: 16px; border-radius: 8px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                <div style="font-size: 20px; font-weight: bold;">APP 2</div>
+                <div style="font-size: 11px; margin-top: 8px; opacity: 0.9;">Partially Compliant</div>
+            </div>
+            
+            <div style="background: #f39c12; color: white; padding: 16px; border-radius: 8px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                <div style="font-size: 20px; font-weight: bold;">APP 3</div>
+                <div style="font-size: 11px; margin-top: 8px; opacity: 0.9;">Partially Compliant</div>
+            </div>
+            
+            <div style="background: #e74c3c; color: white; padding: 16px; border-radius: 8px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                <div style="font-size: 20px; font-weight: bold;">APP 4</div>
+                <div style="font-size: 11px; margin-top: 8px; opacity: 0.9;">Non-Compliant</div>
+            </div>
+            
+            <div style="background: #f39c12; color: white; padding: 16px; border-radius: 8px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                <div style="font-size: 20px; font-weight: bold;">APP 5</div>
+                <div style="font-size: 11px; margin-top: 8px; opacity: 0.9;">Partially Compliant</div>
+            </div>
+            
+            <div style="background: #f39c12; color: white; padding: 16px; border-radius: 8px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                <div style="font-size: 20px; font-weight: bold;">APP 6</div>
+                <div style="font-size: 11px; margin-top: 8px; opacity: 0.9;">Partially Compliant</div>
+            </div>
+            
+            <div style="background: #f39c12; color: white; padding: 16px; border-radius: 8px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                <div style="font-size: 20px; font-weight: bold;">APP 7</div>
+                <div style="font-size: 11px; margin-top: 8px; opacity: 0.9;">Partially Compliant</div>
+            </div>
+            
+            <div style="background: #e74c3c; color: white; padding: 16px; border-radius: 8px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                <div style="font-size: 20px; font-weight: bold;">APP 8</div>
+                <div style="font-size: 11px; margin-top: 8px; opacity: 0.9;">Non-Compliant</div>
+            </div>
+            
+            <div style="background: #f39c12; color: white; padding: 16px; border-radius: 8px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                <div style="font-size: 20px; font-weight: bold;">APP 9</div>
+                <div style="font-size: 11px; margin-top: 8px; opacity: 0.9;">Partially Compliant</div>
+            </div>
+            
+            <div style="background: #f39c12; color: white; padding: 16px; border-radius: 8px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                <div style="font-size: 20px; font-weight: bold;">APP 10</div>
+                <div style="font-size: 11px; margin-top: 8px; opacity: 0.9;">Partially Compliant</div>
+            </div>
+            
+            <div style="background: #f39c12; color: white; padding: 16px; border-radius: 8px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                <div style="font-size: 20px; font-weight: bold;">APP 11</div>
+                <div style="font-size: 11px; margin-top: 8px; opacity: 0.9;">Partially Compliant</div>
+            </div>
+            
+            <div style="background: #27ae60; color: white; padding: 16px; border-radius: 8px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                <div style="font-size: 20px; font-weight: bold;">APP 12</div>
+                <div style="font-size: 11px; margin-top: 8px; opacity: 0.9;">Compliant</div>
+            </div>
+            
+            <div style="background: #f39c12; color: white; padding: 16px; border-radius: 8px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                <div style="font-size: 20px; font-weight: bold;">APP 13</div>
+                <div style="font-size: 11px; margin-top: 8px; opacity: 0.9;">Partially Compliant</div>
+            </div>
+            </div>
+        
+
+                <h2>Detailed Analysis</h2>
+                
+        <div style="position: relative; margin-bottom: 32px; padding: 24px; background: #ecf0f1; border-left: 4px solid #f39c12; border-radius: 8px; page-break-inside: avoid;">
+            
+            <div >
+                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 16px;">
+                    <div>
+                        <h3 style="margin: 0 0 8px 0; font-size: 18px; color: #1a1a2e;">APP 1: Open and transparent management of personal information</h3>
+                        <span style="display: inline-block; padding: 4px 12px; background: #f39c12; color: white; border-radius: 20px; font-size: 12px; font-weight: bold;">Partially Compliant</span>
+                    </div>
+                    <div style="text-align: right;">
+                        <div style="font-size: 12px; color: #34495e; margin-bottom: 4px;">Priority</div>
+                        <div style="font-size: 14px; font-weight: bold; color: #1a1a2e;">CRITICAL</div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 12px; padding: 12px; background: rgba(0, 0, 0, 0.05); border-radius: 4px; font-size: 13px; color: #34495e; line-height: 1.6;">
+                    <strong>Why this score:</strong> Found 4 key indicators addressing 71% of requirements. Gaps identified: privacy contact, privacy complaint, accessible format.
+                </div>
+
+                <div style="margin-top: 16px;">
+                    <h4 style="margin: 0 0 12px 0; font-size: 14px; color: #1a1a2e; font-weight: bold; text-transform: uppercase;">Key Findings</h4>
+                    <ul style="margin: 0; padding-left: 20px; color: #34495e; line-height: 1.8;">
+                        <li style="margin-bottom: 8px; line-height: 1.6;">Found 4 key indicators addressing 71% of requirements</li>
+                    </ul>
+                </div>
+
+                <div style="margin-top: 20px; padding-top: 16px; border-top: 1px solid #34495e;">
+                    <h4 style="margin: 0 0 12px 0; font-size: 14px; color: #1a1a2e; font-weight: bold; text-transform: uppercase;">Recommended Language</h4>
+                    <p style="margin: 0; color: #34495e; line-height: 1.8; font-style: italic;">
+RECOMMENDED: "We are committed to protecting your privacy. This Privacy Policy sets out how
+we collect, use, disclose, and manage personal information in accordance with the Australian
+Privacy Act 1988 (Cth)."
+</p>
+                </div>
+            </div>
+        </div>
+        
+                
+        <div style="position: relative; margin-bottom: 32px; padding: 24px; background: #ecf0f1; border-left: 4px solid #f39c12; border-radius: 8px; page-break-inside: avoid;">
+            
+            <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(255,255,255,0.7); display: flex; align-items: center; justify-content: center; border-radius: 8px;">
+                <div style="text-align: center;">
+                    <div style="font-size: 18px; font-weight: bold; color: #1a1a2e; margin-bottom: 12px;">🔒 Locked</div>
+                    <div style="font-size: 14px; color: #34495e;">Unlock your full report</div>
+                </div>
+            </div>
+            
+            <div style="filter: blur(4px); opacity: 0.6; pointer-events: none;">
+                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 16px;">
+                    <div>
+                        <h3 style="margin: 0 0 8px 0; font-size: 18px; color: #1a1a2e;">APP 2: Anonymity and pseudonymity</h3>
+                        <span style="display: inline-block; padding: 4px 12px; background: #f39c12; color: white; border-radius: 20px; font-size: 12px; font-weight: bold;">Partially Compliant</span>
+                    </div>
+                    <div style="text-align: right;">
+                        <div style="font-size: 12px; color: #34495e; margin-bottom: 4px;">Priority</div>
+                        <div style="font-size: 14px; font-weight: bold; color: #1a1a2e;">MEDIUM</div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 12px; padding: 12px; background: rgba(0, 0, 0, 0.05); border-radius: 4px; font-size: 13px; color: #34495e; line-height: 1.6;">
+                    <strong>Why this score:</strong> Policy addresses topic of APP 2 but lacks specific requirement details (0% coverage). Gaps identified: anonymous, pseudonymous, anonymity not practical.
+                </div>
+
+                <div style="margin-top: 16px;">
+                    <h4 style="margin: 0 0 12px 0; font-size: 14px; color: #1a1a2e; font-weight: bold; text-transform: uppercase;">Key Findings</h4>
+                    <ul style="margin: 0; padding-left: 20px; color: #34495e; line-height: 1.8;">
+                        <li style="margin-bottom: 8px; line-height: 1.6;">Policy addresses topic of APP 2 but lacks specific requirement details (0% coverage)</li>
+                    </ul>
+                </div>
+
+                <div style="margin-top: 20px; padding-top: 16px; border-top: 1px solid #34495e;">
+                    <h4 style="margin: 0 0 12px 0; font-size: 14px; color: #1a1a2e; font-weight: bold; text-transform: uppercase;">Recommended Language</h4>
+                    <p style="margin: 0; color: #34495e; line-height: 1.8; font-style: italic;">Review APP 2 (Anonymity and pseudonymity) requirements and update policy to address identified gaps.</p>
+                </div>
+            </div>
+        </div>
+        
+        <div style="position: relative; margin-bottom: 32px; padding: 24px; background: #ecf0f1; border-left: 4px solid #f39c12; border-radius: 8px; page-break-inside: avoid;">
+            
+            <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(255,255,255,0.7); display: flex; align-items: center; justify-content: center; border-radius: 8px;">
+                <div style="text-align: center;">
+                    <div style="font-size: 18px; font-weight: bold; color: #1a1a2e; margin-bottom: 12px;">🔒 Locked</div>
+                    <div style="font-size: 14px; color: #34495e;">Unlock your full report</div>
+                </div>
+            </div>
+            
+            <div style="filter: blur(4px); opacity: 0.6; pointer-events: none;">
+                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 16px;">
+                    <div>
+                        <h3 style="margin: 0 0 8px 0; font-size: 18px; color: #1a1a2e;">APP 3: Collection of solicited personal information</h3>
+                        <span style="display: inline-block; padding: 4px 12px; background: #f39c12; color: white; border-radius: 20px; font-size: 12px; font-weight: bold;">Partially Compliant</span>
+                    </div>
+                    <div style="text-align: right;">
+                        <div style="font-size: 12px; color: #34495e; margin-bottom: 4px;">Priority</div>
+                        <div style="font-size: 14px; font-weight: bold; color: #1a1a2e;">HIGH</div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 12px; padding: 12px; background: rgba(0, 0, 0, 0.05); border-radius: 4px; font-size: 13px; color: #34495e; line-height: 1.6;">
+                    <strong>Why this score:</strong> Found 4 key indicators addressing 71% of requirements. Gaps identified: necessary information, reasonably necessary, collection notice.
+                </div>
+
+                <div style="margin-top: 16px;">
+                    <h4 style="margin: 0 0 12px 0; font-size: 14px; color: #1a1a2e; font-weight: bold; text-transform: uppercase;">Key Findings</h4>
+                    <ul style="margin: 0; padding-left: 20px; color: #34495e; line-height: 1.8;">
+                        <li style="margin-bottom: 8px; line-height: 1.6;">Found 4 key indicators addressing 71% of requirements</li>
+                    </ul>
+                </div>
+
+                <div style="margin-top: 20px; padding-top: 16px; border-top: 1px solid #34495e;">
+                    <h4 style="margin: 0 0 12px 0; font-size: 14px; color: #1a1a2e; font-weight: bold; text-transform: uppercase;">Recommended Language</h4>
+                    <p style="margin: 0; color: #34495e; line-height: 1.8; font-style: italic;">Review APP 3 (Collection of solicited personal information) requirements and update policy to address identified gaps.</p>
+                </div>
+            </div>
+        </div>
+        
+        <div style="position: relative; margin-bottom: 32px; padding: 24px; background: #ecf0f1; border-left: 4px solid #e74c3c; border-radius: 8px; page-break-inside: avoid;">
+            
+            <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(255,255,255,0.7); display: flex; align-items: center; justify-content: center; border-radius: 8px;">
+                <div style="text-align: center;">
+                    <div style="font-size: 18px; font-weight: bold; color: #1a1a2e; margin-bottom: 12px;">🔒 Locked</div>
+                    <div style="font-size: 14px; color: #34495e;">Unlock your full report</div>
+                </div>
+            </div>
+            
+            <div style="filter: blur(4px); opacity: 0.6; pointer-events: none;">
+                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 16px;">
+                    <div>
+                        <h3 style="margin: 0 0 8px 0; font-size: 18px; color: #1a1a2e;">APP 4: Dealing with unsolicited personal information</h3>
+                        <span style="display: inline-block; padding: 4px 12px; background: #e74c3c; color: white; border-radius: 20px; font-size: 12px; font-weight: bold;">Non-Compliant</span>
+                    </div>
+                    <div style="text-align: right;">
+                        <div style="font-size: 12px; color: #34495e; margin-bottom: 4px;">Priority</div>
+                        <div style="font-size: 14px; font-weight: bold; color: #1a1a2e;">MEDIUM</div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 12px; padding: 12px; background: rgba(0, 0, 0, 0.05); border-radius: 4px; font-size: 13px; color: #34495e; line-height: 1.6;">
+                    <strong>Why this score:</strong> Only 0 of 5 key requirements found (0% coverage). Gaps identified: unsolicited, received information, destroy.
+                </div>
+
+                <div style="margin-top: 16px;">
+                    <h4 style="margin: 0 0 12px 0; font-size: 14px; color: #1a1a2e; font-weight: bold; text-transform: uppercase;">Key Findings</h4>
+                    <ul style="margin: 0; padding-left: 20px; color: #34495e; line-height: 1.8;">
+                        <li style="margin-bottom: 8px; line-height: 1.6;">Only 0 of 5 key requirements found (0% coverage)</li>
+                    </ul>
+                </div>
+
+                <div style="margin-top: 20px; padding-top: 16px; border-top: 1px solid #34495e;">
+                    <h4 style="margin: 0 0 12px 0; font-size: 14px; color: #1a1a2e; font-weight: bold; text-transform: uppercase;">Recommended Language</h4>
+                    <p style="margin: 0; color: #34495e; line-height: 1.8; font-style: italic;">Review APP 4 (Dealing with unsolicited personal information) requirements and update policy to address identified gaps.</p>
+                </div>
+            </div>
+        </div>
+        
+        <div style="position: relative; margin-bottom: 32px; padding: 24px; background: #ecf0f1; border-left: 4px solid #f39c12; border-radius: 8px; page-break-inside: avoid;">
+            
+            <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(255,255,255,0.7); display: flex; align-items: center; justify-content: center; border-radius: 8px;">
+                <div style="text-align: center;">
+                    <div style="font-size: 18px; font-weight: bold; color: #1a1a2e; margin-bottom: 12px;">🔒 Locked</div>
+                    <div style="font-size: 14px; color: #34495e;">Unlock your full report</div>
+                </div>
+            </div>
+            
+            <div style="filter: blur(4px); opacity: 0.6; pointer-events: none;">
+                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 16px;">
+                    <div>
+                        <h3 style="margin: 0 0 8px 0; font-size: 18px; color: #1a1a2e;">APP 5: Notification of the collection of personal information</h3>
+                        <span style="display: inline-block; padding: 4px 12px; background: #f39c12; color: white; border-radius: 20px; font-size: 12px; font-weight: bold;">Partially Compliant</span>
+                    </div>
+                    <div style="text-align: right;">
+                        <div style="font-size: 12px; color: #34495e; margin-bottom: 4px;">Priority</div>
+                        <div style="font-size: 14px; font-weight: bold; color: #1a1a2e;">CRITICAL</div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 12px; padding: 12px; background: rgba(0, 0, 0, 0.05); border-radius: 4px; font-size: 13px; color: #34495e; line-height: 1.6;">
+                    <strong>Why this score:</strong> Found 2 key indicators addressing 25% of requirements. Gaps identified: collection notice, why we collect, how we use.
+                </div>
+
+                <div style="margin-top: 16px;">
+                    <h4 style="margin: 0 0 12px 0; font-size: 14px; color: #1a1a2e; font-weight: bold; text-transform: uppercase;">Key Findings</h4>
+                    <ul style="margin: 0; padding-left: 20px; color: #34495e; line-height: 1.8;">
+                        <li style="margin-bottom: 8px; line-height: 1.6;">Found 2 key indicators addressing 25% of requirements</li>
+                    </ul>
+                </div>
+
+                <div style="margin-top: 20px; padding-top: 16px; border-top: 1px solid #34495e;">
+                    <h4 style="margin: 0 0 12px 0; font-size: 14px; color: #1a1a2e; font-weight: bold; text-transform: uppercase;">Recommended Language</h4>
+                    <p style="margin: 0; color: #34495e; line-height: 1.8; font-style: italic;">Review APP 5 (Notification of the collection of personal information) requirements and update policy to address identified gaps.</p>
+                </div>
+            </div>
+        </div>
+        
+        <div style="position: relative; margin-bottom: 32px; padding: 24px; background: #ecf0f1; border-left: 4px solid #f39c12; border-radius: 8px; page-break-inside: avoid;">
+            
+            <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(255,255,255,0.7); display: flex; align-items: center; justify-content: center; border-radius: 8px;">
+                <div style="text-align: center;">
+                    <div style="font-size: 18px; font-weight: bold; color: #1a1a2e; margin-bottom: 12px;">🔒 Locked</div>
+                    <div style="font-size: 14px; color: #34495e;">Unlock your full report</div>
+                </div>
+            </div>
+            
+            <div style="filter: blur(4px); opacity: 0.6; pointer-events: none;">
+                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 16px;">
+                    <div>
+                        <h3 style="margin: 0 0 8px 0; font-size: 18px; color: #1a1a2e;">APP 6: Use or disclosure of personal information</h3>
+                        <span style="display: inline-block; padding: 4px 12px; background: #f39c12; color: white; border-radius: 20px; font-size: 12px; font-weight: bold;">Partially Compliant</span>
+                    </div>
+                    <div style="text-align: right;">
+                        <div style="font-size: 12px; color: #34495e; margin-bottom: 4px;">Priority</div>
+                        <div style="font-size: 14px; font-weight: bold; color: #1a1a2e;">HIGH</div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 12px; padding: 12px; background: rgba(0, 0, 0, 0.05); border-radius: 4px; font-size: 13px; color: #34495e; line-height: 1.6;">
+                    <strong>Why this score:</strong> Found 6 key indicators addressing 50% of requirements. Gaps identified: secondary purpose, related purpose, direct marketing.
+                </div>
+
+                <div style="margin-top: 16px;">
+                    <h4 style="margin: 0 0 12px 0; font-size: 14px; color: #1a1a2e; font-weight: bold; text-transform: uppercase;">Key Findings</h4>
+                    <ul style="margin: 0; padding-left: 20px; color: #34495e; line-height: 1.8;">
+                        <li style="margin-bottom: 8px; line-height: 1.6;">Found 6 key indicators addressing 50% of requirements</li>
+                    </ul>
+                </div>
+
+                <div style="margin-top: 20px; padding-top: 16px; border-top: 1px solid #34495e;">
+                    <h4 style="margin: 0 0 12px 0; font-size: 14px; color: #1a1a2e; font-weight: bold; text-transform: uppercase;">Recommended Language</h4>
+                    <p style="margin: 0; color: #34495e; line-height: 1.8; font-style: italic;">Review APP 6 (Use or disclosure of personal information) requirements and update policy to address identified gaps.</p>
+                </div>
+            </div>
+        </div>
+        
+        <div style="position: relative; margin-bottom: 32px; padding: 24px; background: #ecf0f1; border-left: 4px solid #f39c12; border-radius: 8px; page-break-inside: avoid;">
+            
+            <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(255,255,255,0.7); display: flex; align-items: center; justify-content: center; border-radius: 8px;">
+                <div style="text-align: center;">
+                    <div style="font-size: 18px; font-weight: bold; color: #1a1a2e; margin-bottom: 12px;">🔒 Locked</div>
+                    <div style="font-size: 14px; color: #34495e;">Unlock your full report</div>
+                </div>
+            </div>
+            
+            <div style="filter: blur(4px); opacity: 0.6; pointer-events: none;">
+                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 16px;">
+                    <div>
+                        <h3 style="margin: 0 0 8px 0; font-size: 18px; color: #1a1a2e;">APP 7: Direct marketing</h3>
+                        <span style="display: inline-block; padding: 4px 12px; background: #f39c12; color: white; border-radius: 20px; font-size: 12px; font-weight: bold;">Partially Compliant</span>
+                    </div>
+                    <div style="text-align: right;">
+                        <div style="font-size: 12px; color: #34495e; margin-bottom: 4px;">Priority</div>
+                        <div style="font-size: 14px; font-weight: bold; color: #1a1a2e;">MEDIUM</div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 12px; padding: 12px; background: rgba(0, 0, 0, 0.05); border-radius: 4px; font-size: 13px; color: #34495e; line-height: 1.6;">
+                    <strong>Why this score:</strong> Found 1 key indicators addressing 62% of requirements. Gaps identified: direct marketing, opt-out, unsubscribe.
+                </div>
+
+                <div style="margin-top: 16px;">
+                    <h4 style="margin: 0 0 12px 0; font-size: 14px; color: #1a1a2e; font-weight: bold; text-transform: uppercase;">Key Findings</h4>
+                    <ul style="margin: 0; padding-left: 20px; color: #34495e; line-height: 1.8;">
+                        <li style="margin-bottom: 8px; line-height: 1.6;">Found 1 key indicators addressing 62% of requirements</li>
+                    </ul>
+                </div>
+
+                <div style="margin-top: 20px; padding-top: 16px; border-top: 1px solid #34495e;">
+                    <h4 style="margin: 0 0 12px 0; font-size: 14px; color: #1a1a2e; font-weight: bold; text-transform: uppercase;">Recommended Language</h4>
+                    <p style="margin: 0; color: #34495e; line-height: 1.8; font-style: italic;">Review APP 7 (Direct marketing) requirements and update policy to address identified gaps.</p>
+                </div>
+            </div>
+        </div>
+        
+        <div style="position: relative; margin-bottom: 32px; padding: 24px; background: #ecf0f1; border-left: 4px solid #e74c3c; border-radius: 8px; page-break-inside: avoid;">
+            
+            <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(255,255,255,0.7); display: flex; align-items: center; justify-content: center; border-radius: 8px;">
+                <div style="text-align: center;">
+                    <div style="font-size: 18px; font-weight: bold; color: #1a1a2e; margin-bottom: 12px;">🔒 Locked</div>
+                    <div style="font-size: 14px; color: #34495e;">Unlock your full report</div>
+                </div>
+            </div>
+            
+            <div style="filter: blur(4px); opacity: 0.6; pointer-events: none;">
+                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 16px;">
+                    <div>
+                        <h3 style="margin: 0 0 8px 0; font-size: 18px; color: #1a1a2e;">APP 8: Cross-border disclosure of personal information</h3>
+                        <span style="display: inline-block; padding: 4px 12px; background: #e74c3c; color: white; border-radius: 20px; font-size: 12px; font-weight: bold;">Non-Compliant</span>
+                    </div>
+                    <div style="text-align: right;">
+                        <div style="font-size: 12px; color: #34495e; margin-bottom: 4px;">Priority</div>
+                        <div style="font-size: 14px; font-weight: bold; color: #1a1a2e;">MEDIUM</div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 12px; padding: 12px; background: rgba(0, 0, 0, 0.05); border-radius: 4px; font-size: 13px; color: #34495e; line-height: 1.6;">
+                    <strong>Why this score:</strong> Only 0 of 7 key requirements found (0% coverage). Gaps identified: overseas, international, cross-border.
+                </div>
+
+                <div style="margin-top: 16px;">
+                    <h4 style="margin: 0 0 12px 0; font-size: 14px; color: #1a1a2e; font-weight: bold; text-transform: uppercase;">Key Findings</h4>
+                    <ul style="margin: 0; padding-left: 20px; color: #34495e; line-height: 1.8;">
+                        <li style="margin-bottom: 8px; line-height: 1.6;">Only 0 of 7 key requirements found (0% coverage)</li>
+                    </ul>
+                </div>
+
+                <div style="margin-top: 20px; padding-top: 16px; border-top: 1px solid #34495e;">
+                    <h4 style="margin: 0 0 12px 0; font-size: 14px; color: #1a1a2e; font-weight: bold; text-transform: uppercase;">Recommended Language</h4>
+                    <p style="margin: 0; color: #34495e; line-height: 1.8; font-style: italic;">Review APP 8 (Cross-border disclosure of personal information) requirements and update policy to address identified gaps.</p>
+                </div>
+            </div>
+        </div>
+        
+        <div style="position: relative; margin-bottom: 32px; padding: 24px; background: #ecf0f1; border-left: 4px solid #f39c12; border-radius: 8px; page-break-inside: avoid;">
+            
+            <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(255,255,255,0.7); display: flex; align-items: center; justify-content: center; border-radius: 8px;">
+                <div style="text-align: center;">
+                    <div style="font-size: 18px; font-weight: bold; color: #1a1a2e; margin-bottom: 12px;">🔒 Locked</div>
+                    <div style="font-size: 14px; color: #34495e;">Unlock your full report</div>
+                </div>
+            </div>
+            
+            <div style="filter: blur(4px); opacity: 0.6; pointer-events: none;">
+                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 16px;">
+                    <div>
+                        <h3 style="margin: 0 0 8px 0; font-size: 18px; color: #1a1a2e;">APP 9: Adoption, use or disclosure of government related identifiers</h3>
+                        <span style="display: inline-block; padding: 4px 12px; background: #f39c12; color: white; border-radius: 20px; font-size: 12px; font-weight: bold;">Partially Compliant</span>
+                    </div>
+                    <div style="text-align: right;">
+                        <div style="font-size: 12px; color: #34495e; margin-bottom: 4px;">Priority</div>
+                        <div style="font-size: 14px; font-weight: bold; color: #1a1a2e;">MEDIUM</div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 12px; padding: 12px; background: rgba(0, 0, 0, 0.05); border-radius: 4px; font-size: 13px; color: #34495e; line-height: 1.6;">
+                    <strong>Why this score:</strong> Found 1 key indicators addressing 25% of requirements. Gaps identified: TFN, tax file number, ACN.
+                </div>
+
+                <div style="margin-top: 16px;">
+                    <h4 style="margin: 0 0 12px 0; font-size: 14px; color: #1a1a2e; font-weight: bold; text-transform: uppercase;">Key Findings</h4>
+                    <ul style="margin: 0; padding-left: 20px; color: #34495e; line-height: 1.8;">
+                        <li style="margin-bottom: 8px; line-height: 1.6;">Found 1 key indicators addressing 25% of requirements</li>
+                    </ul>
+                </div>
+
+                <div style="margin-top: 20px; padding-top: 16px; border-top: 1px solid #34495e;">
+                    <h4 style="margin: 0 0 12px 0; font-size: 14px; color: #1a1a2e; font-weight: bold; text-transform: uppercase;">Recommended Language</h4>
+                    <p style="margin: 0; color: #34495e; line-height: 1.8; font-style: italic;">Review APP 9 (Adoption, use or disclosure of government related identifiers) requirements and update policy to address identified gaps.</p>
+                </div>
+            </div>
+        </div>
+        
+        <div style="position: relative; margin-bottom: 32px; padding: 24px; background: #ecf0f1; border-left: 4px solid #f39c12; border-radius: 8px; page-break-inside: avoid;">
+            
+            <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(255,255,255,0.7); display: flex; align-items: center; justify-content: center; border-radius: 8px;">
+                <div style="text-align: center;">
+                    <div style="font-size: 18px; font-weight: bold; color: #1a1a2e; margin-bottom: 12px;">🔒 Locked</div>
+                    <div style="font-size: 14px; color: #34495e;">Unlock your full report</div>
+                </div>
+            </div>
+            
+            <div style="filter: blur(4px); opacity: 0.6; pointer-events: none;">
+                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 16px;">
+                    <div>
+                        <h3 style="margin: 0 0 8px 0; font-size: 18px; color: #1a1a2e;">APP 10: Quality of personal information</h3>
+                        <span style="display: inline-block; padding: 4px 12px; background: #f39c12; color: white; border-radius: 20px; font-size: 12px; font-weight: bold;">Partially Compliant</span>
+                    </div>
+                    <div style="text-align: right;">
+                        <div style="font-size: 12px; color: #34495e; margin-bottom: 4px;">Priority</div>
+                        <div style="font-size: 14px; font-weight: bold; color: #1a1a2e;">LOW</div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 12px; padding: 12px; background: rgba(0, 0, 0, 0.05); border-radius: 4px; font-size: 13px; color: #34495e; line-height: 1.6;">
+                    <strong>Why this score:</strong> Found 7 key indicators addressing 57% of requirements. Gaps identified: current, retention, data quality.
+                </div>
+
+                <div style="margin-top: 16px;">
+                    <h4 style="margin: 0 0 12px 0; font-size: 14px; color: #1a1a2e; font-weight: bold; text-transform: uppercase;">Key Findings</h4>
+                    <ul style="margin: 0; padding-left: 20px; color: #34495e; line-height: 1.8;">
+                        <li style="margin-bottom: 8px; line-height: 1.6;">Found 7 key indicators addressing 57% of requirements</li>
+                    </ul>
+                </div>
+
+                <div style="margin-top: 20px; padding-top: 16px; border-top: 1px solid #34495e;">
+                    <h4 style="margin: 0 0 12px 0; font-size: 14px; color: #1a1a2e; font-weight: bold; text-transform: uppercase;">Recommended Language</h4>
+                    <p style="margin: 0; color: #34495e; line-height: 1.8; font-style: italic;">Review APP 10 (Quality of personal information) requirements and update policy to address identified gaps.</p>
+                </div>
+            </div>
+        </div>
+        
+        <div style="position: relative; margin-bottom: 32px; padding: 24px; background: #ecf0f1; border-left: 4px solid #f39c12; border-radius: 8px; page-break-inside: avoid;">
+            
+            <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(255,255,255,0.7); display: flex; align-items: center; justify-content: center; border-radius: 8px;">
+                <div style="text-align: center;">
+                    <div style="font-size: 18px; font-weight: bold; color: #1a1a2e; margin-bottom: 12px;">🔒 Locked</div>
+                    <div style="font-size: 14px; color: #34495e;">Unlock your full report</div>
+                </div>
+            </div>
+            
+            <div style="filter: blur(4px); opacity: 0.6; pointer-events: none;">
+                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 16px;">
+                    <div>
+                        <h3 style="margin: 0 0 8px 0; font-size: 18px; color: #1a1a2e;">APP 11: Security of personal information</h3>
+                        <span style="display: inline-block; padding: 4px 12px; background: #f39c12; color: white; border-radius: 20px; font-size: 12px; font-weight: bold;">Partially Compliant</span>
+                    </div>
+                    <div style="text-align: right;">
+                        <div style="font-size: 12px; color: #34495e; margin-bottom: 4px;">Priority</div>
+                        <div style="font-size: 14px; font-weight: bold; color: #1a1a2e;">CRITICAL</div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 12px; padding: 12px; background: rgba(0, 0, 0, 0.05); border-radius: 4px; font-size: 13px; color: #34495e; line-height: 1.6;">
+                    <strong>Why this score:</strong> Found 7 key indicators addressing 55% of requirements. Gaps identified: encrypt, access control, password.
+                </div>
+
+                <div style="margin-top: 16px;">
+                    <h4 style="margin: 0 0 12px 0; font-size: 14px; color: #1a1a2e; font-weight: bold; text-transform: uppercase;">Key Findings</h4>
+                    <ul style="margin: 0; padding-left: 20px; color: #34495e; line-height: 1.8;">
+                        <li style="margin-bottom: 8px; line-height: 1.6;">Found 7 key indicators addressing 55% of requirements</li>
+                    </ul>
+                </div>
+
+                <div style="margin-top: 20px; padding-top: 16px; border-top: 1px solid #34495e;">
+                    <h4 style="margin: 0 0 12px 0; font-size: 14px; color: #1a1a2e; font-weight: bold; text-transform: uppercase;">Recommended Language</h4>
+                    <p style="margin: 0; color: #34495e; line-height: 1.8; font-style: italic;">Review APP 11 (Security of personal information) requirements and update policy to address identified gaps.</p>
+                </div>
+            </div>
+        </div>
+        
+        <div style="position: relative; margin-bottom: 32px; padding: 24px; background: #ecf0f1; border-left: 4px solid #27ae60; border-radius: 8px; page-break-inside: avoid;">
+            
+            <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(255,255,255,0.7); display: flex; align-items: center; justify-content: center; border-radius: 8px;">
+                <div style="text-align: center;">
+                    <div style="font-size: 18px; font-weight: bold; color: #1a1a2e; margin-bottom: 12px;">🔒 Locked</div>
+                    <div style="font-size: 14px; color: #34495e;">Unlock your full report</div>
+                </div>
+            </div>
+            
+            <div style="filter: blur(4px); opacity: 0.6; pointer-events: none;">
+                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 16px;">
+                    <div>
+                        <h3 style="margin: 0 0 8px 0; font-size: 18px; color: #1a1a2e;">APP 12: Access to personal information</h3>
+                        <span style="display: inline-block; padding: 4px 12px; background: #27ae60; color: white; border-radius: 20px; font-size: 12px; font-weight: bold;">Compliant</span>
+                    </div>
+                    <div style="text-align: right;">
+                        <div style="font-size: 12px; color: #34495e; margin-bottom: 4px;">Priority</div>
+                        <div style="font-size: 14px; font-weight: bold; color: #1a1a2e;">HIGH</div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 12px; padding: 12px; background: rgba(0, 0, 0, 0.05); border-radius: 4px; font-size: 13px; color: #34495e; line-height: 1.6;">
+                    <strong>Why this score:</strong> Found 5 key indicators addressing 85% of requirements.
+                </div>
+
+                <div style="margin-top: 16px;">
+                    <h4 style="margin: 0 0 12px 0; font-size: 14px; color: #1a1a2e; font-weight: bold; text-transform: uppercase;">Key Findings</h4>
+                    <ul style="margin: 0; padding-left: 20px; color: #34495e; line-height: 1.8;">
+                        <li style="margin-bottom: 8px; line-height: 1.6;">Found 5 key indicators addressing 85% of requirements</li>
+                    </ul>
+                </div>
+
+                <div style="margin-top: 20px; padding-top: 16px; border-top: 1px solid #34495e;">
+                    <h4 style="margin: 0 0 12px 0; font-size: 14px; color: #1a1a2e; font-weight: bold; text-transform: uppercase;">Recommended Language</h4>
+                    <p style="margin: 0; color: #34495e; line-height: 1.8; font-style: italic;">Review APP 12 (Access to personal information) requirements and update policy to address identified gaps.</p>
+                </div>
+            </div>
+        </div>
+        
+        <div style="position: relative; margin-bottom: 32px; padding: 24px; background: #ecf0f1; border-left: 4px solid #f39c12; border-radius: 8px; page-break-inside: avoid;">
+            
+            <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(255,255,255,0.7); display: flex; align-items: center; justify-content: center; border-radius: 8px;">
+                <div style="text-align: center;">
+                    <div style="font-size: 18px; font-weight: bold; color: #1a1a2e; margin-bottom: 12px;">🔒 Locked</div>
+                    <div style="font-size: 14px; color: #34495e;">Unlock your full report</div>
+                </div>
+            </div>
+            
+            <div style="filter: blur(4px); opacity: 0.6; pointer-events: none;">
+                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 16px;">
+                    <div>
+                        <h3 style="margin: 0 0 8px 0; font-size: 18px; color: #1a1a2e;">APP 13: Correction of personal information</h3>
+                        <span style="display: inline-block; padding: 4px 12px; background: #f39c12; color: white; border-radius: 20px; font-size: 12px; font-weight: bold;">Partially Compliant</span>
+                    </div>
+                    <div style="text-align: right;">
+                        <div style="font-size: 12px; color: #34495e; margin-bottom: 4px;">Priority</div>
+                        <div style="font-size: 14px; font-weight: bold; color: #1a1a2e;">HIGH</div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 12px; padding: 12px; background: rgba(0, 0, 0, 0.05); border-radius: 4px; font-size: 13px; color: #34495e; line-height: 1.6;">
+                    <strong>Why this score:</strong> Found 3 key indicators addressing 42% of requirements. Gaps identified: correct, correction, inaccurate.
+                </div>
+
+                <div style="margin-top: 16px;">
+                    <h4 style="margin: 0 0 12px 0; font-size: 14px; color: #1a1a2e; font-weight: bold; text-transform: uppercase;">Key Findings</h4>
+                    <ul style="margin: 0; padding-left: 20px; color: #34495e; line-height: 1.8;">
+                        <li style="margin-bottom: 8px; line-height: 1.6;">Found 3 key indicators addressing 42% of requirements</li>
+                    </ul>
+                </div>
+
+                <div style="margin-top: 20px; padding-top: 16px; border-top: 1px solid #34495e;">
+                    <h4 style="margin: 0 0 12px 0; font-size: 14px; color: #1a1a2e; font-weight: bold; text-transform: uppercase;">Recommended Language</h4>
+                    <p style="margin: 0; color: #34495e; line-height: 1.8; font-style: italic;">Review APP 13 (Correction of personal information) requirements and update policy to address identified gaps.</p>
+                </div>
+            </div>
+        </div>
+        
+
+                
+        <h2>Unlock Your Complete Gap Analysis</h2>
+        <div class="paywall">
+            <div style="font-size: 18px; color: #1a1a2e; margin-bottom: 8px;">Get the Full Report</div>
+            <div class="paywall-amount">A$149</div>
+            <p style="margin-bottom: 16px; color: #34495e;">Complete analysis of all 13 APPs with recommended policy language customised to your sector</p>
+            <button class="paywall-button" onclick="alert('In a production environment, this would redirect to your checkout flow.')">Unlock Full Report</button>
+        </div>
+        
+                
+        <div style="margin: 32px 0; padding: 20px; background: #f39c12; border-left: 4px solid #e74c3c; border-radius: 8px; color: #1a1a2e; line-height: 1.8;">
+            <div style="font-weight: bold; margin-bottom: 8px;">📢 December 2026 ADM Transparency Requirement</div>
+            <strong>Using Automated Decision-Making?</strong> From 10 December 2026, if you use automated decision-making with legal or similarly significant effect (e.g., credit scoring, eligibility decisions), you must disclose: (1) the use of automated systems; (2) how they work; (3) personal information used; (4) the significant effect; (5) mechanism to request human review; and (6) right to object.
+        </div>
+        
+                
+        <div class="disclaimer">
+            <strong>⚠️ Disclaimer:</strong> This report is for informational purposes only and does not constitute legal advice. The Australian Privacy Act and Privacy Principles are complex and may apply differently to your specific circumstances. Please consult a qualified privacy professional or legal advisor for advice specific to your business before implementing any changes to your privacy practices.
+        </div>
+        
+                
+        <footer>
+            <p>Report generated on 01 April 2026 at 07:49 UTC</p>
+            <p>© 2026 Privacy Compliance Tools. All rights reserved.</p>
+        </footer>
+        
+            </div>
+        </body>
+        </html>
+        

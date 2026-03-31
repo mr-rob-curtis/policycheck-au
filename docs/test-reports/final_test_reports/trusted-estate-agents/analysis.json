@@ -1,0 +1,200 @@
+{
+  "business_name": "Trusted Estate Agents",
+  "sector": "real_estate",
+  "analysis_date": "2026-04-01T07:49:32.264436",
+  "overall_score": 61,
+  "overall_status": "PARTIALLY_COMPLIANT",
+  "apps": [
+    {
+      "app_number": 1,
+      "app_name": "Open and transparent management of personal information",
+      "status": "PARTIALLY_COMPLIANT",
+      "findings": [
+        "Found 3 key indicators addressing 71% of requirements"
+      ],
+      "gaps": [
+        "Missing: privacy contact",
+        "Missing: privacy complaint",
+        "Missing: accessible format"
+      ],
+      "recommended_language": "\nRECOMMENDED: \"We are committed to protecting your privacy. This Privacy Policy sets out how\nwe collect, use, disclose, and manage personal information in accordance with the Australian\nPrivacy Act 1988 (Cth).\"\n",
+      "priority": "CRITICAL"
+    },
+    {
+      "app_number": 2,
+      "app_name": "Anonymity and pseudonymity",
+      "status": "PARTIALLY_COMPLIANT",
+      "findings": [
+        "Found 1 key indicators addressing 25% of requirements"
+      ],
+      "gaps": [
+        "Missing: pseudonymous",
+        "Missing: anonymity not practical",
+        "Missing: without identifying"
+      ],
+      "recommended_language": "Review APP 2 (Anonymity and pseudonymity) requirements and update policy to address identified gaps.",
+      "priority": "MEDIUM"
+    },
+    {
+      "app_number": 3,
+      "app_name": "Collection of solicited personal information",
+      "status": "PARTIALLY_COMPLIANT",
+      "findings": [
+        "Found 4 key indicators addressing 57% of requirements"
+      ],
+      "gaps": [
+        "Missing: necessary information",
+        "Missing: accurate",
+        "Missing: complete"
+      ],
+      "recommended_language": "Review APP 3 (Collection of solicited personal information) requirements and update policy to address identified gaps.",
+      "priority": "HIGH"
+    },
+    {
+      "app_number": 4,
+      "app_name": "Dealing with unsolicited personal information",
+      "status": "NON_COMPLIANT",
+      "findings": [
+        "Only 0 of 5 key requirements found (0% coverage)"
+      ],
+      "gaps": [
+        "Missing: unsolicited",
+        "Missing: received information",
+        "Missing: destroy"
+      ],
+      "recommended_language": "Review APP 4 (Dealing with unsolicited personal information) requirements and update policy to address identified gaps.",
+      "priority": "MEDIUM"
+    },
+    {
+      "app_number": 5,
+      "app_name": "Notification of the collection of personal information",
+      "status": "PARTIALLY_COMPLIANT",
+      "findings": [
+        "Found 4 key indicators addressing 50% of requirements"
+      ],
+      "gaps": [
+        "Missing: collection notice",
+        "Missing: why we collect",
+        "Missing: how we use"
+      ],
+      "recommended_language": "Review APP 5 (Notification of the collection of personal information) requirements and update policy to address identified gaps.",
+      "priority": "CRITICAL"
+    },
+    {
+      "app_number": 6,
+      "app_name": "Use or disclosure of personal information",
+      "status": "COMPLIANT",
+      "findings": [
+        "Found 10 key indicators addressing 75% of requirements"
+      ],
+      "gaps": [],
+      "recommended_language": "Review APP 6 (Use or disclosure of personal information) requirements and update policy to address identified gaps.",
+      "priority": "HIGH"
+    },
+    {
+      "app_number": 7,
+      "app_name": "Direct marketing",
+      "status": "COMPLIANT",
+      "findings": [
+        "Found 6 key indicators addressing 87% of requirements"
+      ],
+      "gaps": [],
+      "recommended_language": "Review APP 7 (Direct marketing) requirements and update policy to address identified gaps.",
+      "priority": "MEDIUM"
+    },
+    {
+      "app_number": 8,
+      "app_name": "Cross-border disclosure of personal information",
+      "status": "PARTIALLY_COMPLIANT",
+      "findings": [
+        "Found 4 key indicators addressing 28% of requirements"
+      ],
+      "gaps": [
+        "Missing: international",
+        "Missing: cross-border",
+        "Missing: international transfer"
+      ],
+      "recommended_language": "Review APP 8 (Cross-border disclosure of personal information) requirements and update policy to address identified gaps.",
+      "priority": "MEDIUM"
+    },
+    {
+      "app_number": 9,
+      "app_name": "Adoption, use or disclosure of government related identifiers",
+      "status": "PARTIALLY_COMPLIANT",
+      "findings": [
+        "Found 2 key indicators addressing 25% of requirements"
+      ],
+      "gaps": [
+        "Missing: TFN",
+        "Missing: tax file number",
+        "Missing: driver's license"
+      ],
+      "recommended_language": "Review APP 9 (Adoption, use or disclosure of government related identifiers) requirements and update policy to address identified gaps.",
+      "priority": "MEDIUM"
+    },
+    {
+      "app_number": 10,
+      "app_name": "Quality of personal information",
+      "status": "PARTIALLY_COMPLIANT",
+      "findings": [
+        "Found 6 key indicators addressing 28% of requirements"
+      ],
+      "gaps": [
+        "Missing: accurate",
+        "Missing: up-to-date",
+        "Missing: complete"
+      ],
+      "recommended_language": "Review APP 10 (Quality of personal information) requirements and update policy to address identified gaps.",
+      "priority": "LOW"
+    },
+    {
+      "app_number": 11,
+      "app_name": "Security of personal information",
+      "status": "PARTIALLY_COMPLIANT",
+      "findings": [
+        "Found 5 key indicators addressing 55% of requirements"
+      ],
+      "gaps": [
+        "Missing: encrypt",
+        "Missing: access control",
+        "Missing: password"
+      ],
+      "recommended_language": "Review APP 11 (Security of personal information) requirements and update policy to address identified gaps.",
+      "priority": "CRITICAL"
+    },
+    {
+      "app_number": 12,
+      "app_name": "Access to personal information",
+      "status": "COMPLIANT",
+      "findings": [
+        "Found 5 key indicators addressing 100% of requirements"
+      ],
+      "gaps": [],
+      "recommended_language": "Review APP 12 (Access to personal information) requirements and update policy to address identified gaps.",
+      "priority": "HIGH"
+    },
+    {
+      "app_number": 13,
+      "app_name": "Correction of personal information",
+      "status": "COMPLIANT",
+      "findings": [
+        "Found 7 key indicators addressing 85% of requirements"
+      ],
+      "gaps": [],
+      "recommended_language": "Review APP 13 (Correction of personal information) requirements and update policy to address identified gaps.",
+      "priority": "HIGH"
+    }
+  ],
+  "adm_check": {
+    "uses_adm": "UNKNOWN",
+    "adm_disclosed": false,
+    "examples_found": [],
+    "recommendation": "From 10 December 2026, if you use automated decision-making with legal or similarly significant effect (e.g., credit scoring, eligibility decisions), you must disclose: (1) the use of automated systems; (2) how they work; (3) personal information used; (4) the significant effect; (5) mechanism to request human review; and (6) right to object."
+  },
+  "summary": {
+    "compliant_count": 4,
+    "partial_count": 8,
+    "non_compliant_count": 1,
+    "not_addressed_count": 0
+  }
+}

@@ -1,0 +1,6 @@
+business_name,url,sector,compliance_score,status,report_path,email_draft,error
+Example Real Estate,https://www.example-realestate.com.au,real_estate,11,SUCCESS,test_results/example-real-estate,test_results/example-real-estate/email_draft.txt,
+Sydney Legal Practice,https://www.sydney-lawyers.com.au,lawyers,3,SUCCESS,test_results/sydney-legal-practice,test_results/sydney-legal-practice/email_draft.txt,
+Trusted Pharmacy Melbourne,https://www.trusted-pharmacy.com.au,chemists,0,SUCCESS,test_results/trusted-pharmacy-melbourne,test_results/trusted-pharmacy-melbourne/email_draft.txt,
+Premier Property Group,https://www.premier-realestate.com.au,real_estate,7,SUCCESS,test_results/premier-property-group,test_results/premier-property-group/email_draft.txt,
+Brighton Conveyancing,https://www.brighton-lawyers.com.au,lawyers,0,SUCCESS,test_results/brighton-conveyancing,test_results/brighton-conveyancing/email_draft.txt,

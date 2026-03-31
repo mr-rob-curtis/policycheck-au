@@ -1,0 +1,42 @@
+[
+  {
+    "name": "Stone Real Estate",
+    "url": "https://www.stonerealestate.com.au",
+    "sector": "real_estate",
+    "found": true,
+    "text_len": 20623,
+    "slug": "stone-real-estate"
+  },
+  {
+    "name": "Trusted Estate Agents",
+    "url": "https://trustedestateagents.com.au",
+    "sector": "real_estate",
+    "found": true,
+    "text_len": 18574,
+    "slug": "trusted-estate-agents"
+  },
+  {
+    "name": "Independent Pharmacies Australia",
+    "url": "https://independentpharmacies.com.au",
+    "sector": "pharmacy",
+    "found": true,
+    "text_len": 21278,
+    "slug": "independent-pharmacies-australia"
+  },
+  {
+    "name": "Conveyancing Depot",
+    "url": "https://www.conveyancingdepot.com.au",
+    "sector": "legal",
+    "found": true,
+    "text_len": 6257,
+    "slug": "conveyancing-depot"
+  },
+  {
+    "name": "My Law Firm",
+    "url": "https://mylawfirm.com.au",
+    "sector": "legal",
+    "found": true,
+    "text_len": 13690,
+    "slug": "my-law-firm"
+  }
+]

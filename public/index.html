@@ -1,0 +1,1611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PolicyCheck AU - Australian Privacy Principles Compliance Scanner</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --navy: #1a1a2e;
+            --teal: #16a085;
+            --light-teal: #48b5a8;
+            --accent: #f39c12;
+            --success: #27ae60;
+            --warning: #e67e22;
+            --danger: #e74c3c;
+            --light-gray: #ecf0f1;
+            --medium-gray: #95a5a6;
+            --white: #ffffff;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, var(--navy) 0%, #0f3460 100%);
+            color: #2c3e50;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* HEADER */
+        .header {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--teal), var(--light-teal));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+            font-size: 20px;
+        }
+
+        .logo-text h1 {
+            margin: 0;
+            color: var(--navy);
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .logo-text p {
+            margin: 0;
+            color: var(--medium-gray);
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .badge {
+            display: inline-block;
+            background: var(--accent);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .countdown {
+            text-align: right;
+        }
+
+        .countdown-label {
+            color: var(--medium-gray);
+            font-size: 12px;
+            margin-bottom: 4px;
+        }
+
+        .countdown-value {
+            color: var(--danger);
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        .countdown-text {
+            color: var(--medium-gray);
+            font-size: 11px;
+            margin-top: 4px;
+        }
+
+        .header-info {
+            background: #f8f9fa;
+            border-left: 4px solid var(--teal);
+            padding: 12px 16px;
+            border-radius: 4px;
+            font-size: 12px;
+            color: var(--navy);
+            line-height: 1.6;
+        }
+
+        /* SCAN FORM */
+        .scan-section {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        .section-title {
+            color: var(--navy);
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 24px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            color: var(--navy);
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .form-group input,
+        .form-group select {
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--teal);
+            box-shadow: 0 0 0 3px rgba(22, 160, 133, 0.1);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--teal), var(--light-teal));
+            color: white;
+            flex: 1;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(22, 160, 133, 0.3);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            background: var(--light-gray);
+            color: var(--navy);
+            border: 2px solid #e0e0e0;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        /* PROGRESS STEPS */
+        .progress-section {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            display: none;
+        }
+
+        .progress-section.active {
+            display: block;
+        }
+
+        .progress-steps {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .progress-steps::before {
+            content: '';
+            position: absolute;
+            top: 24px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #e0e0e0;
+            z-index: 0;
+        }
+
+        .step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+            position: relative;
+            z-index: 1;
+        }
+
+        .step-circle {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--medium-gray);
+            font-weight: 600;
+            margin-bottom: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .step.active .step-circle {
+            background: linear-gradient(135deg, var(--teal), var(--light-teal));
+            color: white;
+            animation: pulse 1.5s infinite;
+        }
+
+        .step.completed .step-circle {
+            background: var(--success);
+            color: white;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .step-label {
+            font-size: 12px;
+            color: var(--medium-gray);
+            font-weight: 600;
+        }
+
+        .step.active .step-label {
+            color: var(--teal);
+        }
+
+        .step.completed .step-label {
+            color: var(--success);
+        }
+
+        .progress-message {
+            text-align: center;
+            font-size: 14px;
+            color: var(--medium-gray);
+            margin-bottom: 20px;
+        }
+
+        .spinner {
+            border: 3px solid #e0e0e0;
+            border-top: 3px solid var(--teal);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* RESULTS */
+        .results-section {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            display: none;
+        }
+
+        .results-section.active {
+            display: block;
+        }
+
+        .score-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+            align-items: center;
+        }
+
+        .gauge-wrapper {
+            display: flex;
+            justify-content: center;
+            position: relative;
+            width: 200px;
+            height: 200px;
+            margin: 0 auto;
+        }
+
+        .gauge-text {
+            text-align: center;
+        }
+
+        .gauge-score {
+            font-size: 48px;
+            font-weight: 700;
+            color: var(--navy);
+            margin-bottom: 8px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%;
+        }
+
+        .gauge-label {
+            font-size: 14px;
+            color: var(--medium-gray);
+            margin-bottom: 20px;
+            position: absolute;
+            bottom: 10px;
+            width: 100%;
+        }
+
+        .summary-bar {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .summary-item {
+            background: #f8f9fa;
+            border-radius: 6px;
+            padding: 16px;
+            text-align: center;
+        }
+
+        .summary-item-value {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .summary-item-label {
+            font-size: 12px;
+            color: var(--medium-gray);
+            font-weight: 600;
+        }
+
+        .summary-item.compliant .summary-item-value {
+            color: var(--success);
+        }
+
+        .summary-item.partial .summary-item-value {
+            color: var(--warning);
+        }
+
+        .summary-item.non-compliant .summary-item-value {
+            color: var(--danger);
+        }
+
+        .summary-item.not-addressed .summary-item-value {
+            color: var(--medium-gray);
+        }
+
+        .adm-warning {
+            background: #fff3cd;
+            border-left: 4px solid var(--accent);
+            padding: 16px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .adm-warning strong {
+            color: var(--navy);
+        }
+
+        /* APP ROWS */
+        .apps-container {
+            margin-top: 30px;
+        }
+
+        .app-row {
+            background: #f8f9fa;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            margin-bottom: 12px;
+            overflow: hidden;
+        }
+
+        .app-header {
+            padding: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: background 0.3s ease;
+        }
+
+        .app-header:hover {
+            background: #f0f1f2;
+        }
+
+        .app-header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex: 1;
+        }
+
+        .app-number {
+            background: var(--navy);
+            color: white;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        .app-info {
+            flex: 1;
+        }
+
+        .app-title {
+            color: var(--navy);
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 2px;
+        }
+
+        .app-priority {
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            display: inline-block;
+        }
+
+        .app-priority.critical {
+            color: var(--danger);
+            background: #ffe6e6;
+            padding: 2px 8px;
+            border-radius: 3px;
+        }
+
+        .app-priority.high {
+            color: var(--warning);
+            background: #fff3e0;
+            padding: 2px 8px;
+            border-radius: 3px;
+        }
+
+        .app-priority.medium {
+            color: #3498db;
+            background: #e3f2fd;
+            padding: 2px 8px;
+            border-radius: 3px;
+        }
+
+        .app-priority.low {
+            color: var(--medium-gray);
+            background: #f5f5f5;
+            padding: 2px 8px;
+            border-radius: 3px;
+        }
+
+        .app-status {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-badge.compliant {
+            background: #d4edda;
+            color: var(--success);
+        }
+
+        .status-badge.partial {
+            background: #fff3cd;
+            color: var(--warning);
+        }
+
+        .status-badge.non-compliant {
+            background: #f8d7da;
+            color: var(--danger);
+        }
+
+        .status-badge.not-addressed {
+            background: #e9ecef;
+            color: var(--medium-gray);
+        }
+
+        .score-indicator {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--navy);
+            min-width: 40px;
+            text-align: right;
+        }
+
+        .expand-icon {
+            color: var(--medium-gray);
+            transition: transform 0.3s ease;
+        }
+
+        .app-row.expanded .expand-icon {
+            transform: rotate(180deg);
+        }
+
+        .app-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .app-row.expanded .app-content {
+            max-height: 500px;
+        }
+
+        .app-details {
+            padding: 20px;
+            border-top: 1px solid #e0e0e0;
+            background: white;
+        }
+
+        .details-section {
+            margin-bottom: 16px;
+        }
+
+        .details-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .details-label {
+            color: var(--navy);
+            font-size: 12px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .details-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .details-list li {
+            padding: 6px 0;
+            font-size: 13px;
+            color: #2c3e50;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        .details-list li::before {
+            content: '✓';
+            color: var(--success);
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .details-list.gaps li::before {
+            content: '✗';
+            color: var(--danger);
+        }
+
+        .export-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .error-message {
+            background: #f8d7da;
+            border-left: 4px solid var(--danger);
+            padding: 16px;
+            border-radius: 4px;
+            color: #721c24;
+            margin-bottom: 20px;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header-top {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .countdown {
+                text-align: left;
+            }
+
+            .score-container {
+                grid-template-columns: 1fr;
+            }
+
+            .summary-bar {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .app-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .app-status {
+                width: 100%;
+                margin-top: 12px;
+                justify-content: space-between;
+            }
+
+            .export-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- HEADER -->
+        <div class="header">
+            <div class="header-top">
+                <div class="logo">
+                    <div class="logo-icon">✓</div>
+                    <div class="logo-text">
+                        <h1>PolicyCheck AU</h1>
+                        <p>Privacy Compliance Scanner</p>
+                    </div>
+                    <span class="badge">BETA</span>
+                </div>
+                <div class="countdown">
+                    <div class="countdown-label">DEADLINE</div>
+                    <div class="countdown-value" id="countdown">-</div>
+                    <div class="countdown-text">1 July 2026</div>
+                </div>
+            </div>
+            <div class="header-info">
+                <strong>Australian Privacy Principles (APPs) Compliance Scanner.</strong> Scan your privacy policy against all 13 APPs. Non-compliance penalties: A$66,000 per contravention, up to A$50M for serious breaches.
+            </div>
+        </div>
+
+        <!-- SCAN FORM -->
+        <div class="scan-section" id="scanSection">
+            <h2 class="section-title">Scan Your Privacy Policy</h2>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="websiteUrl">Website URL</label>
+                    <input type="url" id="websiteUrl" placeholder="https://example.com" />
+                </div>
+                <div class="form-group">
+                    <label for="sector">Business Sector</label>
+                    <select id="sector">
+                        <option value="">Select a sector...</option>
+                        <option value="Real Estate">Real Estate</option>
+                        <option value="Pharmacy & Health">Pharmacy & Health</option>
+                        <option value="Legal / Conveyancing">Legal / Conveyancing</option>
+                        <option value="Hospitality & Licensed Venues">Hospitality & Licensed Venues</option>
+                        <option value="Automotive">Automotive</option>
+                        <option value="Jewellery & High-Value Goods">Jewellery & High-Value Goods</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="businessName">Business Name</label>
+                    <input type="text" id="businessName" placeholder="Your business name" />
+                </div>
+            </div>
+            <div class="button-group">
+                <button class="btn btn-primary" id="scanBtn">Start Scan</button>
+            </div>
+        </div>
+
+        <!-- PROGRESS -->
+        <div class="progress-section" id="progressSection">
+            <h2 class="section-title">Scanning in Progress</h2>
+            <div class="progress-steps">
+                <div class="step active" id="step1">
+                    <div class="step-circle">1</div>
+                    <div class="step-label">Fetching Policy</div>
+                </div>
+                <div class="step" id="step2">
+                    <div class="step-circle">2</div>
+                    <div class="step-label">Analyzing Content</div>
+                </div>
+                <div class="step" id="step3">
+                    <div class="step-circle">3</div>
+                    <div class="step-label">Calculating Score</div>
+                </div>
+                <div class="step" id="step4">
+                    <div class="step-circle">4</div>
+                    <div class="step-label">Done</div>
+                </div>
+            </div>
+            <div class="progress-message" id="progressMessage">Fetching privacy policy from website...</div>
+            <div class="spinner"></div>
+        </div>
+
+        <!-- RESULTS -->
+        <div class="results-section" id="resultsSection">
+            <h2 class="section-title">Compliance Scan Results</h2>
+
+            <div id="errorContainer"></div>
+
+            <div id="scoreContainer" style="display: none;">
+                <div class="score-container">
+                    <div class="gauge-wrapper">
+                        <svg width="200" height="200" viewBox="0 0 200 200">
+                            <circle cx="100" cy="100" r="90" fill="none" stroke="#e0e0e0" stroke-width="8" />
+                            <circle cx="100" cy="100" r="90" fill="none" stroke="url(#gaugeGradient)" stroke-width="8"
+                                stroke-dasharray="565" stroke-dashoffset="565" stroke-linecap="round" id="gaugeRing" />
+                            <defs>
+                                <linearGradient id="gaugeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:var(--teal);stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:var(--light-teal);stop-opacity:1" />
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                        <div class="gauge-score" id="gaugeScore">0</div>
+                        <div class="gauge-label">Overall Score</div>
+                    </div>
+                </div>
+
+                <div class="gauge-text">
+                    <div class="summary-bar" id="summaryBar"></div>
+                </div>
+
+                <div class="adm-warning" id="admWarning" style="display: none;">
+                    <strong>⚠ Automated Decision-Making (ADM):</strong> Your privacy policy does <strong id="admStatus">NOT address</strong> automated decision-making transparency.
+                    Remember: ADM transparency is required by the Privacy Act. Deadline: <strong>10 December 2026</strong>.
+                </div>
+
+                <div class="apps-container" id="appsContainer"></div>
+
+                <div class="export-buttons">
+                    <button class="btn btn-secondary" id="viewReportBtn">View Full Report</button>
+                    <button class="btn btn-secondary" id="exportJsonBtn">Export JSON</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ============================================================================
+        // COMPLIANCE ENGINE: 13 APPs with Critical Phrases
+        // ============================================================================
+
+        const APPS = [
+            {
+                number: 1,
+                name: 'Open/Transparent Management',
+                priority: 'CRITICAL',
+                criticalPhrases: [
+                    'privacy policy', 'privacy statement', 'privacy notice', 'data protection',
+                    'personal information', 'personal data', 'your information', 'your data',
+                    'privacy officer', 'privacy contact', 'privacy complaint', 'accessible format',
+                    'management practices'
+                ]
+            },
+            {
+                number: 2,
+                name: 'Anonymity/Pseudonymity',
+                priority: 'MEDIUM',
+                criticalPhrases: [
+                    'anonymous', 'pseudonymous', 'anonymity not practical', 'without identifying',
+                    'identity required', 'anonymity'
+                ]
+            },
+            {
+                number: 3,
+                name: 'Solicited Collection',
+                priority: 'HIGH',
+                criticalPhrases: [
+                    'collect', 'gather', 'obtain', 'acquire', 'collection',
+                    'necessary information', 'accurate', 'complete', 'reasonably necessary',
+                    'collection notice'
+                ]
+            },
+            {
+                number: 4,
+                name: 'Unsolicited Information',
+                priority: 'MEDIUM',
+                criticalPhrases: [
+                    'unsolicited', 'received information', 'destroy', 'delete', 'erase', 'remove',
+                    'de-identify', 'not requested'
+                ]
+            },
+            {
+                number: 5,
+                name: 'Collection Notification',
+                priority: 'CRITICAL',
+                criticalPhrases: [
+                    'collection notice', 'why we collect', 'how we use', 'who we share with',
+                    'overseas', 'offshore', 'outside australia', 'international',
+                    'access', 'view your', 'obtain a copy', 'request your',
+                    'correct', 'rectify', 'fix', 'update your',
+                    'complaint'
+                ]
+            },
+            {
+                number: 6,
+                name: 'Use/Disclosure',
+                priority: 'HIGH',
+                criticalPhrases: [
+                    'use', 'disclosure', 'secondary purpose', 'related purpose', 'direct marketing',
+                    'consent', 'permission', 'agree', 'authorise', 'authorize',
+                    'share', 'third party', 'third-party', 'external party',
+                    'other organisations', 'service providers'
+                ]
+            },
+            {
+                number: 7,
+                name: 'Direct Marketing',
+                priority: 'MEDIUM',
+                criticalPhrases: [
+                    'direct marketing', 'marketing', 'promotional', 'commercial messages', 'advertising',
+                    'opt-out', 'opt out', 'unsubscribe', 'stop receiving',
+                    'marketing preferences', 'email marketing', 'sms marketing'
+                ]
+            },
+            {
+                number: 8,
+                name: 'Cross-Border',
+                priority: 'MEDIUM',
+                criticalPhrases: [
+                    'overseas', 'offshore', 'international', 'cross-border', 'international transfer',
+                    'foreign', 'abroad', 'outside australia', 'outside australia'
+                ]
+            },
+            {
+                number: 9,
+                name: 'Government IDs',
+                priority: 'MEDIUM',
+                criticalPhrases: [
+                    'tfn', 'tax file number', 'abn', 'acn', 'driver\'s license',
+                    'medicare', 'government identifier', 'unique identifier'
+                ]
+            },
+            {
+                number: 10,
+                name: 'Data Quality',
+                priority: 'LOW',
+                criticalPhrases: [
+                    'accurate', 'up-to-date', 'current', 'complete', 'relevant', 'retention',
+                    'data quality'
+                ]
+            },
+            {
+                number: 11,
+                name: 'Security',
+                priority: 'CRITICAL',
+                criticalPhrases: [
+                    'security', 'safeguard', 'protection', 'securing', 'encrypt', 'encrypted',
+                    'protected', 'access control', 'password', 'firewall', 'secure',
+                    'breach', 'data breach', 'data incident', 'security incident',
+                    'notifiable data breach'
+                ]
+            },
+            {
+                number: 12,
+                name: 'Access Rights',
+                priority: 'HIGH',
+                criticalPhrases: [
+                    'access', 'view your', 'obtain a copy', 'request your',
+                    'subject access', 'access request', 'individual access',
+                    '30 days', 'reasonable fee'
+                ]
+            },
+            {
+                number: 13,
+                name: 'Correction',
+                priority: 'HIGH',
+                criticalPhrases: [
+                    'correct', 'rectify', 'fix', 'update your', 'correction',
+                    'update', 'inaccurate', 'amend', 'amendment'
+                ]
+            }
+        ];
+
+        // ============================================================================
+        // UTILITIES
+        // ============================================================================
+
+        function normalizeText(text) {
+            return text.toLowerCase().trim();
+        }
+
+        function stripHtmlTags(html) {
+            const div = document.createElement('div');
+            div.innerHTML = html;
+            return div.textContent || div.innerText || '';
+        }
+
+        function calculateCountdown() {
+            const now = new Date();
+            const deadline = new Date('2026-07-01T00:00:00Z');
+            const diff = deadline - now;
+            const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
+            return Math.max(0, days);
+        }
+
+        function updateCountdown() {
+            const days = calculateCountdown();
+            document.getElementById('countdown').textContent = days + ' days';
+        }
+
+        // ============================================================================
+        // COMPLIANCE SCANNER
+        // ============================================================================
+
+        async function fetchPrivacyPolicy(url) {
+            try {
+                const corsUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
+                const response = await fetch(corsUrl);
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                return await response.text();
+            } catch (error) {
+                console.error('Fetch error:', error);
+                return null;
+            }
+        }
+
+        function extractPrivacyPolicyUrl(html, baseUrl) {
+            const text = html.toLowerCase();
+            const patterns = ['/privacy-policy/', '/privacy-policy', '/privacy/', '/privacy', '/legal/privacy', '/policies'];
+
+            for (const pattern of patterns) {
+                if (text.includes(pattern)) {
+                    try {
+                        const base = new URL(baseUrl);
+                        return new URL(pattern, base).toString();
+                    } catch (e) {
+                        // If URL construction fails, try next pattern
+                    }
+                }
+            }
+            return null;
+        }
+
+        function analyzePolicy(policyText) {
+            const normalized = normalizeText(policyText);
+            const results = [];
+
+            for (const app of APPS) {
+                let foundPhrases = 0;
+                const foundList = [];
+                const missingList = [];
+
+                for (const phrase of app.criticalPhrases) {
+                    const normalizedPhrase = normalizeText(phrase);
+                    if (normalized.includes(normalizedPhrase)) {
+                        foundPhrases++;
+                        foundList.push(phrase);
+                    } else {
+                        missingList.push(phrase);
+                    }
+                }
+
+                const coverage = app.criticalPhrases.length > 0
+                    ? foundPhrases / app.criticalPhrases.length
+                    : 0;
+
+                let status;
+                let score;
+
+                if (coverage > 0.75) {
+                    status = 'COMPLIANT';
+                    score = 100;
+                } else if (coverage >= 0.25) {
+                    status = 'PARTIALLY_COMPLIANT';
+                    score = Math.round(coverage * 100);
+                } else if (coverage > 0) {
+                    status = 'NON_COMPLIANT';
+                    score = Math.round(coverage * 100);
+                } else {
+                    status = 'NOT_ADDRESSED';
+                    score = 0;
+                }
+
+                results.push({
+                    app: app.number,
+                    name: app.name,
+                    priority: app.priority,
+                    status,
+                    score,
+                    coverage,
+                    found: foundList,
+                    missing: missingList
+                });
+            }
+
+            return results;
+        }
+
+        function checkADMCoverage(policyText) {
+            const normalized = normalizeText(policyText);
+            const admPhrases = [
+                'automated decision', 'automated', 'algorithm', 'machine learning',
+                'automated system', 'automated scoring', 'automated assessment'
+            ];
+
+            let found = 0;
+            for (const phrase of admPhrases) {
+                if (normalized.includes(normalizeText(phrase))) {
+                    found++;
+                    break;
+                }
+            }
+
+            return found > 0;
+        }
+
+        function calculateOverallScore(results, policyText) {
+            if (!policyText || policyText.length < 500) {
+                return 0;
+            }
+
+            const scores = results.map(r => r.score);
+            const averageScore = scores.length > 0 ? scores.reduce((a, b) => a + b, 0) / scores.length : 0;
+
+            const appsCovered = results.filter(r => r.status !== 'NOT_ADDRESSED').length;
+            if (appsCovered >= 2 && averageScore < 15) {
+                return 15;
+            }
+
+            return Math.round(averageScore);
+        }
+
+        function summarizeResults(results) {
+            const summary = {
+                compliant: results.filter(r => r.status === 'COMPLIANT').length,
+                partial: results.filter(r => r.status === 'PARTIALLY_COMPLIANT').length,
+                nonCompliant: results.filter(r => r.status === 'NON_COMPLIANT').length,
+                notAddressed: results.filter(r => r.status === 'NOT_ADDRESSED').length
+            };
+            return summary;
+        }
+
+        // ============================================================================
+        // UI RENDERING
+        // ============================================================================
+
+        function renderScoreGauge(score) {
+            const circumference = 2 * Math.PI * 90;
+            const offset = circumference - (score / 100) * circumference;
+
+            const ring = document.getElementById('gaugeRing');
+            const scoreEl = document.getElementById('gaugeScore');
+
+            ring.style.strokeDashoffset = circumference;
+            scoreEl.textContent = score;
+
+            setTimeout(() => {
+                ring.style.transition = 'stroke-dashoffset 1.5s ease-out';
+                ring.style.strokeDashoffset = offset;
+            }, 100);
+        }
+
+        function renderSummaryBar(summary) {
+            const container = document.getElementById('summaryBar');
+            container.innerHTML = `
+                <div class="summary-item compliant">
+                    <div class="summary-item-value">${summary.compliant}</div>
+                    <div class="summary-item-label">Compliant</div>
+                </div>
+                <div class="summary-item partial">
+                    <div class="summary-item-value">${summary.partial}</div>
+                    <div class="summary-item-label">Partial</div>
+                </div>
+                <div class="summary-item non-compliant">
+                    <div class="summary-item-value">${summary.nonCompliant}</div>
+                    <div class="summary-item-label">Non-Compliant</div>
+                </div>
+                <div class="summary-item not-addressed">
+                    <div class="summary-item-value">${summary.notAddressed}</div>
+                    <div class="summary-item-label">Not Addressed</div>
+                </div>
+            `;
+        }
+
+        function renderAPPRows(results) {
+            const container = document.getElementById('appsContainer');
+            container.innerHTML = results.map(app => `
+                <div class="app-row" data-app-number="${app.app}">
+                    <div class="app-header" onclick="toggleAppRow(${app.app})">
+                        <div class="app-header-left">
+                            <div class="app-number">${app.app}</div>
+                            <div class="app-info">
+                                <div class="app-title">${app.name}</div>
+                                <span class="app-priority ${app.priority.toLowerCase()}">${app.priority}</span>
+                            </div>
+                        </div>
+                        <div class="app-status">
+                            <span class="status-badge ${app.status.toLowerCase().replace('_', '-')}">${app.status.replace('_', ' ')}</span>
+                            <div class="score-indicator">${app.score}%</div>
+                            <span class="expand-icon">▼</span>
+                        </div>
+                    </div>
+                    <div class="app-content">
+                        <div class="app-details">
+                            <div class="details-section">
+                                <div class="details-label">Found (${app.found.length}/${app.found.length + app.missing.length})</div>
+                                <ul class="details-list">
+                                    ${app.found.length > 0 ? app.found.map(p => `<li>${p}</li>`).join('') : '<li>No phrases found</li>'}
+                                </ul>
+                            </div>
+                            ${app.missing.length > 0 ? `
+                                <div class="details-section">
+                                    <div class="details-label">Gaps (${app.missing.length})</div>
+                                    <ul class="details-list gaps">
+                                        ${app.missing.map(p => `<li>${p}</li>`).join('')}
+                                    </ul>
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function toggleAppRow(appNumber) {
+            const row = document.querySelector(`[data-app-number="${appNumber}"]`);
+            row.classList.toggle('expanded');
+        }
+
+        function setProgressStep(step) {
+            document.querySelectorAll('.step').forEach((el, idx) => {
+                el.classList.remove('active', 'completed');
+                if (idx < step - 1) {
+                    el.classList.add('completed');
+                } else if (idx === step - 1) {
+                    el.classList.add('active');
+                }
+            });
+        }
+
+        // ============================================================================
+        // REPORT GENERATION
+        // ============================================================================
+
+        function generateHTMLReport(results, summary, overallScore, businessName, sector, admCovered) {
+            const timestamp = new Date().toLocaleString();
+            const priorityColors = {
+                CRITICAL: '#e74c3c',
+                HIGH: '#e67e22',
+                MEDIUM: '#3498db',
+                LOW: '#95a5a6'
+            };
+
+            const appSummary = results.map(r => `
+                <tr>
+                    <td style="padding: 12px; border-bottom: 1px solid #ecf0f1;">APP ${r.app}</td>
+                    <td style="padding: 12px; border-bottom: 1px solid #ecf0f1;">${r.name}</td>
+                    <td style="padding: 12px; border-bottom: 1px solid #ecf0f1;">
+                        <span style="display: inline-block; padding: 4px 8px; border-radius: 3px; font-size: 12px; font-weight: 600; ${
+                            r.status === 'COMPLIANT' ? 'background: #d4edda; color: #27ae60;' :
+                            r.status === 'PARTIALLY_COMPLIANT' ? 'background: #fff3cd; color: #e67e22;' :
+                            r.status === 'NON_COMPLIANT' ? 'background: #f8d7da; color: #e74c3c;' :
+                            'background: #e9ecef; color: #95a5a6;'
+                        }">${r.status.replace('_', ' ')}</span>
+                    </td>
+                    <td style="padding: 12px; border-bottom: 1px solid #ecf0f1; text-align: center; font-weight: 600;">${r.score}%</td>
+                    <td style="padding: 12px; border-bottom: 1px solid #ecf0f1; text-align: center;">
+                        <span style="display: inline-block; padding: 2px 6px; border-radius: 3px; font-size: 11px; color: white; background: ${priorityColors[r.priority]};">${r.priority}</span>
+                    </td>
+                </tr>
+            `).join('');
+
+            const html = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PolicyCheck AU - Compliance Report</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            color: #2c3e50;
+            line-height: 1.6;
+            background: #f5f7fa;
+            padding: 40px 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #1a1a2e 0%, #0f3460 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+        .header h1 {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        .content {
+            padding: 40px;
+        }
+        .score-box {
+            background: linear-gradient(135deg, #16a085 0%, #48b5a8 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 8px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .score-value {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        .score-label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .summary-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .summary-card-value {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        .summary-card-label {
+            font-size: 12px;
+            color: #7f8c8d;
+            font-weight: 600;
+        }
+        .details {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .details-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #ecf0f1;
+        }
+        .details-row:last-child {
+            border-bottom: none;
+        }
+        .details-label {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        .details-value {
+            color: #7f8c8d;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th {
+            background: #f8f9fa;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid #ecf0f1;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .footer {
+            background: #f8f9fa;
+            padding: 20px;
+            border-top: 1px solid #ecf0f1;
+            text-align: center;
+            font-size: 12px;
+            color: #7f8c8d;
+        }
+        .adm-note {
+            background: #fff3cd;
+            border-left: 4px solid #f39c12;
+            padding: 16px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            font-size: 13px;
+        }
+        @media print {
+            body { padding: 0; background: white; }
+            .container { box-shadow: none; border-radius: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>PolicyCheck AU</h1>
+            <p>Australian Privacy Principles Compliance Scan Report</p>
+        </div>
+        <div class="content">
+            <div class="score-box">
+                <div class="score-value">${overallScore}</div>
+                <div class="score-label">Overall Compliance Score</div>
+            </div>
+
+            <div class="details">
+                <div class="details-row">
+                    <span class="details-label">Business Name</span>
+                    <span class="details-value">${businessName || 'N/A'}</span>
+                </div>
+                <div class="details-row">
+                    <span class="details-label">Sector</span>
+                    <span class="details-value">${sector || 'N/A'}</span>
+                </div>
+                <div class="details-row">
+                    <span class="details-label">Report Generated</span>
+                    <span class="details-value">${timestamp}</span>
+                </div>
+            </div>
+
+            <div class="summary-grid">
+                <div class="summary-card">
+                    <div class="summary-card-value" style="color: #27ae60;">${summary.compliant}</div>
+                    <div class="summary-card-label">Compliant</div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-card-value" style="color: #e67e22;">${summary.partial}</div>
+                    <div class="summary-card-label">Partial</div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-card-value" style="color: #e74c3c;">${summary.nonCompliant}</div>
+                    <div class="summary-card-label">Non-Compliant</div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-card-value" style="color: #95a5a6;">${summary.notAddressed}</div>
+                    <div class="summary-card-label">Not Addressed</div>
+                </div>
+            </div>
+
+            ${admCovered ? '' : '<div class="adm-note"><strong>⚠ Automated Decision-Making (ADM):</strong> Your privacy policy does not address automated decision-making transparency. Remember: ADM transparency is required by the Privacy Act. Deadline: <strong>10 December 2026</strong>.</div>'}
+
+            <h3 style="margin: 30px 0 20px 0; color: #1a1a2e; font-size: 18px;">APP Compliance Summary</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>APP</th>
+                        <th>Principle</th>
+                        <th>Status</th>
+                        <th>Score</th>
+                        <th>Priority</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${appSummary}
+                </tbody>
+            </table>
+
+            <h3 style="margin: 30px 0 20px 0; color: #1a1a2e; font-size: 18px;">Key Findings</h3>
+            <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                <ul style="margin-left: 20px;">
+                    <li style="margin-bottom: 10px;">Overall compliance score: <strong>${overallScore}%</strong></li>
+                    <li style="margin-bottom: 10px;">APPs fully compliant: <strong>${summary.compliant} of 13</strong></li>
+                    <li style="margin-bottom: 10px;">APPs partially compliant: <strong>${summary.partial} of 13</strong></li>
+                    <li style="margin-bottom: 10px;">Critical priority APPs addressed: <strong>${results.filter(r => r.priority === 'CRITICAL' && r.status !== 'NOT_ADDRESSED').length} of 3</strong></li>
+                    <li>ADM transparency: <strong>${admCovered ? 'Addressed' : 'Not Addressed'}</strong></li>
+                </ul>
+            </div>
+
+            <p style="background: #fffacd; padding: 16px; border-radius: 8px; border-left: 4px solid #f39c12; font-size: 13px; margin-bottom: 20px;">
+                <strong>Penalties for Non-Compliance:</strong> Privacy breaches can result in penalties of up to A$66,000 per contravention or up to A$50 million for serious breaches.
+                Ensure your business meets the Australian Privacy Principles deadline of <strong>1 July 2026</strong>.
+            </p>
+        </div>
+        <div class="footer">
+            <p>This report was generated by PolicyCheck AU - Australian Privacy Principles Compliance Scanner. For more information, visit the Office of the Australian Information Commissioner (OAIC).</p>
+        </div>
+    </div>
+    <script>
+        window.print();
+    </script>
+</body>
+</html>
+            `;
+            return html;
+        }
+
+        // ============================================================================
+        // EVENT HANDLERS
+        // ============================================================================
+
+        document.getElementById('scanBtn').addEventListener('click', async () => {
+            const url = document.getElementById('websiteUrl').value.trim();
+            const sector = document.getElementById('sector').value;
+            const businessName = document.getElementById('businessName').value.trim();
+
+            if (!url) {
+                showError('Please enter a website URL');
+                return;
+            }
+
+            if (!url.startsWith('http')) {
+                showError('URL must start with http:// or https://');
+                return;
+            }
+
+            document.getElementById('scanSection').style.display = 'none';
+            document.getElementById('progressSection').classList.add('active');
+            document.getElementById('resultsSection').classList.remove('active');
+            document.getElementById('errorContainer').innerHTML = '';
+
+            try {
+                setProgressStep(1);
+                let html = await fetchPrivacyPolicy(url);
+
+                if (!html) {
+                    throw new Error('Could not fetch website content');
+                }
+
+                setProgressStep(2);
+                document.getElementById('progressMessage').textContent = 'Searching for privacy policy...';
+
+                const policyUrl = extractPrivacyPolicyUrl(html, url);
+                let policyText = '';
+
+                if (policyUrl) {
+                    const policyHtml = await fetchPrivacyPolicy(policyUrl);
+                    if (policyHtml) {
+                        policyText = stripHtmlTags(policyHtml);
+                    }
+                }
+
+                if (!policyText || policyText.length < 200) {
+                    policyText = stripHtmlTags(html);
+                }
+
+                setProgressStep(3);
+                document.getElementById('progressMessage').textContent = 'Analyzing compliance...';
+
+                await new Promise(resolve => setTimeout(resolve, 800));
+
+                const results = analyzePolicy(policyText);
+                const summary = summarizeResults(results);
+                const overallScore = calculateOverallScore(results, policyText);
+                const admCovered = checkADMCoverage(policyText);
+
+                setProgressStep(4);
+                document.getElementById('progressMessage').textContent = 'Scan complete!';
+
+                await new Promise(resolve => setTimeout(resolve, 500));
+
+                document.getElementById('progressSection').classList.remove('active');
+                document.getElementById('resultsSection').classList.add('active');
+
+                renderScoreGauge(overallScore);
+                renderSummaryBar(summary);
+                renderAPPRows(results);
+
+                if (!admCovered) {
+                    document.getElementById('admWarning').style.display = 'block';
+                    document.getElementById('admStatus').textContent = 'NOT address';
+                } else {
+                    document.getElementById('admWarning').style.display = 'block';
+                    document.getElementById('admStatus').textContent = 'address';
+                }
+
+                const reportData = { results, summary, overallScore, businessName, sector, admCovered, policyText: policyText.substring(0, 500) };
+
+                document.getElementById('viewReportBtn').onclick = () => {
+                    const reportHtml = generateHTMLReport(results, summary, overallScore, businessName, sector, admCovered);
+                    const blob = new Blob([reportHtml], { type: 'text/html' });
+                    const url = URL.createObjectURL(blob);
+                    window.open(url, '_blank');
+                    setTimeout(() => URL.revokeObjectURL(url), 100);
+                };
+
+                document.getElementById('exportJsonBtn').onclick = () => {
+                    const json = JSON.stringify(reportData, null, 2);
+                    const blob = new Blob([json], { type: 'application/json' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `policycheck-report-${Date.now()}.json`;
+                    a.click();
+                    URL.revokeObjectURL(url);
+                };
+
+                document.getElementById('scoreContainer').style.display = 'block';
+
+            } catch (error) {
+                showError(`Error: ${error.message}`);
+                document.getElementById('progressSection').classList.remove('active');
+                document.getElementById('scanSection').style.display = 'block';
+            }
+        });
+
+        function showError(message) {
+            const container = document.getElementById('errorContainer');
+            container.innerHTML = `<div class="error-message">${message}</div>`;
+        }
+
+        // ============================================================================
+        // INIT
+        // ============================================================================
+
+        updateCountdown();
+        setInterval(updateCountdown, 1000);
+    </script>
+</body>
+</html>
