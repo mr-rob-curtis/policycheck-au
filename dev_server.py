@@ -96,7 +96,7 @@ def dashboard():
 
 
 @app.route('/report/<slug>')
-def report(slug):
+def report_page(slug):
     return send_from_directory('public', 'report.html')
 
 
