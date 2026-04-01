@@ -16,6 +16,7 @@ logger = logging.getLogger(__name__)
 BLOB_TOKEN = os.environ.get('BLOB_READ_WRITE_TOKEN')
 BLOB_API = 'https://blob.vercel-storage.com'
 LOCAL_DIR = Path(__file__).parent.parent / 'data' / 'reports'
+STATIC_DIR = Path(__file__).parent.parent / 'public' / 'reports'
 
 # Only allow safe slug characters
 SLUG_RE = re.compile(r'^[a-z0-9][a-z0-9-]{0,80}[a-z0-9]$')
@@ -56,11 +57,16 @@ def save_report(slug, data):
             logger.warning(f"Failed to save report to Vercel Blob: {e}")
             return False
     else:
-        LOCAL_DIR.mkdir(parents=True, exist_ok=True)
-        path = LOCAL_DIR / f'{slug}.json'
-        with open(path, 'w', encoding='utf-8') as f:
-            json.dump(data, f, ensure_ascii=False)
-        logger.info(f"Saved report locally: {path}")
+        # Save to both data dir (gitignored) and public/reports (static, deployable)
+        for d in [LOCAL_DIR, STATIC_DIR]:
+            try:
+                d.mkdir(parents=True, exist_ok=True)
+                path = d / f'{slug}.json'
+                with open(path, 'w', encoding='utf-8') as f:
+                    json.dump(data, f, ensure_ascii=False)
+                logger.info(f"Saved report: {path}")
+            except Exception as e:
+                logger.warning(f"Failed to save to {d}: {e}")
         return True
 
 
@@ -90,8 +96,9 @@ def get_report(slug):
             logger.warning(f"Failed to retrieve report from Vercel Blob: {e}")
             return None
     else:
-        path = LOCAL_DIR / f'{slug}.json'
-        if path.exists():
-            with open(path, encoding='utf-8') as f:
-                return json.load(f)
+        for d in [LOCAL_DIR, STATIC_DIR]:
+            path = d / f'{slug}.json'
+            if path.exists():
+                with open(path, encoding='utf-8') as f:
+                    return json.load(f)
         return None

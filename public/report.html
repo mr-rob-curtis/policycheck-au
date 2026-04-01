@@ -247,15 +247,22 @@
             }
             const slug = match[1];
 
-            // Try server-side storage first, fall back to localStorage
+            // Try: 1) API storage, 2) static JSON file, 3) localStorage
             let scan = null;
             try {
                 const res = await fetch('/api/report_data?slug=' + encodeURIComponent(slug));
                 if (res.ok) {
                     scan = await res.json();
                 }
-            } catch (e) {
-                // API unavailable, try localStorage
+            } catch (e) {}
+
+            if (!scan) {
+                try {
+                    const res = await fetch('/reports/' + encodeURIComponent(slug) + '.json');
+                    if (res.ok) {
+                        scan = await res.json();
+                    }
+                } catch (e) {}
             }
 
             if (!scan) {
