@@ -424,6 +424,17 @@
             <input type="url" id="url-input" placeholder="Enter your website URL (e.g. example.com.au)" autocomplete="url">
             <button id="scan-btn" onclick="startScan()">Scan now</button>
         </div>
+        <div style="display: flex; gap: 10px; margin-top: 10px;">
+            <input type="text" id="business-name" placeholder="Business name (optional)" style="flex: 1; border: 1px solid var(--gray-200); border-radius: 8px; padding: 10px 14px; font-size: 14px; outline: none; transition: border-color 0.2s;" onfocus="this.style.borderColor='var(--teal)'" onblur="this.style.borderColor='var(--gray-200)'">
+            <select id="sector-select" style="flex: 1; border: 1px solid var(--gray-200); border-radius: 8px; padding: 10px 14px; font-size: 14px; outline: none; background: var(--white); color: var(--slate); cursor: pointer; transition: border-color 0.2s;" onfocus="this.style.borderColor='var(--teal)'" onblur="this.style.borderColor='var(--gray-200)'">
+                <option value="Other">Select sector</option>
+                <option value="real_estate">Real Estate</option>
+                <option value="pharmacy">Pharmacy</option>
+                <option value="legal">Legal</option>
+                <option value="accounting">Accounting</option>
+                <option value="finance">Finance</option>
+            </select>
+        </div>
         <p class="scanner-note">We'll find your privacy policy and check it against all 13 APPs.</p>
         <div class="error-msg" id="error-msg"></div>
     </section>
@@ -520,6 +531,9 @@
                 return;
             }
 
+            const businessName = document.getElementById('business-name').value.trim();
+            const sector = document.getElementById('sector-select').value;
+
             const btn = document.getElementById('scan-btn');
             btn.disabled = true;
             btn.textContent = 'Scanning...';
@@ -542,7 +556,8 @@
             }, 3000);
 
             try {
-                const res = await fetch('/api/scan?url=' + encodeURIComponent(url));
+                const params = new URLSearchParams({ url, sector, business_name: businessName });
+                const res = await fetch('/api/scan?' + params);
                 const data = await res.json();
 
                 clearInterval(stepInterval);
