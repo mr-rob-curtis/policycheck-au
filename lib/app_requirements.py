@@ -438,6 +438,124 @@ class APPRequirements:
         ],
     }
 
+    # Human-readable gap descriptions keyed by (app_number, phrase)
+    GAP_DESCRIPTIONS = {
+        # APP 1: Openness
+        (1, "privacy policy"): "No clearly published privacy policy found",
+        (1, "personal information"): "Policy doesn't explain what personal information is collected",
+        (1, "privacy officer"): "No privacy officer or contact person identified",
+        (1, "privacy contact"): "No privacy contact details provided",
+        (1, "privacy complaint"): "No process for making a privacy complaint",
+        (1, "accessible format"): "Policy not available in an accessible format",
+        (1, "management practices"): "Policy doesn't describe information management practices",
+        # APP 2: Anonymity
+        (2, "anonymous"): "No statement on whether individuals can deal anonymously",
+        (2, "pseudonymous"): "No option to use a pseudonym where practical",
+        (2, "anonymity not practical"): "Doesn't explain why anonymity isn't practical (if applicable)",
+        (2, "without identifying"): "No mention of dealing without identifying yourself",
+        (2, "identity required"): "Doesn't explain when identity verification is required",
+        # APP 3: Collection
+        (3, "collect"): "No description of what information is collected",
+        (3, "collection"): "No description of collection practices",
+        (3, "necessary information"): "Doesn't explain why collection is reasonably necessary",
+        (3, "accurate"): "No commitment to collecting accurate information",
+        (3, "complete"): "No commitment to collecting complete information",
+        (3, "reasonably necessary"): "Doesn't limit collection to what's reasonably necessary",
+        (3, "collection notice"): "No collection notice provided at time of collection",
+        # APP 4: Unsolicited information
+        (4, "unsolicited"): "No process for handling unsolicited personal information",
+        (4, "received information"): "No policy on information received without request",
+        (4, "destroy"): "No commitment to destroy information that shouldn't have been collected",
+        (4, "de-identify"): "No process for de-identifying unnecessary information",
+        (4, "not requested"): "No policy on unrequested personal information",
+        # APP 5: Collection notice
+        (5, "collection notice"): "No collection notice at or before time of collection",
+        (5, "why we collect"): "Doesn't explain why personal information is collected",
+        (5, "how we use"): "Doesn't explain how personal information is used",
+        (5, "who we share with"): "Doesn't disclose who information is shared with",
+        (5, "overseas"): "Doesn't disclose if information is sent overseas",
+        (5, "access"): "Doesn't explain how to request access to your information",
+        (5, "correct"): "Doesn't explain how to request corrections",
+        (5, "complaint"): "Doesn't explain how to make a complaint",
+        # APP 6: Use & disclosure
+        (6, "use"): "Doesn't explain how personal information is used",
+        (6, "disclosure"): "Doesn't describe disclosure practices",
+        (6, "secondary purpose"): "No statement on secondary use of information",
+        (6, "related purpose"): "Doesn't explain related purposes for information use",
+        (6, "direct marketing"): "No direct marketing disclosure",
+        (6, "consent"): "No mention of consent for information use",
+        (6, "share"): "Doesn't explain information sharing practices",
+        (6, "third party"): "No disclosure of third-party information sharing",
+        # APP 7: Direct marketing
+        (7, "direct marketing"): "No direct marketing policy",
+        (7, "marketing"): "No explanation of marketing practices",
+        (7, "opt-out"): "No opt-out mechanism for marketing communications",
+        (7, "unsubscribe"): "No unsubscribe option for marketing",
+        (7, "promotional"): "No policy on promotional communications",
+        (7, "marketing preferences"): "No way to manage marketing preferences",
+        (7, "email marketing"): "No email marketing policy",
+        (7, "sms marketing"): "No SMS marketing policy",
+        # APP 8: Cross-border disclosure
+        (8, "overseas"): "No disclosure about overseas data transfers",
+        (8, "international"): "No policy on international data sharing",
+        (8, "cross-border"): "No cross-border data transfer policy",
+        (8, "international transfer"): "No international transfer safeguards described",
+        (8, "foreign"): "No mention of foreign data recipients",
+        (8, "abroad"): "No policy on sending data abroad",
+        (8, "outside Australia"): "Doesn't disclose if data is sent outside Australia",
+        # APP 9: Government identifiers
+        (9, "TFN"): "No policy on handling Tax File Numbers",
+        (9, "tax file number"): "No Tax File Number handling policy",
+        (9, "ABN"): "No policy on business number handling",
+        (9, "ACN"): "No policy on company number handling",
+        (9, "driver's license"): "No policy on driver's licence data handling",
+        (9, "Medicare"): "No policy on Medicare number handling",
+        (9, "government identifier"): "No government identifier handling policy",
+        (9, "unique identifier"): "No policy on unique identifiers",
+        # APP 10: Data quality
+        (10, "accurate"): "No commitment to keeping information accurate",
+        (10, "up-to-date"): "No commitment to keeping information up-to-date",
+        (10, "current"): "No process for keeping records current",
+        (10, "complete"): "No commitment to data completeness",
+        (10, "relevant"): "No commitment to keeping only relevant information",
+        (10, "retention"): "No data retention or deletion policy",
+        (10, "data quality"): "No data quality standards described",
+        # APP 11: Security
+        (11, "security"): "No description of security measures",
+        (11, "encrypt"): "No mention of encryption for data protection",
+        (11, "protected"): "No description of how data is protected",
+        (11, "access control"): "No access control measures described",
+        (11, "password"): "No password or authentication policies",
+        (11, "firewall"): "No network security measures described",
+        (11, "breach"): "No data breach response plan",
+        (11, "data breach"): "No data breach notification process",
+        (11, "secure"): "No commitment to secure data handling",
+        # APP 12: Access
+        (12, "access"): "No process for individuals to access their information",
+        (12, "request"): "No access request mechanism described",
+        (12, "subject access"): "No subject access request process",
+        (12, "access request"): "No access request procedure explained",
+        (12, "individual access"): "No individual access rights described",
+        (12, "30 days"): "No response timeframe for access requests",
+        (12, "reasonable fee"): "No information about access request fees",
+        # APP 13: Correction
+        (13, "correct"): "No process for correcting inaccurate information",
+        (13, "correction"): "No correction request procedure",
+        (13, "update"): "No process for updating personal information",
+        (13, "inaccurate"): "No policy on handling inaccurate information",
+        (13, "amend"): "No amendment process for records",
+        (13, "amendment"): "No amendment procedure described",
+        (13, "rectify"): "No rectification process available",
+    }
+
+    @classmethod
+    def get_gap_description(cls, app_number: int, phrase: str) -> str:
+        """Get human-readable gap description for a missing phrase"""
+        return cls.GAP_DESCRIPTIONS.get(
+            (app_number, phrase),
+            f"Policy doesn't address: {phrase}"
+        )
+
     @classmethod
     def get_app(cls, app_number: int) -> Dict:
         """Get requirements for a specific APP"""

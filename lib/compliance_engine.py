@@ -259,18 +259,18 @@ class ComplianceEngine:
             # PARTIALLY_COMPLIANT: covers 25-75% of requirements
             status = ComplianceStatus.PARTIALLY_COMPLIANT
             findings = [f"Found {phrase_match_count} key indicators addressing {int(coverage_percentage)}% of requirements"]
-            gaps = self._identify_gaps(found_phrases, original_phrases)
+            gaps = self._identify_gaps(app_num, found_phrases, original_phrases)
         else:
             # Only NON_COMPLIANT if coverage is <25% AND no topic indicators found
             topic_detected = self._detect_topic_presence(app_num, policy_text)
             if topic_detected:
                 status = ComplianceStatus.PARTIALLY_COMPLIANT
                 findings = [f"Policy addresses topic of APP {app_num} but lacks specific requirement details ({int(coverage_percentage)}% coverage)"]
-                gaps = self._identify_gaps(found_phrases, original_phrases)
+                gaps = self._identify_gaps(app_num, found_phrases, original_phrases)
             else:
                 status = ComplianceStatus.NON_COMPLIANT
                 findings = [f"Only {phrase_match_count} of {expected_phrase_count} key requirements found ({int(coverage_percentage)}% coverage)"]
-                gaps = self._identify_gaps(found_phrases, original_phrases)
+                gaps = self._identify_gaps(app_num, found_phrases, original_phrases)
 
         # Get recommended language
         gap_type = self._determine_gap_type(app_num, gaps)
@@ -679,14 +679,19 @@ class ComplianceEngine:
 
     def _identify_gaps(
         self,
+        app_num: int,
         found_phrases: List[str],
         expected_phrases: List[str],
     ) -> List[str]:
         """
-        Identify which expected phrases were not found
+        Identify which expected phrases were not found,
+        returning human-readable gap descriptions.
         """
         missing = [p for p in expected_phrases if p not in found_phrases]
-        return [f"Missing: {phrase}" for phrase in missing[:3]]  # Top 3 gaps
+        return [
+            APPRequirements.get_gap_description(app_num, phrase)
+            for phrase in missing[:3]
+        ]
 
     def _determine_gap_type(self, app_num: int, gaps: List[str]) -> str:
         """
