@@ -788,21 +788,24 @@
                 score < 70 ? 'Several areas require attention' :
                 'Good coverage, some gaps to address';
 
-            const apps = a.apps || [];
-            const critical = apps.find(app =>
-                (app.status === 'NON_COMPLIANT' || app.status === 'NOT_ADDRESSED') &&
-                app.gaps && app.gaps.length > 0 &&
-                (app.priority === 'CRITICAL' || app.priority === 'HIGH')
-            ) || apps.find(app => app.gaps && app.gaps.length > 0);
+            // Sort apps: ones with gaps first, by priority
+            const apps = (a.apps || []).filter(app => app.gaps && app.gaps.length > 0);
+            const priorityOrder = { CRITICAL: 0, HIGH: 1, MEDIUM: 2, LOW: 3 };
+            apps.sort((a, b) => (priorityOrder[a.priority] || 3) - (priorityOrder[b.priority] || 3));
 
             const container = document.getElementById('revealed-issue-container');
+            const blurredItems = document.getElementById('blurred-items');
+            const blurredContainer = document.getElementById('blurred-container');
 
-            if (critical) {
-                const priorityClass = critical.priority === 'CRITICAL' ? 'badge-critical' : 'badge-high';
-                const priorityLabel = critical.priority === 'CRITICAL' ? 'Compliance gap' : 'Needs attention';
+            // Show first 2 fully revealed
+            const revealed = apps.slice(0, 2);
+            container.innerHTML = revealed.map(app => {
+                const priorityClass = app.priority === 'CRITICAL' ? 'badge-critical' : 'badge-high';
+                const priorityLabel = app.priority === 'CRITICAL' ? 'Compliance gap' : 'Needs attention';
+                const gapList = app.gaps.slice(0, 3).map(g => g.replace('Missing: ', '')).join(', ');
 
                 let quoteHtml = '';
-                if (data.policy_excerpt && data.policy_url) {
+                if (app === revealed[0] && data.policy_excerpt && data.policy_url) {
                     const excerpt = data.policy_excerpt.length > 200
                         ? data.policy_excerpt.substring(0, 200) + '...'
                         : data.policy_excerpt;
@@ -814,42 +817,49 @@
                     `;
                 }
 
-                const gapList = critical.gaps.slice(0, 3).map(g =>
-                    g.replace('Missing: ', '')
-                ).join(', ');
-
-                container.innerHTML = `
+                return `
                     <div class="issue-card">
                         <span class="issue-badge ${priorityClass}">${priorityLabel}</span>
-                        <h3>APP ${critical.app_number}: ${critical.app_name}</h3>
+                        <h3>APP ${app.app_number}: ${app.app_name}</h3>
                         ${quoteHtml}
                         <p class="issue-explanation">
                             Your policy does not adequately address: <strong>${gapList}</strong>.
                             Under the Privacy Act, this is an obligation that needs to be met
-                            ${critical.priority === 'CRITICAL' ? ' before the 1 July deadline' : ''}.
+                            ${app.priority === 'CRITICAL' ? ' before the 1 July deadline' : ''}.
                         </p>
                     </div>
                 `;
-            } else {
-                container.innerHTML = '';
-            }
+            }).join('');
 
-            const remaining = apps.filter(app =>
-                app !== critical && app.gaps && app.gaps.length > 0
-            );
-            const blurredItems = document.getElementById('blurred-items');
-            blurredItems.innerHTML = remaining.slice(0, 4).map(app => `
-                <div class="blurred-item">
-                    <strong>APP ${app.app_number}: ${app.app_name}</strong>
-                    <p>${app.gaps.length} gap${app.gaps.length !== 1 ? 's' : ''} identified</p>
-                </div>
-            `).join('');
+            // Issues 3-6: progressively blurred (readable with effort)
+            const squintable = apps.slice(2, 6);
+            // Issues 7+: fully obscured
+            const hidden = apps.slice(6);
 
-            const blurredContainer = document.getElementById('blurred-container');
-            if (remaining.length > 0) {
+            if (squintable.length > 0 || hidden.length > 0) {
                 blurredContainer.style.display = 'block';
+                const blurLevels = [1.5, 2.5, 3.5, 4.5];
+                let html = squintable.map((app, i) => `
+                    <div class="blurred-item" style="filter: blur(${blurLevels[i]}px)">
+                        <strong>APP ${app.app_number}: ${app.app_name}</strong>
+                        <p>${app.gaps.length} gap${app.gaps.length !== 1 ? 's' : ''} identified</p>
+                    </div>
+                `).join('');
+
+                if (hidden.length > 0) {
+                    html += hidden.slice(0, 2).map(app => `
+                        <div class="blurred-item" style="filter: blur(6px)">
+                            <strong>APP ${app.app_number}: ${app.app_name}</strong>
+                            <p>${app.gaps.length} gap${app.gaps.length !== 1 ? 's' : ''} identified</p>
+                        </div>
+                    `).join('');
+                }
+
+                blurredItems.innerHTML = html;
+
+                const totalHidden = squintable.length + hidden.length;
                 document.getElementById('blurred-count').textContent =
-                    remaining.length + ' more APP' + (remaining.length !== 1 ? 's' : '') + ' with gaps';
+                    totalHidden + ' more APP' + (totalHidden !== 1 ? 's' : '') + ' with gaps';
             } else {
                 blurredContainer.style.display = 'none';
             }
@@ -857,8 +867,38 @@
             document.getElementById('contact-scan-url').value = data.url;
             document.getElementById('contact-scan-score').value = score;
 
+            // Save to localStorage for dashboard + report
+            saveScanToStorage(data);
+
             document.getElementById('results').classList.add('active');
             document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function saveScanToStorage(data) {
+            const scans = JSON.parse(localStorage.getItem('ps_scans') || '[]');
+            const apps = data.analysis?.apps || [];
+            const slug = (data.business_name || new URL(data.url).hostname)
+                .toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+            const scan = {
+                id: Date.now().toString(),
+                slug: slug,
+                url: data.url,
+                business_name: data.business_name || new URL(data.url).hostname,
+                sector: data.sector || 'Other',
+                score: data.analysis?.overall_score || 0,
+                status: data.analysis?.overall_status || 'UNKNOWN',
+                criticalCount: apps.filter(a => a.priority === 'CRITICAL' && a.status !== 'COMPLIANT').length,
+                gapCount: apps.reduce((s, a) => s + (a.gaps?.length || 0), 0),
+                policy_found: data.policy_found,
+                policy_url: data.policy_url,
+                policy_excerpt: data.policy_excerpt,
+                scanned_at: new Date().toISOString(),
+                analysis: data.analysis,
+            };
+            // Remove previous scan of same URL
+            const filtered = scans.filter(s => s.url !== scan.url);
+            filtered.unshift(scan);
+            localStorage.setItem('ps_scans', JSON.stringify(filtered.slice(0, 50)));
         }
 
         async function submitContact(e) {

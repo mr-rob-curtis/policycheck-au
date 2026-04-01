@@ -95,6 +95,11 @@ def dashboard():
     return send_from_directory('public', 'dashboard.html')
 
 
+@app.route('/report/<slug>')
+def report(slug):
+    return send_from_directory('public', 'report.html')
+
+
 @app.route('/')
 def index():
     return send_from_directory('public', 'index.html')

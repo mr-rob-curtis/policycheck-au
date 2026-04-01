@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Compliance Report - PrivacySorted</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --navy: #0c1425;
+            --slate: #3d4f6f;
+            --slate-light: #6b7c99;
+            --teal: #0d9488;
+            --teal-dark: #0a7a70;
+            --red: #c33;
+            --amber: #b45309;
+            --green: #15803d;
+            --gray-50: #f8f9fb;
+            --gray-100: #f0f2f5;
+            --gray-200: #dfe3ea;
+            --gray-300: #c4cad6;
+            --white: #ffffff;
+            --font-serif: 'Source Serif 4', Georgia, serif;
+            --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+        }
+        body {
+            font-family: var(--font-sans);
+            color: var(--navy);
+            background: var(--gray-50);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .topbar {
+            background: var(--navy);
+            padding: 14px 28px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .topbar-logo {
+            font-family: var(--font-serif);
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--white);
+            text-decoration: none;
+        }
+        .topbar-logo span { color: #2dd4bf; }
+        .topbar-cta {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--white);
+            background: var(--teal);
+            padding: 8px 16px;
+            border-radius: 6px;
+            text-decoration: none;
+        }
+        .topbar-cta:hover { background: var(--teal-dark); }
+
+        .report-container {
+            max-width: 760px;
+            margin: 0 auto;
+            padding: 32px 28px 64px;
+        }
+
+        .report-header {
+            text-align: center;
+            margin-bottom: 36px;
+            padding-bottom: 28px;
+            border-bottom: 1px solid var(--gray-200);
+        }
+        .report-label {
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--teal);
+            margin-bottom: 12px;
+        }
+        .report-header h1 {
+            font-family: var(--font-serif);
+            font-size: 32px;
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 8px;
+        }
+        .report-meta {
+            font-size: 14px;
+            color: var(--slate-light);
+        }
+
+        .score-section {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            border-radius: 10px;
+            padding: 24px;
+            margin-bottom: 28px;
+        }
+        .score-circle {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--white);
+            flex-shrink: 0;
+        }
+        .sc-low { background: var(--red); }
+        .sc-mid { background: var(--amber); }
+        .sc-high { background: var(--green); }
+        .score-text h2 { font-size: 18px; font-weight: 700; margin-bottom: 4px; }
+        .score-text p { font-size: 14px; color: var(--slate-light); }
+
+        .app-card {
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 14px;
+        }
+        .app-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .app-card h3 {
+            font-size: 15px;
+            font-weight: 700;
+        }
+        .app-status {
+            font-size: 12px;
+            font-weight: 600;
+            padding: 3px 10px;
+            border-radius: 20px;
+        }
+        .st-compliant { background: #f0fdf4; color: var(--green); }
+        .st-partial { background: #fffbeb; color: var(--amber); }
+        .st-non { background: #fef2f2; color: var(--red); }
+
+        .gap-list {
+            list-style: none;
+            padding: 0;
+            margin: 8px 0 0;
+        }
+        .gap-list li {
+            font-size: 13px;
+            color: var(--slate);
+            padding: 4px 0 4px 16px;
+            position: relative;
+        }
+        .gap-list li::before {
+            content: '!';
+            position: absolute;
+            left: 0;
+            color: var(--red);
+            font-weight: 700;
+            font-size: 12px;
+        }
+        .rec-list li::before {
+            content: '\2192';
+            color: var(--teal);
+        }
+        .no-gaps {
+            font-size: 13px;
+            color: var(--slate-light);
+            margin-top: 4px;
+        }
+
+        .report-footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 28px;
+            border-top: 1px solid var(--gray-200);
+        }
+        .report-footer p {
+            font-size: 14px;
+            color: var(--slate-light);
+            margin-bottom: 16px;
+        }
+        .cta-btn {
+            display: inline-block;
+            background: var(--teal);
+            color: var(--white);
+            padding: 12px 28px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            text-decoration: none;
+        }
+        .cta-btn:hover { background: var(--teal-dark); }
+
+        .not-found {
+            text-align: center;
+            padding: 80px 28px;
+        }
+        .not-found h1 {
+            font-family: var(--font-serif);
+            font-size: 28px;
+            margin-bottom: 12px;
+        }
+        .not-found p {
+            font-size: 15px;
+            color: var(--slate-light);
+            margin-bottom: 24px;
+        }
+    </style>
+</head>
+<body>
+    <div class="topbar">
+        <a href="/" class="topbar-logo">Privacy<span>Sorted</span></a>
+        <a href="/" class="topbar-cta">Scan your website</a>
+    </div>
+
+    <div class="report-container" id="report-container">
+        <div class="not-found" id="not-found" style="display:none">
+            <h1>Report not found</h1>
+            <p>This report may have expired or the URL may be incorrect.</p>
+            <a href="/" class="cta-btn">Run a free scan</a>
+        </div>
+        <div id="report-content"></div>
+    </div>
+
+    <script>
+        function esc(s) {
+            const d = document.createElement('div');
+            d.textContent = s || '';
+            return d.innerHTML;
+        }
+
+        function loadReport() {
+            // Extract slug from URL path: /report/slug-name
+            const path = window.location.pathname;
+            const match = path.match(/\/report\/([a-z0-9-]+)/);
+            if (!match) {
+                document.getElementById('not-found').style.display = 'block';
+                return;
+            }
+            const slug = match[1];
+
+            // Look up scan in localStorage
+            const scans = JSON.parse(localStorage.getItem('ps_scans') || '[]');
+            const scan = scans.find(s => s.slug === slug);
+
+            if (!scan || !scan.analysis) {
+                document.getElementById('not-found').style.display = 'block';
+                return;
+            }
+
+            const a = scan.analysis;
+            const apps = a.apps || [];
+            const scoreClass = scan.score < 40 ? 'sc-low' : scan.score < 70 ? 'sc-mid' : 'sc-high';
+            const statusText = (a.overall_status || '').replace(/_/g, ' ');
+
+            document.title = `${esc(scan.business_name)} - Privacy Act Compliance Report`;
+
+            const priorityOrder = { CRITICAL: 0, HIGH: 1, MEDIUM: 2, LOW: 3 };
+            const sorted = [...apps].sort((x, y) => (priorityOrder[x.priority] || 3) - (priorityOrder[y.priority] || 3));
+
+            let html = `
+                <div class="report-header">
+                    <div class="report-label">PRIVACY ACT COMPLIANCE REPORT</div>
+                    <h1>${esc(scan.business_name)}</h1>
+                    <div class="report-meta">${esc(scan.url)} &middot; Scanned ${new Date(scan.scanned_at).toLocaleDateString('en-AU', { day: 'numeric', month: 'long', year: 'numeric' })}</div>
+                </div>
+
+                <div class="score-section">
+                    <div class="score-circle ${scoreClass}">${scan.score}</div>
+                    <div class="score-text">
+                        <h2>${statusText}</h2>
+                        <p>${apps.filter(ap => ap.status !== 'COMPLIANT').length} of ${apps.length} Australian Privacy Principles have gaps</p>
+                    </div>
+                </div>
+            `;
+
+            html += sorted.map(app => {
+                const stClass = app.status === 'COMPLIANT' ? 'st-compliant' : app.status === 'PARTIALLY_COMPLIANT' ? 'st-partial' : 'st-non';
+                const stLabel = app.status === 'COMPLIANT' ? 'Compliant' : app.status === 'PARTIALLY_COMPLIANT' ? 'Partial' : 'Non-compliant';
+                const gaps = app.gaps || [];
+                const recs = app.recommendations || [];
+
+                let body = '';
+                if (gaps.length > 0) {
+                    body += `<ul class="gap-list">${gaps.map(g => `<li>${esc(g)}</li>`).join('')}</ul>`;
+                }
+                if (recs.length > 0) {
+                    body += `<ul class="gap-list rec-list" style="margin-top:6px">${recs.map(r => `<li>${esc(r)}</li>`).join('')}</ul>`;
+                }
+                if (!gaps.length && !recs.length) {
+                    body = '<p class="no-gaps">No gaps identified</p>';
+                }
+
+                return `<div class="app-card">
+                    <div class="app-card-header">
+                        <h3>APP ${app.app_number}: ${esc(app.app_name)}</h3>
+                        <span class="app-status ${stClass}">${stLabel}</span>
+                    </div>
+                    ${body}
+                </div>`;
+            }).join('');
+
+            html += `
+                <div class="report-footer">
+                    <p>This report was generated by PrivacySorted, an automated Privacy Act compliance scanner.<br>
+                    For a detailed remediation plan, get in touch.</p>
+                    <a href="/" class="cta-btn">Run your own free scan</a>
+                </div>
+            `;
+
+            document.getElementById('report-content').innerHTML = html;
+        }
+
+        loadReport();
+    </script>
+</body>
+</html>

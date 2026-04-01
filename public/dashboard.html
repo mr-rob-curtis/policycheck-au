@@ -197,6 +197,95 @@
         .view { display: none; }
         .view.active { display: block; }
 
+        /* Scan detail */
+        .detail-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--teal);
+            cursor: pointer;
+            background: none;
+            border: none;
+            margin-bottom: 16px;
+            padding: 0;
+        }
+        .detail-back:hover { color: var(--teal-dark); }
+        .detail-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        .detail-score {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--white);
+            flex-shrink: 0;
+        }
+        .detail-score.s-low { background: var(--red); }
+        .detail-score.s-mid { background: var(--amber); }
+        .detail-score.s-high { background: var(--green); }
+        .detail-meta { font-size: 13px; color: var(--slate-light); margin-top: 2px; }
+        .app-card {
+            border: 1px solid var(--gray-200);
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 12px;
+        }
+        .app-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        .app-card h3 {
+            font-size: 15px;
+            font-weight: 700;
+        }
+        .app-status {
+            font-size: 12px;
+            font-weight: 600;
+            padding: 3px 10px;
+            border-radius: 20px;
+        }
+        .app-status.st-compliant { background: #f0fdf4; color: var(--green); }
+        .app-status.st-partial { background: #fffbeb; color: var(--amber); }
+        .app-status.st-non { background: #fef2f2; color: var(--red); }
+        .gap-list {
+            list-style: none;
+            padding: 0;
+            margin: 8px 0 0;
+        }
+        .gap-list li {
+            font-size: 13px;
+            color: var(--slate);
+            padding: 4px 0;
+            padding-left: 16px;
+            position: relative;
+        }
+        .gap-list li::before {
+            content: '!';
+            position: absolute;
+            left: 0;
+            color: var(--red);
+            font-weight: 700;
+            font-size: 12px;
+        }
+        .rec-list li::before {
+            content: '→';
+            color: var(--teal);
+        }
+        tr.clickable { cursor: pointer; }
+        tr.clickable:hover td { background: var(--gray-100); }
+
         /* Empty state */
         .empty-state {
             text-align: center;
@@ -336,6 +425,12 @@
                 </table>
                 <div class="empty-state" id="scans-empty"><p>No scans yet.</p></div>
             </div>
+        </div>
+
+        <!-- Scan Detail View -->
+        <div class="view" id="view-scan-detail">
+            <button class="detail-back" onclick="closeScanDetail()">&#8592; Back</button>
+            <div id="scan-detail-content"></div>
         </div>
 
         <!-- Leads View -->
@@ -482,7 +577,7 @@
             const recent = scans.slice(0, 5);
             container.innerHTML = `<table>
                 <thead><tr><th>Business</th><th>Score</th><th>Gaps</th><th>Date</th></tr></thead>
-                <tbody>${recent.map(s => `<tr>
+                <tbody>${recent.map((s, i) => `<tr class="clickable" onclick="openScanDetail(${i})">
                     <td><strong>${esc(s.business_name)}</strong><br><span style="font-size:12px;color:var(--slate-light)">${esc(s.url)}</span></td>
                     <td>${scorePill(s.score)}</td>
                     <td>${s.gapCount} gaps</td>
@@ -496,7 +591,7 @@
             const empty = document.getElementById('scans-empty');
             if (scans.length === 0) { empty.style.display = 'block'; tbody.innerHTML = ''; return; }
             empty.style.display = 'none';
-            tbody.innerHTML = scans.map(s => `<tr>
+            tbody.innerHTML = scans.map((s, i) => `<tr class="clickable" onclick="openScanDetail(${i})">
                 <td><strong>${esc(s.business_name)}</strong></td>
                 <td style="font-size:13px">${esc(s.url)}</td>
                 <td>${scorePill(s.score)}</td>
@@ -504,6 +599,79 @@
                 <td>${s.gapCount}</td>
                 <td style="font-size:13px;color:var(--slate-light)">${timeAgo(s.scanned_at)}</td>
             </tr>`).join('');
+        }
+
+        // Scan detail view
+        let detailReturnView = 'dashboard';
+
+        function openScanDetail(index) {
+            const scan = scans[index];
+            if (!scan || !scan.analysis) return;
+            const a = scan.analysis;
+            const apps = a.apps || [];
+            const scoreClass = scan.score < 40 ? 's-low' : scan.score < 70 ? 's-mid' : 's-high';
+
+            let html = `
+                <div class="detail-header">
+                    <div class="detail-score ${scoreClass}">${scan.score}</div>
+                    <div>
+                        <h1 style="margin-bottom:2px">${esc(scan.business_name)}</h1>
+                        <div class="detail-meta">${esc(scan.url)} &middot; ${timeAgo(scan.scanned_at)}${scan.slug ? ` &middot; <a href="/report/${esc(scan.slug)}" target="_blank" style="color:var(--teal)">Public report</a>` : ''}</div>
+                    </div>
+                </div>
+                <div class="card" style="margin-bottom:16px">
+                    <h2 style="font-size:16px;margin-bottom:4px">Overall: ${esc((a.overall_status || '').replace(/_/g, ' '))}</h2>
+                    <p style="font-size:14px;color:var(--slate-light)">${apps.filter(ap => ap.status !== 'COMPLIANT').length} of ${apps.length} APPs have gaps</p>
+                </div>
+            `;
+
+            const priorityOrder = { CRITICAL: 0, HIGH: 1, MEDIUM: 2, LOW: 3 };
+            const sorted = [...apps].sort((a, b) => (priorityOrder[a.priority] || 3) - (priorityOrder[b.priority] || 3));
+
+            html += sorted.map(app => {
+                const stClass = app.status === 'COMPLIANT' ? 'st-compliant' : app.status === 'PARTIALLY_COMPLIANT' ? 'st-partial' : 'st-non';
+                const stLabel = app.status === 'COMPLIANT' ? 'Compliant' : app.status === 'PARTIALLY_COMPLIANT' ? 'Partial' : 'Non-compliant';
+                const gaps = app.gaps || [];
+                const recs = app.recommendations || [];
+
+                let body = '';
+                if (gaps.length > 0) {
+                    body += `<ul class="gap-list">${gaps.map(g => `<li>${esc(g)}</li>`).join('')}</ul>`;
+                }
+                if (recs.length > 0) {
+                    body += `<ul class="gap-list rec-list" style="margin-top:6px">${recs.map(r => `<li>${esc(r)}</li>`).join('')}</ul>`;
+                }
+                if (!gaps.length && !recs.length) {
+                    body = '<p style="font-size:13px;color:var(--slate-light);margin-top:4px">No gaps identified</p>';
+                }
+
+                return `<div class="app-card">
+                    <div class="app-card-header">
+                        <h3>APP ${app.app_number}: ${esc(app.app_name)}</h3>
+                        <span class="app-status ${stClass}">${stLabel}</span>
+                    </div>
+                    ${body}
+                </div>`;
+            }).join('');
+
+            document.getElementById('scan-detail-content').innerHTML = html;
+
+            // Figure out which view we came from
+            const activeView = document.querySelector('.view.active');
+            detailReturnView = activeView ? activeView.id.replace('view-', '') : 'dashboard';
+
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.getElementById('view-scan-detail').classList.add('active');
+        }
+
+        function closeScanDetail() {
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.getElementById('view-' + detailReturnView).classList.add('active');
+            // Re-highlight correct nav item
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(n => n.classList.remove('active'));
+            const idx = detailReturnView === 'dashboard' ? 0 : detailReturnView === 'scans' ? 1 : 2;
+            navItems[idx].classList.add('active');
         }
 
         function renderLeadsTable() {
