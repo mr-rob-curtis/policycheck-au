@@ -11,6 +11,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from lib.policy_scraper import PrivacyPolicyScraper
 from lib.compliance_engine import ComplianceEngine
+from lib.report_store import save_report, slugify
 
 ALLOWED_ORIGIN = os.environ.get('ALLOWED_ORIGIN', '*')
 
@@ -68,6 +69,16 @@ def _run_scan(url, sector, business_name):
                 'next_steps': report.next_steps,
             }
         }
+
+        # Save report for public report page
+        slug_source = business_name or urlparse(url).hostname or ''
+        slug = slugify(slug_source)
+        if slug:
+            result['slug'] = slug
+            try:
+                save_report(slug, result)
+            except Exception:
+                pass  # Non-critical, don't fail the scan
 
         return 200, result
 

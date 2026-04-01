@@ -237,7 +237,7 @@
             return d.innerHTML;
         }
 
-        function loadReport() {
+        async function loadReport() {
             // Extract slug from URL path: /report/slug-name
             const path = window.location.pathname;
             const match = path.match(/\/report\/([a-z0-9-]+)/);
@@ -247,9 +247,21 @@
             }
             const slug = match[1];
 
-            // Look up scan in localStorage
-            const scans = JSON.parse(localStorage.getItem('ps_scans') || '[]');
-            const scan = scans.find(s => s.slug === slug);
+            // Try server-side storage first, fall back to localStorage
+            let scan = null;
+            try {
+                const res = await fetch('/api/report_data?slug=' + encodeURIComponent(slug));
+                if (res.ok) {
+                    scan = await res.json();
+                }
+            } catch (e) {
+                // API unavailable, try localStorage
+            }
+
+            if (!scan) {
+                const scans = JSON.parse(localStorage.getItem('ps_scans') || '[]');
+                scan = scans.find(s => s.slug === slug);
+            }
 
             if (!scan || !scan.analysis) {
                 document.getElementById('not-found').style.display = 'block';
@@ -257,11 +269,15 @@
             }
 
             const a = scan.analysis;
+            // Normalize: API result has score inside analysis, localStorage has it at top level
+            const score = scan.score || a.overall_score || 0;
+            const businessName = scan.business_name || a.business_name || '';
+            const scannedAt = scan.scanned_at || a.analysis_date || '';
             const apps = a.apps || [];
-            const scoreClass = scan.score < 40 ? 'sc-low' : scan.score < 70 ? 'sc-mid' : 'sc-high';
+            const scoreClass = score < 40 ? 'sc-low' : score < 70 ? 'sc-mid' : 'sc-high';
             const statusText = (a.overall_status || '').replace(/_/g, ' ');
 
-            document.title = `${esc(scan.business_name)} - Privacy Act Compliance Report`;
+            document.title = `${esc(businessName)} - Privacy Act Compliance Report`;
 
             const priorityOrder = { CRITICAL: 0, HIGH: 1, MEDIUM: 2, LOW: 3 };
             const sorted = [...apps].sort((x, y) => (priorityOrder[x.priority] || 3) - (priorityOrder[y.priority] || 3));
@@ -269,12 +285,12 @@
             let html = `
                 <div class="report-header">
                     <div class="report-label">PRIVACY ACT COMPLIANCE REPORT</div>
-                    <h1>${esc(scan.business_name)}</h1>
-                    <div class="report-meta">${esc(scan.url)} &middot; Scanned ${new Date(scan.scanned_at).toLocaleDateString('en-AU', { day: 'numeric', month: 'long', year: 'numeric' })}</div>
+                    <h1>${esc(businessName)}</h1>
+                    <div class="report-meta">${esc(scan.url)} &middot; Scanned ${scannedAt ? new Date(scannedAt).toLocaleDateString('en-AU', { day: 'numeric', month: 'long', year: 'numeric' }) : ''}</div>
                 </div>
 
                 <div class="score-section">
-                    <div class="score-circle ${scoreClass}">${scan.score}</div>
+                    <div class="score-circle ${scoreClass}">${score}</div>
                     <div class="score-text">
                         <h2>${statusText}</h2>
                         <p>${apps.filter(ap => ap.status !== 'COMPLIANT').length} of ${apps.length} Australian Privacy Principles have gaps</p>
@@ -319,7 +335,9 @@
             document.getElementById('report-content').innerHTML = html;
         }
 
-        loadReport();
+        loadReport().catch(() => {
+            document.getElementById('not-found').style.display = 'block';
+        });
     </script>
 </body>
 </html>

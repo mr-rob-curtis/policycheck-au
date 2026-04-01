@@ -7,6 +7,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from flask import Flask, request, send_from_directory, jsonify
 from api.scan import _run_scan, _extract_excerpt
 from lib.report_generator import HTMLReportGenerator
+from lib.report_store import get_report
 
 app = Flask(__name__, static_folder='public')
 
@@ -60,6 +61,27 @@ def report():
         resp.status_code = 500
         resp.headers['Access-Control-Allow-Origin'] = '*'
         return resp
+
+
+@app.route('/api/report_data', methods=['GET', 'OPTIONS'])
+def report_data():
+    if request.method == 'OPTIONS':
+        return _cors_response('')
+    slug = request.args.get('slug', '').strip()
+    if not slug:
+        resp = jsonify({'error': 'slug parameter is required'})
+        resp.status_code = 400
+        resp.headers['Access-Control-Allow-Origin'] = '*'
+        return resp
+    data = get_report(slug)
+    if data is None:
+        resp = jsonify({'error': 'Report not found'})
+        resp.status_code = 404
+        resp.headers['Access-Control-Allow-Origin'] = '*'
+        return resp
+    resp = jsonify(data)
+    resp.headers['Access-Control-Allow-Origin'] = '*'
+    return resp
 
 
 @app.route('/api/contact', methods=['POST', 'OPTIONS'])
