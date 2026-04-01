@@ -4,10 +4,12 @@ Takes scan result as POST body, returns rendered HTML report.
 import json
 import sys
 import os
+import traceback
 from http.server import BaseHTTPRequestHandler
-from urllib.parse import urlparse, parse_qs
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+ALLOWED_ORIGIN = os.environ.get('ALLOWED_ORIGIN', '*')
 
 from lib.report_generator import HTMLReportGenerator
 
@@ -16,7 +18,10 @@ class handler(BaseHTTPRequestHandler):
 
     def do_POST(self):
         """Generate HTML report from analysis data"""
-        content_length = int(self.headers.get('Content-Length', 0))
+        try:
+            content_length = int(self.headers.get('Content-Length', 0))
+        except (ValueError, TypeError):
+            content_length = 0
         body = self.rfile.read(content_length).decode('utf-8') if content_length else '{}'
 
         try:
@@ -41,17 +46,18 @@ class handler(BaseHTTPRequestHandler):
 
             self.send_response(200)
             self.send_header('Content-Type', 'text/html; charset=utf-8')
-            self.send_header('Access-Control-Allow-Origin', '*')
+            self.send_header('Access-Control-Allow-Origin', ALLOWED_ORIGIN)
             self.end_headers()
             self.wfile.write(html.encode('utf-8'))
 
-        except Exception as e:
-            self._error(500, str(e))
+        except Exception:
+            print(f"REPORT_ERROR: {traceback.format_exc()}")
+            self._error(500, 'An error occurred generating the report.')
 
     def do_OPTIONS(self):
         """Handle CORS preflight"""
         self.send_response(200)
-        self.send_header('Access-Control-Allow-Origin', '*')
+        self.send_header('Access-Control-Allow-Origin', ALLOWED_ORIGIN)
         self.send_header('Access-Control-Allow-Methods', 'POST, OPTIONS')
         self.send_header('Access-Control-Allow-Headers', 'Content-Type')
         self.end_headers()
@@ -59,6 +65,6 @@ class handler(BaseHTTPRequestHandler):
     def _error(self, status, msg):
         self.send_response(status)
         self.send_header('Content-Type', 'application/json')
-        self.send_header('Access-Control-Allow-Origin', '*')
+        self.send_header('Access-Control-Allow-Origin', ALLOWED_ORIGIN)
         self.end_headers()
         self.wfile.write(json.dumps({'error': msg}).encode('utf-8'))

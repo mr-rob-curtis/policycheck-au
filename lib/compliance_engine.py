@@ -1,19 +1,11 @@
 """
 Australian Privacy Act Compliance Analysis Engine
 
-This module analyzes privacy policies against the 13 Australian Privacy Principles (APPs)
-and produces a structured compliance report.
-
-Supports two analysis modes:
-1. LLM mode - uses Claude API for deep semantic analysis
-2. Rule-based mode - uses keyword/pattern matching for quick screening
+Analyzes privacy policies against the 13 Australian Privacy Principles (APPs)
+and produces a structured compliance report using rule-based keyword/pattern matching.
 
 Usage:
-    engine = ComplianceEngine(mode='rule_based')
-    report = engine.analyze(policy_text, business_name, sector)
-
-    # Or for LLM analysis:
-    engine = ComplianceEngine(mode='llm')
+    engine = ComplianceEngine()
     report = engine.analyze(policy_text, business_name, sector)
 """
 
@@ -24,32 +16,18 @@ from enum import Enum
 from typing import Dict, List, Tuple, Optional
 from dataclasses import dataclass, asdict
 
-try:
-    from app_requirements import (
-        APPRequirements,
-        ComplianceStatus,
-        ComplianceScoringRules,
-        SectorSpecificGuidance,
-    )
-    from sector_notes import (
-        SectorSpecificLanguage,
-        GAP_RECOMMENDATIONS,
-        SectorRiskAssessment,
-        ADM_TRANSPARENCY_DETAILS,
-    )
-except ImportError:
-    from lib.app_requirements import (
-        APPRequirements,
-        ComplianceStatus,
-        ComplianceScoringRules,
-        SectorSpecificGuidance,
-    )
-    from lib.sector_notes import (
-        SectorSpecificLanguage,
-        GAP_RECOMMENDATIONS,
-        SectorRiskAssessment,
-        ADM_TRANSPARENCY_DETAILS,
-    )
+from lib.app_requirements import (
+    APPRequirements,
+    ComplianceStatus,
+    ComplianceScoringRules,
+    SectorSpecificGuidance,
+)
+from lib.sector_notes import (
+    SectorSpecificLanguage,
+    GAP_RECOMMENDATIONS,
+    SectorRiskAssessment,
+    ADM_TRANSPARENCY_DETAILS,
+)
 
 
 @dataclass
@@ -112,20 +90,10 @@ class ComplianceEngine:
     Core compliance analysis engine for Australian Privacy Act
 
     Analyzes privacy policies against 13 APPs and produces structured reports.
-    Supports both LLM (deep analysis) and rule-based (fast screening) modes.
+    Uses rule-based keyword/pattern matching for fast screening.
     """
 
-    def __init__(self, mode: str = "rule_based"):
-        """
-        Initialize compliance engine
-
-        Args:
-            mode: 'rule_based' for fast keyword matching, 'llm' for deep analysis
-        """
-        if mode not in ["rule_based", "llm"]:
-            raise ValueError("Mode must be 'rule_based' or 'llm'")
-
-        self.mode = mode
+    def __init__(self):
         self.app_requirements = APPRequirements()
         self.scoring_rules = ComplianceScoringRules()
 
@@ -154,176 +122,7 @@ class ComplianceEngine:
         if not policy_text or policy_text.strip() == "":
             return self._analyze_missing_policy(business_name, sector)
 
-        # Run appropriate analysis mode
-        if self.mode == "llm":
-            return self._analyze_llm(policy_text, business_name, sector)
-        else:
-            return self._analyze_rule_based(policy_text, business_name, sector)
-
-    # ========================================================================================
-    # LLM MODE - Prompt Template Generation
-    # ========================================================================================
-
-    def _analyze_llm(
-        self,
-        policy_text: str,
-        business_name: str,
-        sector: str,
-    ) -> ComplianceReport:
-        """
-        Analyze using LLM prompts. Returns prompt templates that would be sent to Claude API.
-
-        For MVP, this generates the structured prompts without actually calling Claude.
-        In production, these prompts would be sent to claude-3-5-sonnet or similar.
-        """
-        app_analyses = {}
-        app_statuses = {}
-
-        for app_num in range(1, 14):
-            app_def = self.app_requirements.get_app(app_num)
-
-            # Generate LLM prompt for this APP
-            prompt = self._generate_llm_prompt_for_app(
-                app_num=app_num,
-                app_def=app_def,
-                policy_text=policy_text,
-                sector=sector,
-            )
-
-            # In production, would call Claude API here like:
-            # response = client.messages.create(
-            #     model="claude-3-5-sonnet-20241022",
-            #     max_tokens=1024,
-            #     messages=[{"role": "user", "content": prompt}]
-            # )
-            # analysis = parse_llm_response(response.content[0].text)
-
-            # For MVP, use rule-based as fallback + fallback analysis
-            analysis = self._analyze_app_rule_based(
-                app_num, policy_text, sector
-            )
-
-            app_analyses[app_num] = analysis
-            app_statuses[app_num] = ComplianceStatus[analysis.status]
-
-        # Analyze ADM requirement
-        adm_analysis = self._analyze_adm(policy_text, sector)
-
-        # Calculate scores
-        overall_score = self.scoring_rules.calculate_overall_score(app_statuses)
-        overall_status = self.scoring_rules.calculate_overall_status(overall_score)
-
-        # Build apps list
-        apps_list = [
-            {
-                "app_number": analysis.app_number,
-                "app_name": analysis.app_name,
-                "status": analysis.status,
-                "findings": analysis.findings,
-                "gaps": analysis.gaps,
-                "recommended_language": analysis.recommended_language,
-                "priority": analysis.priority,
-            }
-            for analysis in app_analyses.values()
-        ]
-
-        # Get sector guidance
-        sector_guidance = SectorSpecificGuidance.get_guidance(sector)
-        sector_risk = SectorRiskAssessment.get_risk_profile(sector)
-
-        # Build summary
-        summary = {
-            "compliant_count": sum(
-                1 for s in app_statuses.values()
-                if s == ComplianceStatus.COMPLIANT
-            ),
-            "partial_count": sum(
-                1 for s in app_statuses.values()
-                if s == ComplianceStatus.PARTIALLY_COMPLIANT
-            ),
-            "non_compliant_count": sum(
-                1 for s in app_statuses.values()
-                if s == ComplianceStatus.NON_COMPLIANT
-            ),
-            "not_addressed_count": sum(
-                1 for s in app_statuses.values()
-                if s == ComplianceStatus.NOT_ADDRESSED
-            ),
-        }
-
-        # Generate next steps
-        next_steps = self._generate_next_steps(
-            overall_status, sector, app_statuses
-        )
-
-        return ComplianceReport(
-            business_name=business_name,
-            sector=sector,
-            analysis_date=datetime.now().isoformat(),
-            analysis_mode="llm",
-            overall_score=overall_score,
-            overall_status=overall_status,
-            apps=apps_list,
-            adm_check=asdict(adm_analysis),
-            summary=summary,
-            sector_risk_profile=sector_risk,
-            next_steps=next_steps,
-        )
-
-    def _generate_llm_prompt_for_app(
-        self,
-        app_num: int,
-        app_def: Dict,
-        policy_text: str,
-        sector: str,
-    ) -> str:
-        """
-        Generate the LLM prompt for analyzing a specific APP
-
-        These templates are structured for Claude API consumption.
-        Returns the full prompt string that would be sent to Claude.
-        """
-        app_name = app_def.get("name", "Unknown")
-        requirements = app_def.get("key_requirements", [])
-
-        prompt = f"""You are an expert in Australian Privacy Act compliance. Analyze the following privacy policy against APP {app_num} ({app_name}).
-
-PRIVACY POLICY:
-{policy_text}
-
-APP {app_num} - {app_name}
-
-LEGAL REQUIREMENT:
-This APP requires: {', '.join(requirements)}
-
-BUSINESS CONTEXT:
-Sector: {sector}
-Sector-specific notes: {APPRequirements.get_sector_note(app_num, sector)}
-
-ANALYSIS TASK:
-Determine the compliance level for this APP:
-1. COMPLIANT - Policy fully addresses all requirements
-2. PARTIALLY_COMPLIANT - Policy addresses some but not all requirements
-3. NON_COMPLIANT - Policy does not address requirements or is inadequate
-4. NOT_ADDRESSED - Requirement not mentioned in policy
-
-For your response, provide JSON with this structure:
-{{
-    "status": "[COMPLIANT|PARTIALLY_COMPLIANT|NON_COMPLIANT|NOT_ADDRESSED]",
-    "findings": ["list of what the policy does/doesn't say"],
-    "gaps": ["specific gaps or issues found"],
-    "confidence": 0.95,
-    "reasoning": "explanation of your assessment"
-}}
-
-SPECIFIC GUIDANCE FOR APP {app_num}:
-- Look for explicit statements about the requirement
-- Check for practical mechanisms (e.g., processes, procedures)
-- Assess whether the policy is clear and accessible to ordinary customers
-- Note any conflicts or contradictions
-- Consider whether the sector context affects interpretation
-"""
-        return prompt
+        return self._analyze_rule_based(policy_text, business_name, sector)
 
     # ========================================================================================
     # RULE-BASED MODE - Keyword/Pattern Analysis
@@ -579,7 +378,7 @@ SPECIFIC GUIDANCE FOR APP {app_num}:
             business_name=business_name,
             sector=sector,
             analysis_date=datetime.now().isoformat(),
-            analysis_mode=self.mode,
+            analysis_mode="rule_based",
             overall_score=0,
             overall_status=ComplianceStatus.NON_COMPLIANT.value,
             apps=apps_list,

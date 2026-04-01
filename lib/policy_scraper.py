@@ -3,6 +3,8 @@ Privacy Policy Web Scraper
 Extracts privacy policy text from business websites with graceful error handling.
 """
 
+import ipaddress
+import socket
 import requests
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
@@ -15,6 +17,9 @@ from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 import csv
+
+# Maximum response size (2MB)
+MAX_RESPONSE_SIZE = 2 * 1024 * 1024
 
 # Configure logging
 logging.basicConfig(
@@ -83,10 +88,10 @@ class PrivacyPolicyScraper:
         """
         session = requests.Session()
 
-        # Configure retry strategy
+        # Configure retry strategy (1 retry, no backoff for speed)
         retry_strategy = Retry(
-            total=3,
-            backoff_factor=0.5,
+            total=1,
+            backoff_factor=0,
             status_forcelist=[429, 500, 502, 503, 504],
             allowed_methods=["GET"]
         )
@@ -134,9 +139,38 @@ class PrivacyPolicyScraper:
         parsed = urlparse(url)
         return f"{parsed.scheme}://{parsed.netloc}"
 
+    def _validate_url(self, url: str) -> bool:
+        """
+        Validate URL is safe to fetch (SSRF protection).
+        Resolves DNS and rejects private/loopback IPs.
+        """
+        parsed = urlparse(url)
+
+        if parsed.scheme not in ('http', 'https'):
+            logger.warning(f"Rejected non-HTTP scheme: {parsed.scheme}")
+            return False
+
+        hostname = parsed.hostname
+        if not hostname:
+            return False
+
+        try:
+            addr_info = socket.getaddrinfo(hostname, None)
+        except socket.gaierror:
+            logger.warning(f"DNS resolution failed for {hostname}")
+            return False
+
+        for family, _, _, _, sockaddr in addr_info:
+            ip = ipaddress.ip_address(sockaddr[0])
+            if ip.is_private or ip.is_loopback or ip.is_reserved or ip.is_link_local:
+                logger.warning(f"Rejected private/reserved IP {ip} for {hostname}")
+                return False
+
+        return True
+
     def _fetch_page(self, url: str) -> Optional[Tuple[str, int]]:
         """
-        Fetch a page with error handling.
+        Fetch a page with error handling, SSRF protection, and size limits.
 
         Args:
             url: URL to fetch
@@ -144,6 +178,9 @@ class PrivacyPolicyScraper:
         Returns:
             Tuple of (html_content, status_code) or None if fetch failed
         """
+        if not self._validate_url(url):
+            return None
+
         try:
             self._apply_rate_limit()
 
@@ -151,15 +188,35 @@ class PrivacyPolicyScraper:
                 url,
                 timeout=self.timeout,
                 allow_redirects=True,
-                verify=True
+                verify=True,
+                stream=True,
             )
 
+            # Check content size before reading body
+            content_length = response.headers.get('Content-Length')
+            if content_length and content_length.isdigit() and int(content_length) > MAX_RESPONSE_SIZE:
+                logger.warning(f"Response too large ({content_length} bytes) for {url}")
+                response.close()
+                return None
+
+            # Read with size limit
+            chunks = []
+            total = 0
+            for chunk in response.iter_content(chunk_size=8192, decode_unicode=False):
+                total += len(chunk)
+                if total > MAX_RESPONSE_SIZE:
+                    logger.warning(f"Response exceeded {MAX_RESPONSE_SIZE} bytes for {url}")
+                    response.close()
+                    return None
+                chunks.append(chunk)
+
             # Log status
-            logger.info(f"Fetched {url} - Status: {response.status_code}")
+            logger.info(f"Fetched {url} - Status: {response.status_code} ({total} bytes)")
 
             # Check for successful response
             if response.status_code < 400:
-                return response.text, response.status_code
+                text = b''.join(chunks).decode(response.encoding or 'utf-8', errors='replace')
+                return text, response.status_code
             else:
                 logger.warning(f"HTTP {response.status_code} for {url}")
                 return None
@@ -168,18 +225,7 @@ class PrivacyPolicyScraper:
             logger.warning(f"Timeout fetching {url}")
             return None
         except requests.exceptions.SSLError:
-            logger.warning(f"SSL error for {url}, retrying with verify=False")
-            try:
-                response = self.session.get(
-                    url,
-                    timeout=self.timeout,
-                    allow_redirects=True,
-                    verify=False
-                )
-                if response.status_code < 400:
-                    return response.text, response.status_code
-            except Exception as e:
-                logger.warning(f"Failed retry for {url}: {e}")
+            logger.warning(f"SSL error for {url} - site has invalid certificate")
             return None
         except requests.exceptions.ConnectionError:
             logger.warning(f"Connection error for {url}")
@@ -297,33 +343,50 @@ class PrivacyPolicyScraper:
 
         # Look for privacy policy links in homepage
         policy_url = self._find_privacy_link_in_html(html, url)
+        policy_html = None
 
-        # If no link found in homepage, try common paths
-        if policy_url is None:
-            logger.info("No privacy link found in homepage, trying common paths...")
-            for path in self.POLICY_PATHS:
+        # If homepage link found, fetch it
+        if policy_url is not None:
+            policy_html, _ = self._fetch_page(policy_url) or (None, None)
+
+        # If no link found (or link failed), try common paths in parallel
+        if policy_html is None:
+            logger.info("Trying common paths in parallel...")
+            from concurrent.futures import ThreadPoolExecutor, as_completed
+
+            def _try_path(path):
                 candidate_url = urljoin(domain, path)
-                html, status = self._fetch_page(candidate_url) or (None, None)
+                result = self._fetch_page(candidate_url)
+                if result is not None:
+                    return candidate_url, result[0]
+                return None
 
-                if html is not None:
-                    policy_url = candidate_url
-                    logger.info(f"Found policy at common path: {policy_url}")
-                    break
+            with ThreadPoolExecutor(max_workers=4) as executor:
+                futures = {executor.submit(_try_path, p): p for p in self.POLICY_PATHS}
+                for future in as_completed(futures, timeout=self.timeout + 2):
+                    try:
+                        found = future.result()
+                        if found is not None:
+                            policy_url, policy_html = found
+                            logger.info(f"Found policy at common path: {policy_url}")
+                            # Cancel remaining futures
+                            for f in futures:
+                                f.cancel()
+                            break
+                    except Exception:
+                        continue
 
         # Extract policy text if found
-        if policy_url is not None:
+        if policy_url is not None and policy_html is not None:
             result['policy_found'] = True
             result['policy_url'] = policy_url
-
-            # Fetch the actual policy page
-            policy_html, status = self._fetch_page(policy_url) or (None, None)
-
-            if policy_html is not None:
-                result['policy_text'] = self._extract_policy_text(policy_html)
-                logger.info(f"Successfully extracted policy from {policy_url}")
-            else:
-                result['error'] = 'UNABLE_TO_FETCH_POLICY'
-                result['policy_text'] = ''
+            result['policy_text'] = self._extract_policy_text(policy_html)
+            logger.info(f"Successfully extracted policy from {policy_url}")
+        elif policy_url is not None:
+            result['policy_found'] = True
+            result['policy_url'] = policy_url
+            result['error'] = 'UNABLE_TO_FETCH_POLICY'
+            result['policy_text'] = ''
         else:
             result['error'] = 'NO_POLICY_FOUND'
             logger.warning(f"No privacy policy found for {url}")
