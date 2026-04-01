@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PrivacySorted - Dashboard</title>
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --navy: #0f172a;
+            --slate: #334155;
+            --slate-light: #64748b;
+            --teal: #0d9488;
+            --teal-dark: #0f766e;
+            --red: #dc2626;
+            --amber: #d97706;
+            --green: #16a34a;
+            --gray-50: #f8fafc;
+            --gray-100: #f1f5f9;
+            --gray-200: #e2e8f0;
+            --gray-300: #cbd5e1;
+            --white: #ffffff;
+            --sidebar-w: 240px;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            color: var(--navy);
+            background: var(--gray-50);
+            display: flex;
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: var(--sidebar-w);
+            background: var(--navy);
+            color: var(--white);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            z-index: 10;
+        }
+        .sidebar-logo {
+            padding: 24px 20px;
+            font-size: 18px;
+            font-weight: 700;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .sidebar-logo span { color: #2dd4bf; }
+        .sidebar-nav { flex: 1; padding: 12px 0; }
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 20px;
+            color: var(--gray-300);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.15s;
+            cursor: pointer;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+        }
+        .nav-item:hover { color: var(--white); background: rgba(255,255,255,0.05); }
+        .nav-item.active { color: var(--white); background: rgba(255,255,255,0.1); }
+        .sidebar-footer {
+            padding: 16px 20px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        .countdown-box {
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+            padding: 12px;
+            text-align: center;
+        }
+        .countdown-box .days { font-size: 28px; font-weight: 800; color: #fbbf24; }
+        .countdown-box .label { font-size: 11px; color: var(--gray-300); margin-top: 2px; }
+
+        /* Main */
+        .main {
+            margin-left: var(--sidebar-w);
+            flex: 1;
+            padding: 32px;
+            max-width: 1000px;
+        }
+        .main h1 { font-size: 24px; font-weight: 700; margin-bottom: 24px; }
+
+        /* Stats */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+        .stat-card {
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            border-radius: 10px;
+            padding: 20px;
+        }
+        .stat-card .number { font-size: 28px; font-weight: 800; }
+        .stat-card .label { font-size: 13px; color: var(--slate-light); margin-top: 2px; }
+
+        /* Cards */
+        .card {
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            border-radius: 10px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+        .card h2 { font-size: 18px; font-weight: 700; margin-bottom: 16px; }
+
+        /* Scan form */
+        .scan-row {
+            display: flex;
+            gap: 8px;
+        }
+        .scan-row input, .scan-row select {
+            border: 1px solid var(--gray-200);
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-size: 14px;
+            font-family: inherit;
+            outline: none;
+        }
+        .scan-row input:focus, .scan-row select:focus { border-color: var(--teal); }
+        .scan-row input[type="url"] { flex: 1; }
+        .scan-row button {
+            background: var(--teal);
+            color: var(--white);
+            border: none;
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .scan-row button:hover { background: var(--teal-dark); }
+        .scan-row button:disabled { opacity: 0.6; cursor: not-allowed; }
+
+        /* Table */
+        table { width: 100%; border-collapse: collapse; font-size: 14px; }
+        th {
+            text-align: left;
+            padding: 10px 12px;
+            border-bottom: 2px solid var(--gray-200);
+            font-weight: 600;
+            color: var(--slate-light);
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        td {
+            padding: 12px;
+            border-bottom: 1px solid var(--gray-100);
+            vertical-align: middle;
+        }
+        tr:hover td { background: var(--gray-50); }
+        .score-pill {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 13px;
+        }
+        .pill-low { background: #fef2f2; color: var(--red); }
+        .pill-mid { background: #fffbeb; color: var(--amber); }
+        .pill-high { background: #f0fdf4; color: var(--green); }
+        .status-dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 6px;
+        }
+        .dot-red { background: var(--red); }
+        .dot-amber { background: var(--amber); }
+        .dot-green { background: var(--green); }
+
+        /* Lead row */
+        .lead-actions a {
+            color: var(--teal);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 13px;
+        }
+
+        /* Views */
+        .view { display: none; }
+        .view.active { display: block; }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 48px 20px;
+            color: var(--slate-light);
+        }
+        .empty-state p { font-size: 15px; }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: var(--navy);
+            color: var(--white);
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s;
+            z-index: 100;
+        }
+        .toast.show { transform: translateY(0); opacity: 1; }
+
+        @media (max-width: 900px) {
+            .sidebar { width: 60px; }
+            .sidebar .sidebar-logo span, .sidebar .nav-item span:last-child,
+            .sidebar .countdown-box .label { display: none; }
+            .main { margin-left: 60px; }
+            .stats-row { grid-template-columns: repeat(2, 1fr); }
+            .scan-row { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+    <aside class="sidebar">
+        <div class="sidebar-logo">Privacy<span>Sorted</span></div>
+        <nav class="sidebar-nav">
+            <button class="nav-item active" onclick="showView('dashboard')">
+                <span>&#9635;</span><span>Dashboard</span>
+            </button>
+            <button class="nav-item" onclick="showView('scans')">
+                <span>&#128269;</span><span>Scans</span>
+            </button>
+            <button class="nav-item" onclick="showView('leads')">
+                <span>&#128100;</span><span>Leads</span>
+            </button>
+        </nav>
+        <div class="sidebar-footer">
+            <div class="countdown-box">
+                <div class="days" id="countdown-days">--</div>
+                <div class="label">days to deadline</div>
+            </div>
+        </div>
+    </aside>
+
+    <div class="main">
+        <!-- Dashboard View -->
+        <div class="view active" id="view-dashboard">
+            <h1>Dashboard</h1>
+            <div class="stats-row">
+                <div class="stat-card">
+                    <div class="number" id="stat-total">0</div>
+                    <div class="label">Total Scans</div>
+                </div>
+                <div class="stat-card">
+                    <div class="number" id="stat-avg">--</div>
+                    <div class="label">Avg Score</div>
+                </div>
+                <div class="stat-card">
+                    <div class="number" id="stat-leads">0</div>
+                    <div class="label">Leads</div>
+                </div>
+                <div class="stat-card">
+                    <div class="number" id="stat-critical">0</div>
+                    <div class="label">Critical Findings</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Quick Scan</h2>
+                <div class="scan-row">
+                    <input type="url" id="scan-url" placeholder="https://example.com.au">
+                    <input type="text" id="scan-name" placeholder="Business name" style="width:180px">
+                    <select id="scan-sector" style="width:160px">
+                        <option value="Other">Sector</option>
+                        <option value="real_estate">Real Estate</option>
+                        <option value="pharmacy">Pharmacy</option>
+                        <option value="legal">Legal</option>
+                        <option value="accounting">Accounting</option>
+                        <option value="finance">Finance</option>
+                    </select>
+                    <button id="scan-btn" onclick="runScan()">Scan</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Recent Scans</h2>
+                <div id="recent-scans-body">
+                    <div class="empty-state"><p>No scans yet. Run your first scan above.</p></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Scans View -->
+        <div class="view" id="view-scans">
+            <h1>All Scans</h1>
+            <div class="card">
+                <div class="scan-row" style="margin-bottom:16px">
+                    <input type="url" id="scan-url-2" placeholder="https://example.com.au">
+                    <input type="text" id="scan-name-2" placeholder="Business name" style="width:180px">
+                    <select id="scan-sector-2" style="width:160px">
+                        <option value="Other">Sector</option>
+                        <option value="real_estate">Real Estate</option>
+                        <option value="pharmacy">Pharmacy</option>
+                        <option value="legal">Legal</option>
+                        <option value="accounting">Accounting</option>
+                        <option value="finance">Finance</option>
+                    </select>
+                    <button id="scan-btn-2" onclick="runScan2()">Scan</button>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Business</th>
+                            <th>URL</th>
+                            <th>Score</th>
+                            <th>Status</th>
+                            <th>Gaps</th>
+                            <th>Scanned</th>
+                        </tr>
+                    </thead>
+                    <tbody id="scans-table-body">
+                    </tbody>
+                </table>
+                <div class="empty-state" id="scans-empty"><p>No scans yet.</p></div>
+            </div>
+        </div>
+
+        <!-- Leads View -->
+        <div class="view" id="view-leads">
+            <h1>Leads</h1>
+            <div class="card">
+                <p style="color:var(--slate-light);font-size:14px;margin-bottom:16px">
+                    Contact form submissions from the client site. Check Vercel function logs for full data.
+                </p>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Scanned URL</th>
+                            <th>Score</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody id="leads-table-body">
+                    </tbody>
+                </table>
+                <div class="empty-state" id="leads-empty">
+                    <p>Leads will appear here once the contact API is connected to storage.<br>
+                    For now, check Vercel function logs for NEW_LEAD entries.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // State
+        let scans = JSON.parse(localStorage.getItem('ps_scans') || '[]');
+        let leads = JSON.parse(localStorage.getItem('ps_leads') || '[]');
+
+        // Countdown
+        function updateCountdown() {
+            const diff = new Date('2026-07-01T00:00:00+10:00') - new Date();
+            document.getElementById('countdown-days').textContent = Math.max(0, Math.floor(diff / 86400000));
+        }
+        updateCountdown();
+
+        // Navigation
+        function showView(name) {
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.getElementById('view-' + name).classList.add('active');
+            event.currentTarget.classList.add('active');
+            if (name === 'scans') renderScansTable();
+            if (name === 'leads') renderLeadsTable();
+        }
+
+        // Stats
+        function updateStats() {
+            document.getElementById('stat-total').textContent = scans.length;
+            document.getElementById('stat-leads').textContent = leads.length;
+            if (scans.length > 0) {
+                const avg = Math.round(scans.reduce((s, x) => s + (x.score || 0), 0) / scans.length);
+                document.getElementById('stat-avg').textContent = avg;
+                const critical = scans.reduce((s, x) => s + (x.criticalCount || 0), 0);
+                document.getElementById('stat-critical').textContent = critical;
+            }
+        }
+
+        // Scan
+        async function runScan() {
+            const url = document.getElementById('scan-url').value.trim();
+            const name = document.getElementById('scan-name').value.trim();
+            const sector = document.getElementById('scan-sector').value;
+            if (!url) return toast('Enter a URL');
+            await executeScan(url, name, sector, 'scan-btn');
+        }
+
+        async function runScan2() {
+            const url = document.getElementById('scan-url-2').value.trim();
+            const name = document.getElementById('scan-name-2').value.trim();
+            const sector = document.getElementById('scan-sector-2').value;
+            if (!url) return toast('Enter a URL');
+            await executeScan(url, name, sector, 'scan-btn-2');
+        }
+
+        async function executeScan(url, name, sector, btnId) {
+            const btn = document.getElementById(btnId);
+            btn.disabled = true;
+            btn.textContent = 'Scanning...';
+
+            try {
+                const res = await fetch('/api/scan?url=' + encodeURIComponent(url)
+                    + '&business_name=' + encodeURIComponent(name)
+                    + '&sector=' + encodeURIComponent(sector));
+                const data = await res.json();
+
+                if (data.error) {
+                    toast('Error: ' + data.error);
+                    btn.disabled = false;
+                    btn.textContent = 'Scan';
+                    return;
+                }
+
+                const apps = data.analysis?.apps || [];
+                const criticalCount = apps.filter(a =>
+                    a.priority === 'CRITICAL' && a.status !== 'COMPLIANT'
+                ).length;
+                const gapCount = apps.reduce((s, a) => s + (a.gaps?.length || 0), 0);
+
+                const scan = {
+                    id: Date.now().toString(),
+                    url: data.url,
+                    business_name: data.business_name || new URL(data.url).hostname,
+                    sector: sector,
+                    score: data.analysis?.overall_score || 0,
+                    status: data.analysis?.overall_status || 'UNKNOWN',
+                    criticalCount: criticalCount,
+                    gapCount: gapCount,
+                    policy_found: data.policy_found,
+                    scanned_at: new Date().toISOString(),
+                    analysis: data.analysis,
+                };
+
+                scans.unshift(scan);
+                localStorage.setItem('ps_scans', JSON.stringify(scans));
+                updateStats();
+                renderRecentScans();
+                renderScansTable();
+                toast('Scan complete: ' + scan.score + '/100');
+
+            } catch (err) {
+                toast('Scan failed. Check the URL.');
+            }
+
+            btn.disabled = false;
+            btn.textContent = 'Scan';
+        }
+
+        // Render
+        function renderRecentScans() {
+            const container = document.getElementById('recent-scans-body');
+            if (scans.length === 0) {
+                container.innerHTML = '<div class="empty-state"><p>No scans yet. Run your first scan above.</p></div>';
+                return;
+            }
+            const recent = scans.slice(0, 5);
+            container.innerHTML = `<table>
+                <thead><tr><th>Business</th><th>Score</th><th>Gaps</th><th>Date</th></tr></thead>
+                <tbody>${recent.map(s => `<tr>
+                    <td><strong>${esc(s.business_name)}</strong><br><span style="font-size:12px;color:var(--slate-light)">${esc(s.url)}</span></td>
+                    <td>${scorePill(s.score)}</td>
+                    <td>${s.gapCount} gaps</td>
+                    <td style="font-size:13px;color:var(--slate-light)">${timeAgo(s.scanned_at)}</td>
+                </tr>`).join('')}</tbody>
+            </table>`;
+        }
+
+        function renderScansTable() {
+            const tbody = document.getElementById('scans-table-body');
+            const empty = document.getElementById('scans-empty');
+            if (scans.length === 0) { empty.style.display = 'block'; tbody.innerHTML = ''; return; }
+            empty.style.display = 'none';
+            tbody.innerHTML = scans.map(s => `<tr>
+                <td><strong>${esc(s.business_name)}</strong></td>
+                <td style="font-size:13px">${esc(s.url)}</td>
+                <td>${scorePill(s.score)}</td>
+                <td><span class="status-dot ${s.score < 40 ? 'dot-red' : s.score < 70 ? 'dot-amber' : 'dot-green'}"></span>${s.status.replace('_', ' ')}</td>
+                <td>${s.gapCount}</td>
+                <td style="font-size:13px;color:var(--slate-light)">${timeAgo(s.scanned_at)}</td>
+            </tr>`).join('');
+        }
+
+        function renderLeadsTable() {
+            const tbody = document.getElementById('leads-table-body');
+            const empty = document.getElementById('leads-empty');
+            if (leads.length === 0) { empty.style.display = 'block'; tbody.innerHTML = ''; return; }
+            empty.style.display = 'none';
+            tbody.innerHTML = leads.map(l => `<tr>
+                <td>${esc(l.name)}</td>
+                <td>${esc(l.email)}</td>
+                <td style="font-size:13px">${esc(l.scan_url || '')}</td>
+                <td>${l.scan_score || '--'}</td>
+                <td style="font-size:13px;color:var(--slate-light)">${timeAgo(l.submitted_at)}</td>
+            </tr>`).join('');
+        }
+
+        // Helpers
+        function scorePill(score) {
+            const cls = score < 40 ? 'pill-low' : score < 70 ? 'pill-mid' : 'pill-high';
+            return `<span class="score-pill ${cls}">${score}</span>`;
+        }
+
+        function timeAgo(iso) {
+            if (!iso) return '--';
+            const d = new Date(iso);
+            const now = new Date();
+            const mins = Math.floor((now - d) / 60000);
+            if (mins < 1) return 'just now';
+            if (mins < 60) return mins + 'm ago';
+            const hrs = Math.floor(mins / 60);
+            if (hrs < 24) return hrs + 'h ago';
+            return d.toLocaleDateString('en-AU', { day: 'numeric', month: 'short' });
+        }
+
+        function esc(s) {
+            const d = document.createElement('div');
+            d.textContent = s || '';
+            return d.innerHTML;
+        }
+
+        function toast(msg) {
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 3000);
+        }
+
+        // Init
+        updateStats();
+        renderRecentScans();
+
+        // Listen for enter key on scan inputs
+        ['scan-url', 'scan-url-2'].forEach(id => {
+            document.getElementById(id).addEventListener('keydown', e => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    const btn = id === 'scan-url' ? 'scan-btn' : 'scan-btn-2';
+                    document.getElementById(btn).click();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
