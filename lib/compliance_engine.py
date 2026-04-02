@@ -619,12 +619,12 @@ class ComplianceEngine:
         app_statuses: Dict[int, ComplianceStatus],
     ) -> int:
         """
-        Apply scoring floor: if policy exists (>500 chars) and covers at least 2 APPs
-        substantively, set minimum floor of 15/100 that scales with policy length.
-        This addresses Fix 1: Scoring Floor
+        Apply scoring floor: having a real privacy policy that addresses multiple
+        APPs deserves meaningful credit. Floor scales with coverage breadth.
 
-        Note: The floor is conservative and only prevents scores from being too low.
-        Policies with substantive coverage of multiple APPs get minimum credit.
+        Rationale: a business that has published a privacy policy and addresses
+        several APPs is making a genuine effort. The score should reflect that
+        effort, even if keyword coverage is imperfect.
         """
         # Check if policy is substantial (>500 characters)
         if not policy_text or len(policy_text.strip()) < 500:
@@ -641,14 +641,9 @@ class ComplianceEngine:
         if substantive_apps < 2:
             return current_score
 
-        # Calculate floor based on policy length
-        # Base floor: 15%, scales up to 20% based on policy length
-        policy_length = len(policy_text.strip())
-        length_factor = min(1.0, policy_length / 8000.0)  # Scale from 0 to 1
-        floor = 15 + (5 * length_factor)  # Scale from 15 to 20
-
-        # Do NOT add additional factor based on number of apps
-        # (The current score already reflects the number of substantive apps)
+        # Base floor: 30 for having a real policy covering 2+ APPs
+        # Scales up by 2 points per additional APP covered, capped at 45
+        floor = min(45, 30 + (substantive_apps - 2) * 2)
 
         # Apply floor: return max of current score or floor
         return max(current_score, int(floor))

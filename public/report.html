@@ -282,7 +282,8 @@
             const scannedAt = scan.scanned_at || a.analysis_date || '';
             const apps = a.apps || [];
             const scoreClass = score < 40 ? 'sc-low' : score < 70 ? 'sc-mid' : 'sc-high';
-            const statusText = (a.overall_status || '').replace(/_/g, ' ');
+            const statusMap = { 'COMPLIANT': 'Low Risk', 'PARTIALLY_COMPLIANT': 'Moderate Risk', 'NON_COMPLIANT': 'High Risk' };
+            const statusText = statusMap[a.overall_status] || (a.overall_status || '').replace(/_/g, ' ');
 
             document.title = `${esc(businessName)} - Privacy Act Compliance Report`;
 
@@ -307,7 +308,7 @@
 
             html += sorted.map(app => {
                 const stClass = app.status === 'COMPLIANT' ? 'st-compliant' : app.status === 'PARTIALLY_COMPLIANT' ? 'st-partial' : 'st-non';
-                const stLabel = app.status === 'COMPLIANT' ? 'Compliant' : app.status === 'PARTIALLY_COMPLIANT' ? 'Partial' : 'Non-compliant';
+                const stLabel = app.status === 'COMPLIANT' ? 'Low Risk' : app.status === 'PARTIALLY_COMPLIANT' ? 'Moderate Risk' : 'High Risk';
                 const gaps = app.gaps || [];
                 const recs = app.recommendations || [];
 

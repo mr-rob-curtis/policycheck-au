@@ -585,10 +585,12 @@ class ComplianceScoringRules:
     """Rules for calculating compliance scores"""
 
     # Score weights for different statuses
+    # Partially compliant gets generous credit (they're making an effort)
+    # Non-compliant gets some credit if the topic is at least mentioned
     STATUS_WEIGHTS = {
         ComplianceStatus.COMPLIANT: 100,
-        ComplianceStatus.PARTIALLY_COMPLIANT: 50,
-        ComplianceStatus.NON_COMPLIANT: 0,
+        ComplianceStatus.PARTIALLY_COMPLIANT: 65,
+        ComplianceStatus.NON_COMPLIANT: 15,
         ComplianceStatus.NOT_ADDRESSED: 0,
     }
 
@@ -641,10 +643,12 @@ class ComplianceScoringRules:
 
     @classmethod
     def calculate_overall_status(cls, score: int) -> str:
-        """Determine overall compliance status from score"""
-        if score >= 85:
+        """Determine overall risk level from score.
+        70+ = low risk (compliant), 40-69 = moderate risk, <40 = high risk.
+        """
+        if score >= 70:
             return ComplianceStatus.COMPLIANT.value
-        elif score >= 50:
+        elif score >= 40:
             return ComplianceStatus.PARTIALLY_COMPLIANT.value
         else:
             return ComplianceStatus.NON_COMPLIANT.value
