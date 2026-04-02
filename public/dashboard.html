@@ -418,6 +418,7 @@
                             <th>Status</th>
                             <th>Gaps</th>
                             <th>Scanned</th>
+                            <th></th>
                         </tr>
                     </thead>
                     <tbody id="scans-table-body">
@@ -549,6 +550,7 @@
                     gapCount: gapCount,
                     policy_found: data.policy_found,
                     scanned_at: new Date().toISOString(),
+                    slug: data.slug || '',
                     analysis: data.analysis,
                 };
 
@@ -576,12 +578,13 @@
             }
             const recent = scans.slice(0, 5);
             container.innerHTML = `<table>
-                <thead><tr><th>Business</th><th>Score</th><th>Gaps</th><th>Date</th></tr></thead>
+                <thead><tr><th>Business</th><th>Score</th><th>Gaps</th><th>Date</th><th></th></tr></thead>
                 <tbody>${recent.map((s, i) => `<tr class="clickable" onclick="openScanDetail(${i})">
                     <td><strong>${esc(s.business_name)}</strong><br><span style="font-size:12px;color:var(--slate-light)">${esc(s.url)}</span></td>
                     <td>${scorePill(s.score)}</td>
                     <td>${s.gapCount} gaps</td>
                     <td style="font-size:13px;color:var(--slate-light)">${timeAgo(s.scanned_at)}</td>
+                    <td>${s.slug ? `<a href="/report/${esc(s.slug)}" target="_blank" onclick="event.stopPropagation()" style="color:var(--teal);font-size:13px;font-weight:600;text-decoration:none">View Report →</a>` : ''}</td>
                 </tr>`).join('')}</tbody>
             </table>`;
         }
@@ -598,6 +601,7 @@
                 <td><span class="status-dot ${s.score < 40 ? 'dot-red' : s.score < 70 ? 'dot-amber' : 'dot-green'}"></span>${s.status.replace('_', ' ')}</td>
                 <td>${s.gapCount}</td>
                 <td style="font-size:13px;color:var(--slate-light)">${timeAgo(s.scanned_at)}</td>
+                <td>${s.slug ? `<a href="/report/${esc(s.slug)}" target="_blank" onclick="event.stopPropagation()" style="color:var(--teal);font-size:13px;font-weight:600;text-decoration:none">View Report →</a>` : ''}</td>
             </tr>`).join('');
         }
 
@@ -616,7 +620,8 @@
                     <div class="detail-score ${scoreClass}">${scan.score}</div>
                     <div>
                         <h1 style="margin-bottom:2px">${esc(scan.business_name)}</h1>
-                        <div class="detail-meta">${esc(scan.url)} &middot; ${timeAgo(scan.scanned_at)}${scan.slug ? ` &middot; <a href="/report/${esc(scan.slug)}" target="_blank" style="color:var(--teal)">Public report</a>` : ''}</div>
+                        <div class="detail-meta">${esc(scan.url)} &middot; ${timeAgo(scan.scanned_at)}</div>
+                        ${scan.slug ? `<a href="/report/${esc(scan.slug)}" target="_blank" style="display:inline-block;margin-top:8px;background:var(--teal);color:var(--white);padding:8px 16px;border-radius:6px;font-size:13px;font-weight:600;text-decoration:none">View Full Report →</a>` : ''}
                     </div>
                 </div>
                 <div class="card" style="margin-bottom:16px">
@@ -627,6 +632,32 @@
 
             const priorityOrder = { CRITICAL: 0, HIGH: 1, MEDIUM: 2, LOW: 3 };
             const sorted = [...apps].sort((a, b) => (priorityOrder[a.priority] || 3) - (priorityOrder[b.priority] || 3));
+
+            // Action Plan section
+            const nextSteps = a.next_steps || [];
+            const appRecs = sorted.filter(ap => ap.status !== 'COMPLIANT' && ap.recommendations && ap.recommendations.length > 0);
+            if (nextSteps.length > 0 || appRecs.length > 0) {
+                html += `<div class="card" style="margin-bottom:16px;border-left:4px solid var(--teal)">
+                    <h2 style="font-size:16px;margin-bottom:12px">&#9889; Recommended Action Plan</h2>`;
+
+                if (nextSteps.length > 0) {
+                    html += `<ol style="padding-left:20px;margin-bottom:12px;font-size:14px;color:var(--slate)">
+                        ${nextSteps.map(s => `<li style="padding:4px 0">${esc(s)}</li>`).join('')}
+                    </ol>`;
+                }
+
+                if (appRecs.length > 0) {
+                    html += `<h3 style="font-size:14px;font-weight:600;margin:12px 0 8px;color:var(--navy)">Per-Principle Recommendations</h3>`;
+                    html += appRecs.map(app => {
+                        return `<div style="margin-bottom:10px;padding:10px 12px;background:var(--gray-50);border-radius:6px">
+                            <div style="font-size:13px;font-weight:700;margin-bottom:4px">APP ${app.app_number}: ${esc(app.app_name || '')}</div>
+                            <div style="font-size:13px;color:var(--slate)">${app.recommendations.map(r => esc(r)).join(' ')}</div>
+                        </div>`;
+                    }).join('');
+                }
+
+                html += `</div>`;
+            }
 
             html += sorted.map(app => {
                 const stClass = app.status === 'COMPLIANT' ? 'st-compliant' : app.status === 'PARTIALLY_COMPLIANT' ? 'st-partial' : 'st-non';
@@ -718,6 +749,19 @@
             t.classList.add('show');
             setTimeout(() => t.classList.remove('show'), 3000);
         }
+
+        // Backfill slugs for existing scans that don't have them
+        function makeSlug(text) {
+            return (text || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 80);
+        }
+        let slugsUpdated = false;
+        scans.forEach(s => {
+            if (!s.slug) {
+                const slug = makeSlug(s.business_name) || makeSlug(new URL(s.url).hostname);
+                if (slug) { s.slug = slug; slugsUpdated = true; }
+            }
+        });
+        if (slugsUpdated) localStorage.setItem('ps_scans', JSON.stringify(scans));
 
         // Init
         updateStats();

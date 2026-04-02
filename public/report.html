@@ -199,6 +199,157 @@
         }
         .cta-btn:hover { background: var(--teal-dark); }
 
+        .draft-section {
+            background: var(--white);
+            border: 2px solid var(--teal);
+            border-radius: 10px;
+            padding: 28px;
+            margin-top: 28px;
+            position: relative;
+        }
+        .draft-section h2 {
+            font-family: var(--font-serif);
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        .draft-section .draft-subtitle {
+            font-size: 14px;
+            color: var(--slate-light);
+            margin-bottom: 20px;
+        }
+        .draft-preview {
+            position: relative;
+            max-height: 320px;
+            overflow: hidden;
+        }
+        .draft-preview-text {
+            font-size: 14px;
+            line-height: 1.7;
+            color: var(--slate);
+            white-space: pre-wrap;
+        }
+        .draft-preview::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 200px;
+            background: linear-gradient(transparent, var(--white) 85%);
+            pointer-events: none;
+        }
+        .draft-cta-overlay {
+            text-align: center;
+            padding: 16px 0 0;
+        }
+        .draft-cta-overlay p {
+            font-size: 15px;
+            color: var(--navy);
+            margin-bottom: 4px;
+            font-weight: 600;
+        }
+        .draft-cta-overlay .price {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--navy);
+            margin-bottom: 4px;
+        }
+        .draft-cta-overlay .price-note {
+            font-size: 13px;
+            color: var(--slate-light);
+            margin-bottom: 16px;
+        }
+        .draft-buy-btn {
+            display: inline-block;
+            background: var(--teal);
+            color: var(--white);
+            padding: 14px 36px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 700;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+        }
+        .draft-buy-btn:hover { background: var(--teal-dark); }
+        .draft-buy-btn:disabled {
+            background: var(--gray-300);
+            cursor: wait;
+        }
+        .draft-includes {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            margin-top: 16px;
+            font-size: 13px;
+            color: var(--slate-light);
+        }
+        .draft-includes span::before {
+            content: '\2713 ';
+            color: var(--teal);
+            font-weight: 700;
+        }
+        .draft-full {
+            font-size: 14px;
+            line-height: 1.8;
+            color: var(--slate);
+            white-space: pre-wrap;
+        }
+        .draft-full h3, .draft-full strong {
+            color: var(--navy);
+        }
+        .draft-disclaimer {
+            background: var(--gray-100);
+            border-radius: 8px;
+            padding: 16px;
+            font-size: 12px;
+            color: var(--slate-light);
+            margin-bottom: 16px;
+            line-height: 1.5;
+        }
+        .draft-generating {
+            text-align: center;
+            padding: 40px 0;
+        }
+        .draft-generating .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid var(--gray-200);
+            border-top-color: var(--teal);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 16px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .draft-generating p {
+            font-size: 15px;
+            color: var(--slate);
+        }
+        .draft-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .draft-actions button {
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            border: 1px solid var(--gray-200);
+            background: var(--white);
+            color: var(--navy);
+        }
+        .draft-actions button:hover { background: var(--gray-100); }
+        .draft-actions .primary {
+            background: var(--teal);
+            color: var(--white);
+            border-color: var(--teal);
+        }
+        .draft-actions .primary:hover { background: var(--teal-dark); }
+
         .not-found {
             text-align: center;
             padding: 80px 28px;
@@ -306,6 +457,32 @@
                 </div>
             `;
 
+            // Action Plan section
+            const nextSteps = a.next_steps || [];
+            const appRecs = sorted.filter(ap => ap.status !== 'COMPLIANT' && ap.recommendations && ap.recommendations.length > 0);
+            if (nextSteps.length > 0 || appRecs.length > 0) {
+                html += `<div class="app-card" style="border-left:4px solid var(--teal);margin-bottom:28px">
+                    <h3 style="font-size:18px;margin-bottom:12px">Recommended Action Plan</h3>`;
+
+                if (nextSteps.length > 0) {
+                    html += `<ol style="padding-left:20px;margin-bottom:12px;font-size:14px;color:var(--slate)">
+                        ${nextSteps.map(s => `<li style="padding:4px 0">${esc(s)}</li>`).join('')}
+                    </ol>`;
+                }
+
+                if (appRecs.length > 0) {
+                    html += `<p style="font-size:13px;font-weight:600;margin:12px 0 8px;color:var(--navy)">Per-Principle Recommendations</p>`;
+                    html += appRecs.map(ap => {
+                        return `<div style="margin-bottom:8px;padding:10px 12px;background:var(--gray-50);border-radius:6px">
+                            <div style="font-size:13px;font-weight:700;margin-bottom:4px">APP ${ap.app_number}: ${esc(ap.app_name || '')}</div>
+                            <div style="font-size:13px;color:var(--slate)">${ap.recommendations.map(r => esc(r)).join(' ')}</div>
+                        </div>`;
+                    }).join('');
+                }
+
+                html += `</div>`;
+            }
+
             html += sorted.map(app => {
                 const stClass = app.status === 'COMPLIANT' ? 'st-compliant' : app.status === 'PARTIALLY_COMPLIANT' ? 'st-partial' : 'st-non';
                 const stLabel = app.status === 'COMPLIANT' ? 'Low Risk' : app.status === 'PARTIALLY_COMPLIANT' ? 'Moderate Risk' : 'High Risk';
@@ -332,15 +509,188 @@
                 </div>`;
             }).join('');
 
+            // Draft section: blurred preview (unpaid) or full draft (paid)
+            const hasGaps = apps.some(ap => ap.status !== 'COMPLIANT');
+            if (hasGaps) {
+                html += `<div class="draft-section" id="draft-section">
+                    <h2>Your Drafted Privacy Policy</h2>
+                    <div id="draft-body"></div>
+                </div>`;
+            }
+
             html += `
                 <div class="report-footer">
-                    <p>This report was generated by PrivacySorted, an automated Privacy Act compliance scanner.<br>
-                    For a detailed remediation plan, get in touch.</p>
+                    <p>This report was generated by PrivacySorted, an automated Privacy Act compliance scanner.</p>
                     <a href="/" class="cta-btn">Run your own free scan</a>
                 </div>
             `;
 
             document.getElementById('report-content').innerHTML = html;
+
+            // Handle draft section state
+            if (hasGaps) {
+                const params = new URLSearchParams(window.location.search);
+                const isPaid = params.get('paid') === 'true' || scan.paid;
+
+                if (isPaid) {
+                    showDraftPolling(slug);
+                } else {
+                    showDraftPreview(scan);
+                }
+            }
+        }
+
+        function showDraftPreview(scan) {
+            const a = scan.analysis;
+            const apps = a.apps || [];
+            const gapCount = apps.filter(ap => ap.status !== 'COMPLIANT').length;
+
+            // Generate preview text from gaps
+            const previewLines = [
+                `Privacy Policy — ${esc(scan.business_name || 'Your Business')}`,
+                '',
+                '1. About This Policy',
+                `This privacy policy sets out how ${esc(scan.business_name || 'we')} collect, use, disclose, and manage your personal information in accordance with the Privacy Act 1988 (Cth) and the 13 Australian Privacy Principles (APPs).`,
+                '',
+                `Our organisation is committed to protecting the privacy of personal information we collect and handle. This policy covers all personal information collected through our website (${esc(scan.url || '')}) and in the course of our business operations.`,
+                '',
+                '2. Collection of Personal Information',
+                'We collect personal information that is reasonably necessary for our business functions and activities. The types of personal information we collect include...',
+                '',
+                '3. How We Use Your Information',
+                'We use personal information collected for the primary purpose for which it was collected, and for related secondary purposes...',
+            ];
+
+            document.getElementById('draft-body').innerHTML = `
+                <p class="draft-subtitle">AI-generated policy tailored to your ${gapCount} compliance gaps</p>
+                <div class="draft-preview">
+                    <div class="draft-preview-text">${previewLines.join('\n')}</div>
+                </div>
+                <div class="draft-cta-overlay">
+                    <p>Get your complete, tailored privacy policy</p>
+                    <div class="price">$149</div>
+                    <div class="price-note">One-time purchase &middot; Instant delivery</div>
+                    <button class="draft-buy-btn" id="buy-btn" onclick="startCheckout('${scan.slug}', '${esc(scan.business_name || '')}')">
+                        Get Your Privacy Policy + Roadmap
+                    </button>
+                    <div class="draft-includes">
+                        <span>Drafted privacy policy</span>
+                        <span>Compliance roadmap PDF</span>
+                        <span>Covers all 13 APPs</span>
+                    </div>
+                </div>
+            `;
+        }
+
+        async function startCheckout(slug, businessName) {
+            const btn = document.getElementById('buy-btn');
+            btn.disabled = true;
+            btn.textContent = 'Redirecting to checkout...';
+
+            try {
+                const res = await fetch('/api/checkout', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ slug, business_name: businessName }),
+                });
+                const data = await res.json();
+
+                if (data.checkout_url) {
+                    window.location.href = data.checkout_url;
+                } else {
+                    btn.disabled = false;
+                    btn.textContent = 'Get Your Privacy Policy + Roadmap';
+                    alert('Something went wrong. Please try again.');
+                }
+            } catch (e) {
+                btn.disabled = false;
+                btn.textContent = 'Get Your Privacy Policy + Roadmap';
+                alert('Connection error. Please try again.');
+            }
+        }
+
+        async function showDraftPolling(slug) {
+            document.getElementById('draft-body').innerHTML = `
+                <p class="draft-subtitle">Your purchase is confirmed</p>
+                <div class="draft-generating">
+                    <div class="spinner"></div>
+                    <p>Generating your tailored privacy policy...<br>This usually takes 30–60 seconds.</p>
+                </div>
+            `;
+
+            // Poll for draft
+            let attempts = 0;
+            const maxAttempts = 60; // 3 minutes at 3s intervals
+
+            const poll = async () => {
+                attempts++;
+                try {
+                    const res = await fetch('/api/draft_status?slug=' + encodeURIComponent(slug));
+                    const data = await res.json();
+
+                    if (data.status === 'ready') {
+                        showFullDraft(data.draft_text);
+                        return;
+                    }
+                } catch (e) {}
+
+                if (attempts < maxAttempts) {
+                    setTimeout(poll, 3000);
+                } else {
+                    document.getElementById('draft-body').innerHTML = `
+                        <p class="draft-subtitle">Your policy is taking longer than expected</p>
+                        <p style="font-size:14px;color:var(--slate)">
+                            Your payment was successful. Please refresh this page in a few minutes,
+                            or contact us at hello@privacysorted.com if the issue persists.
+                        </p>
+                    `;
+                }
+            };
+
+            poll();
+        }
+
+        function showFullDraft(draftText) {
+            // Split disclaimer from policy body
+            const parts = draftText.split('---');
+            const disclaimer = (parts[0] || '').trim();
+            const body = (parts.slice(1, -1).join('---') || '').trim();
+            const footer = (parts[parts.length - 1] || '').trim();
+
+            document.getElementById('draft-body').innerHTML = `
+                <p class="draft-subtitle">Your tailored privacy policy is ready</p>
+                <div class="draft-disclaimer">${esc(disclaimer)}</div>
+                <div class="draft-full">${esc(body)}</div>
+                <div class="draft-disclaimer" style="margin-top:16px">${esc(footer)}</div>
+                <div class="draft-actions">
+                    <button onclick="copyDraft()">Copy to clipboard</button>
+                    <button class="primary" onclick="downloadDraft()">Download as text file</button>
+                </div>
+            `;
+
+            // Store for download/copy
+            window._draftText = draftText;
+        }
+
+        function copyDraft() {
+            if (window._draftText) {
+                navigator.clipboard.writeText(window._draftText).then(() => {
+                    const btns = document.querySelectorAll('.draft-actions button:not(.primary)');
+                    if (btns[0]) { btns[0].textContent = 'Copied!'; setTimeout(() => { btns[0].textContent = 'Copy to clipboard'; }, 2000); }
+                });
+            }
+        }
+
+        function downloadDraft() {
+            if (window._draftText) {
+                const blob = new Blob([window._draftText], { type: 'text/plain' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'privacy-policy-draft.txt';
+                a.click();
+                URL.revokeObjectURL(url);
+            }
         }
 
         loadReport().catch(() => {

@@ -11,6 +11,11 @@
       "use": "@vercel/static"
     }
   ],
+  "functions": {
+    "api/webhook.py": {
+      "maxDuration": 300
+    }
+  },
   "routes": [
     { "src": "/api/(.+)", "dest": "/api/$1.py" },
     { "src": "/dashboard", "dest": "/public/dashboard.html" },

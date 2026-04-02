@@ -168,6 +168,7 @@ class ComplianceEngine:
                 "status": analysis.status,
                 "findings": analysis.findings,
                 "gaps": analysis.gaps,
+                "recommendations": [analysis.recommended_language] if analysis.recommended_language else [],
                 "recommended_language": analysis.recommended_language,
                 "priority": analysis.priority,
             }
@@ -356,6 +357,7 @@ class ComplianceEngine:
                 "status": analysis.status,
                 "findings": analysis.findings,
                 "gaps": analysis.gaps,
+                "recommendations": [analysis.recommended_language] if analysis.recommended_language else [],
                 "recommended_language": analysis.recommended_language,
                 "priority": analysis.priority,
             }

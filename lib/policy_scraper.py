@@ -234,6 +234,75 @@ class PrivacyPolicyScraper:
             logger.warning(f"Request failed for {url}: {e}")
             return None
 
+    def _detect_js_redirect(self, html: str, base_url: str) -> Optional[str]:
+        """
+        Detect JavaScript or meta-refresh redirects in HTML.
+        Returns the redirect target URL, or None if no redirect found.
+        """
+        import re
+
+        # JS: window.location.href = "/path" or window.location = "/path"
+        # Also handles: window.onload=function(){window.location.href="/path"}
+        js_patterns = [
+            r'window\.location\.href\s*=\s*["\']([^"\']+)["\']',
+            r'window\.location\s*=\s*["\']([^"\']+)["\']',
+            r'location\.href\s*=\s*["\']([^"\']+)["\']',
+            r'location\.replace\s*\(\s*["\']([^"\']+)["\']',
+        ]
+        for pattern in js_patterns:
+            match = re.search(pattern, html)
+            if match:
+                target = match.group(1)
+                resolved = urljoin(base_url, target)
+                logger.info(f"Detected JS redirect: {target} -> {resolved}")
+                return resolved
+
+        # Meta refresh: <meta http-equiv="refresh" content="0;url=/path">
+        try:
+            soup = BeautifulSoup(html, 'html.parser')
+            meta = soup.find('meta', attrs={'http-equiv': re.compile(r'refresh', re.I)})
+            if meta and meta.get('content'):
+                content = meta['content']
+                url_match = re.search(r'url\s*=\s*(.+)', content, re.I)
+                if url_match:
+                    target = url_match.group(1).strip().strip('"\'')
+                    resolved = urljoin(base_url, target)
+                    logger.info(f"Detected meta redirect: {target} -> {resolved}")
+                    return resolved
+        except Exception:
+            pass
+
+        return None
+
+    def _fetch_page_following_redirects(self, url: str, max_redirects: int = 3) -> Optional[Tuple[str, int]]:
+        """Fetch a page, following JS/meta redirects up to max_redirects times."""
+        visited = set()
+        current_url = url
+
+        for _ in range(max_redirects + 1):
+            if current_url in visited:
+                break
+            visited.add(current_url)
+
+            result = self._fetch_page(current_url)
+            if result is None:
+                return None
+
+            html, status = result
+
+            # Check if this is a tiny page with a redirect
+            # Only follow redirects for small pages (likely stubs)
+            if len(html) < 1000:
+                redirect_url = self._detect_js_redirect(html, current_url)
+                if redirect_url and redirect_url not in visited:
+                    logger.info(f"Following redirect from {current_url} to {redirect_url}")
+                    current_url = redirect_url
+                    continue
+
+            return html, status
+
+        return result if result else None
+
     def _find_privacy_link_in_html(self, html: str, base_url: str) -> Optional[str]:
         """
         Search HTML for privacy policy links.
@@ -333,8 +402,8 @@ class PrivacyPolicyScraper:
 
         logger.info(f"Starting scrape for {url}")
 
-        # Try to fetch homepage first
-        html, status = self._fetch_page(url) or (None, None)
+        # Try to fetch homepage first (following JS/meta redirects)
+        html, status = self._fetch_page_following_redirects(url) or (None, None)
 
         if html is None:
             result['error'] = 'UNABLE_TO_FETCH_HOMEPAGE'
@@ -345,9 +414,9 @@ class PrivacyPolicyScraper:
         policy_url = self._find_privacy_link_in_html(html, url)
         policy_html = None
 
-        # If homepage link found, fetch it
+        # If homepage link found, fetch it (following JS redirects)
         if policy_url is not None:
-            policy_html, _ = self._fetch_page(policy_url) or (None, None)
+            policy_html, _ = self._fetch_page_following_redirects(policy_url) or (None, None)
 
         # If no link found (or link failed), try common paths in parallel
         if policy_html is None:
@@ -378,12 +447,19 @@ class PrivacyPolicyScraper:
 
         # Extract policy text if found
         if policy_url is not None and policy_html is not None:
-            result['policy_found'] = True
-            result['policy_url'] = policy_url
-            result['policy_text'] = self._extract_policy_text(policy_html)
-            logger.info(f"Successfully extracted policy from {policy_url}")
+            extracted = self._extract_policy_text(policy_html)
+            if extracted and extracted.strip():
+                result['policy_found'] = True
+                result['policy_url'] = policy_url
+                result['policy_text'] = extracted
+                logger.info(f"Successfully extracted policy from {policy_url}")
+            else:
+                result['policy_found'] = False
+                result['policy_url'] = policy_url
+                result['error'] = 'POLICY_PAGE_EMPTY'
+                logger.warning(f"Policy page found at {policy_url} but no text could be extracted")
         elif policy_url is not None:
-            result['policy_found'] = True
+            result['policy_found'] = False
             result['policy_url'] = policy_url
             result['error'] = 'UNABLE_TO_FETCH_POLICY'
             result['policy_text'] = ''

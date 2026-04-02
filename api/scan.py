@@ -45,15 +45,22 @@ def _run_scan(url, sector, business_name):
 
         policy_text = scrape_result.get('policy_text') if scrape_result['policy_found'] else None
 
+        # Treat empty/whitespace-only text as no policy found
+        if not policy_text or not policy_text.strip():
+            policy_text = None
+
         engine = ComplianceEngine()
         report = engine.analyze(policy_text, business_name, sector)
+
+        # Only mark policy_found if we actually extracted text
+        actually_found = policy_text is not None
 
         result = {
             'url': url,
             'sector': sector,
             'business_name': business_name,
-            'policy_found': scrape_result['policy_found'],
-            'policy_url': scrape_result.get('policy_url'),
+            'policy_found': actually_found,
+            'policy_url': scrape_result.get('policy_url') if actually_found else None,
             'policy_excerpt': _extract_excerpt(policy_text),
             'analysis': {
                 'business_name': business_name,
