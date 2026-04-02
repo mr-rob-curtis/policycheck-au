@@ -396,10 +396,80 @@ class ComplianceEngine:
     # ADM TRANSPARENCY ANALYSIS (NEW from 10 December 2026)
     # ========================================================================================
 
+    # Sector-specific ADM examples and likelihood
+    ADM_SECTOR_RELEVANCE = {
+        'real_estate': {
+            'likelihood': 'LIKELY',
+            'examples': 'automated tenant screening, rental application scoring, property valuation algorithms',
+            'plain': 'If you use software that automatically scores or rejects rental applications, that counts as automated decision-making.',
+        },
+        'finance': {
+            'likelihood': 'HIGH',
+            'examples': 'credit scoring, loan eligibility, insurance risk assessment, fraud detection',
+            'plain': 'Credit checks, loan approvals, and insurance quotes almost always use automated scoring. This requirement very likely applies to you.',
+        },
+        'accounting': {
+            'likelihood': 'LOW',
+            'examples': 'automated tax calculations, client risk scoring',
+            'plain': 'Unless you use software that automatically categorises clients or determines service eligibility, this probably doesn\'t apply to your practice.',
+        },
+        'legal': {
+            'likelihood': 'LOW',
+            'examples': 'automated document review, conflict checking systems',
+            'plain': 'Most law firms don\'t use ADM with significant effect on individuals. Conflict checking systems may qualify if they auto-reject clients.',
+        },
+        'healthcare': {
+            'likelihood': 'LIKELY',
+            'examples': 'automated triage, diagnostic algorithms, appointment prioritisation',
+            'plain': 'If you use software that triages patients or prioritises appointments based on symptoms, that may count as ADM.',
+        },
+        'dental': {
+            'likelihood': 'LOW',
+            'examples': 'automated treatment planning software',
+            'plain': 'Most dental practices don\'t use automated systems that make decisions about patients. This is unlikely to apply.',
+        },
+        'retail': {
+            'likelihood': 'LOW',
+            'examples': 'automated pricing, personalised recommendations',
+            'plain': 'Unless you use algorithms that set different prices for different customers or auto-reject warranty claims, this probably doesn\'t apply.',
+        },
+        'hospitality': {
+            'likelihood': 'LOW',
+            'examples': 'automated booking systems, dynamic pricing',
+            'plain': 'Standard booking and POS systems don\'t typically qualify. Dynamic pricing that affects individual customers could.',
+        },
+        'automotive': {
+            'likelihood': 'LIKELY',
+            'examples': 'automated finance eligibility, trade-in valuation algorithms',
+            'plain': 'If your finance pre-approval process uses automated scoring to approve or reject customers, this applies to you.',
+        },
+        'technology': {
+            'likelihood': 'HIGH',
+            'examples': 'content moderation, algorithmic recommendations, automated account decisions',
+            'plain': 'Tech companies commonly use algorithms that affect users. Content filtering, account suspension, and recommendation systems may all qualify.',
+        },
+        'construction': {
+            'likelihood': 'LOW',
+            'examples': 'automated quoting systems',
+            'plain': 'Most construction businesses don\'t use ADM that significantly affects individuals. This is unlikely to apply.',
+        },
+        'education': {
+            'likelihood': 'LIKELY',
+            'examples': 'automated grading, admission scoring, plagiarism detection',
+            'plain': 'Automated grading and admission scoring systems that affect student outcomes qualify as ADM.',
+        },
+        'pharmacy': {
+            'likelihood': 'LOW',
+            'examples': 'automated drug interaction checking',
+            'plain': 'Drug interaction alerts are safety features, not decisions with legal effect. This is unlikely to apply to your pharmacy.',
+        },
+    }
+
     def _analyze_adm(self, policy_text: str, sector: str) -> ADMAnalysis:
         """
-        Analyze whether policy discloses automated decision-making
-        New requirement from 10 December 2026
+        Analyze whether policy discloses automated decision-making.
+        Provides sector-specific guidance on whether ADM is likely relevant.
+        New requirement from 10 December 2026.
         """
         critical_phrases = [
             "automated decision",
@@ -417,31 +487,51 @@ class ComplianceEngine:
 
         found_phrases = self._find_phrases_in_text(policy_text, critical_phrases)
 
+        # Get sector-specific ADM context
+        sector_key = sector.lower().replace(" ", "_")
+        sector_adm = self.ADM_SECTOR_RELEVANCE.get(sector_key, {})
+        likelihood = sector_adm.get('likelihood', 'UNKNOWN')
+        sector_examples = sector_adm.get('examples', 'credit scoring, eligibility decisions')
+        sector_plain = sector_adm.get('plain', '')
+
         if len(found_phrases) == 0:
             uses_adm = "UNKNOWN"
             adm_disclosed = False
             examples = []
-            recommendation = (
-                "From 10 December 2026, if you use automated decision-making with legal or "
-                "similarly significant effect (e.g., credit scoring, eligibility decisions), "
-                "you must disclose: (1) the use of automated systems; (2) how they work; "
-                "(3) personal information used; (4) the significant effect; (5) mechanism to "
-                "request human review; and (6) right to object."
-            )
+
+            if likelihood in ('HIGH', 'LIKELY'):
+                recommendation = (
+                    f"New rule from 10 December 2026: {sector_plain} "
+                    f"Common examples in your sector: {sector_examples}. "
+                    "If this applies, your policy must explain: what automated systems you use, "
+                    "what personal information feeds into them, how customers can request a human review, "
+                    "and how they can object to the decision."
+                )
+            else:
+                recommendation = (
+                    f"New rule from 10 December 2026 about automated decision-making. "
+                    f"{sector_plain} "
+                    f"If you do use automated systems (e.g., {sector_examples}), "
+                    "you'll need to disclose this and offer customers the right to request human review."
+                )
         elif len(found_phrases) >= 3:
             uses_adm = "YES"
             adm_disclosed = True
             examples = found_phrases
-            recommendation = "Your policy adequately discloses automated decision-making. Ensure you have processes for human review requests."
+            recommendation = (
+                "Your policy mentions automated decision-making. Check it covers all six requirements: "
+                "(1) what systems you use, (2) how they work, (3) what data feeds in, "
+                "(4) how customers are affected, (5) how to request human review, (6) how to object."
+            )
         else:
             uses_adm = "YES"
             adm_disclosed = False
             examples = found_phrases
             recommendation = (
-                "Your policy mentions automated systems but does not fully comply with the "
-                "10 December 2026 ADM transparency requirement. Add explicit disclosure of: "
-                "how the system works, personal information used, significant effects, and "
-                "mechanisms for human review and objection."
+                f"Your policy mentions automated systems but doesn't fully meet the 10 December 2026 requirement. "
+                f"You need to add: how the system works, what personal information it uses, "
+                f"the effect on the individual, and a clear process for requesting human review and objecting. "
+                f"In your sector, this typically covers: {sector_examples}."
             )
 
         return ADMAnalysis(
@@ -845,14 +935,25 @@ class ComplianceEngine:
         if app_statuses.get(5) in (ComplianceStatus.NON_COMPLIANT, ComplianceStatus.NOT_ADDRESSED):
             steps.append("Add a collection notice explaining what you collect, why, and who you share it with")
 
-        # Always add ADM reminder
-        steps.append("Prepare for the 10 December 2026 automated decision-making transparency requirement")
+        # Add sector-aware ADM reminder
+        sector_key = sector.lower().replace(" ", "_")
+        sector_adm = self.ADM_SECTOR_RELEVANCE.get(sector_key, {})
+        adm_likelihood = sector_adm.get('likelihood', 'UNKNOWN')
+        adm_plain = sector_adm.get('plain', '')
+
+        if adm_likelihood in ('HIGH', 'LIKELY'):
+            steps.append(f"10 Dec 2026 deadline: New automated decision-making rules likely apply to you. {adm_plain}")
+        elif adm_plain:
+            steps.append(f"10 Dec 2026: New automated decision-making rules take effect. {adm_plain}")
+        else:
+            steps.append("10 Dec 2026: Check if the new automated decision-making transparency rules apply to your business")
 
         # If everything looks good
         if not critical_gaps and not important_gaps and not minor_gaps:
+            adm_step = f"10 Dec 2026: New automated decision-making rules take effect. {adm_plain}" if adm_plain else "10 Dec 2026: Check if the new automated decision-making transparency rules apply to your business"
             steps = [
                 "Your policy covers the key requirements. Review it annually to stay current.",
-                "Prepare for the 10 December 2026 automated decision-making transparency requirement",
+                adm_step,
             ]
 
         return steps

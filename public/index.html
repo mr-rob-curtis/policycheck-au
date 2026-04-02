@@ -820,6 +820,19 @@
                 `;
             }).join('');
 
+            // ADM transparency callout
+            const adm = a.adm_check;
+            if (adm && adm.recommendation) {
+                const admColor = adm.uses_adm === 'YES' && !adm.adm_disclosed ? 'var(--amber)' : 'var(--slate)';
+                container.innerHTML += `
+                    <div class="issue-card" style="border-left: 3px solid ${admColor}; background: var(--gray-50);">
+                        <span class="issue-badge" style="background: #fef3c7; color: var(--amber);">Upcoming · 10 Dec 2026</span>
+                        <h3>Automated Decision-Making Transparency</h3>
+                        <p class="issue-explanation">${escapeHtml(adm.recommendation)}</p>
+                    </div>
+                `;
+            }
+
             // Issues 3-6: progressively blurred (readable with effort)
             const squintable = apps.slice(2, 6);
             // Issues 7+: fully obscured
