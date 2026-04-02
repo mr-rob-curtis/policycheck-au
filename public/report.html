@@ -147,29 +147,39 @@
         .st-partial { background: #fffbeb; color: var(--amber); }
         .st-non { background: #fef2f2; color: var(--red); }
 
-        .gap-list {
-            list-style: none;
-            padding: 0;
-            margin: 8px 0 0;
-        }
-        .gap-list li {
-            font-size: 13px;
+        .gap-summary {
+            font-size: 14px;
             color: var(--slate);
-            padding: 4px 0 4px 16px;
-            position: relative;
+            margin: 8px 0 4px;
         }
-        .gap-list li::before {
-            content: '!';
-            position: absolute;
-            left: 0;
-            color: var(--red);
-            font-weight: 700;
-            font-size: 12px;
+        .rec-text {
+            font-size: 13px;
+            color: var(--navy);
+            padding: 10px 14px;
+            background: var(--gray-50);
+            border-radius: 6px;
+            margin: 8px 0 12px;
         }
-        .rec-list li::before {
-            content: '\2192';
-            color: var(--teal);
+        .app-cta {
+            display: inline-block;
+            padding: 8px 18px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            border: none;
         }
+        .app-cta-primary {
+            background: var(--teal);
+            color: var(--white);
+        }
+        .app-cta-primary:hover { background: var(--teal-dark); }
+        .app-cta-secondary {
+            background: var(--gray-100);
+            color: var(--navy);
+        }
+        .app-cta-secondary:hover { background: var(--gray-200); }
         .no-gaps {
             font-size: 13px;
             color: var(--slate-light);
@@ -485,19 +495,24 @@
 
             html += sorted.map(app => {
                 const stClass = app.status === 'COMPLIANT' ? 'st-compliant' : app.status === 'PARTIALLY_COMPLIANT' ? 'st-partial' : 'st-non';
-                const stLabel = app.status === 'COMPLIANT' ? 'Low Risk' : app.status === 'PARTIALLY_COMPLIANT' ? 'Moderate Risk' : 'High Risk';
+                const stLabel = app.status === 'COMPLIANT' ? 'Compliant' : app.status === 'PARTIALLY_COMPLIANT' ? 'Needs Work' : 'Action Required';
                 const gaps = app.gaps || [];
                 const recs = app.recommendations || [];
 
                 let body = '';
-                if (gaps.length > 0) {
-                    body += `<ul class="gap-list">${gaps.map(g => `<li>${esc(g)}</li>`).join('')}</ul>`;
-                }
-                if (recs.length > 0) {
-                    body += `<ul class="gap-list rec-list" style="margin-top:6px">${recs.map(r => `<li>${esc(r)}</li>`).join('')}</ul>`;
-                }
-                if (!gaps.length && !recs.length) {
-                    body = '<p class="no-gaps">No gaps identified</p>';
+                if (app.status === 'COMPLIANT') {
+                    body = '<p class="no-gaps">Your policy covers this requirement.</p>';
+                } else {
+                    // Show consolidated gap summary (1 line)
+                    if (gaps.length > 0) {
+                        body += `<p class="gap-summary">${esc(gaps[0])}</p>`;
+                    }
+                    // Show recommendation
+                    if (recs.length > 0) {
+                        body += `<p class="rec-text"><strong>What to do:</strong> ${esc(recs[0])}</p>`;
+                    }
+                    // CTA button based on APP type
+                    body += getAppCTA(app.app_number, app.status);
                 }
 
                 return `<div class="app-card">
@@ -508,6 +523,34 @@
                     ${body}
                 </div>`;
             }).join('');
+
+            function getAppCTA(appNum, status) {
+                // CTA mapping: which APPs can we solve with our product vs external guidance
+                const ctaMap = {
+                    // Privacy policy content gaps - we can generate this
+                    1:  { primary: 'Update Your Privacy Policy', type: 'policy' },
+                    2:  { primary: 'Update Your Privacy Policy', type: 'policy' },
+                    3:  { primary: 'Update Your Privacy Policy', type: 'policy' },
+                    4:  { primary: 'Update Your Privacy Policy', type: 'policy' },
+                    5:  { primary: 'Update Your Privacy Policy', type: 'policy' },
+                    6:  { primary: 'Update Your Privacy Policy', type: 'policy' },
+                    7:  { primary: 'Update Your Privacy Policy', type: 'policy', secondary: 'Guide: Email Marketing Compliance', guide: 'marketing' },
+                    8:  { primary: 'Update Your Privacy Policy', type: 'policy', secondary: 'Guide: Cloud & Overseas Data', guide: 'overseas' },
+                    9:  { primary: 'Update Your Privacy Policy', type: 'policy' },
+                    10: { primary: 'Update Your Privacy Policy', type: 'policy' },
+                    11: { primary: 'Update Your Privacy Policy', type: 'policy', secondary: 'Guide: Data Security Basics', guide: 'security' },
+                    12: { primary: 'Update Your Privacy Policy', type: 'policy' },
+                    13: { primary: 'Update Your Privacy Policy', type: 'policy' },
+                };
+                const cta = ctaMap[appNum] || { primary: 'Update Your Privacy Policy', type: 'policy' };
+                let html = `<div style="display:flex;gap:8px;flex-wrap:wrap;">`;
+                html += `<a class="app-cta app-cta-primary" href="#draft-section" onclick="scrollToDraft()">${cta.primary}</a>`;
+                if (cta.secondary) {
+                    html += `<a class="app-cta app-cta-secondary" href="/guides/${cta.guide}" target="_blank">${cta.secondary}</a>`;
+                }
+                html += `</div>`;
+                return html;
+            }
 
             // Draft section: blurred preview (unpaid) or full draft (paid)
             const hasGaps = apps.some(ap => ap.status !== 'COMPLIANT');
@@ -691,6 +734,11 @@
                 a.click();
                 URL.revokeObjectURL(url);
             }
+        }
+
+        function scrollToDraft() {
+            const el = document.getElementById('draft-section');
+            if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
 
         loadReport().catch(() => {

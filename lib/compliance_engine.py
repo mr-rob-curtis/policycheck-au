@@ -309,8 +309,9 @@ class ComplianceEngine:
         sector: str,
     ) -> ComplianceReport:
         """
-        Analyze case where business has no privacy policy
-        ALL APPs will be NOT_ADDRESSED
+        Analyze case where business has no privacy policy.
+        Returns a concise report focused on the single critical action:
+        create a privacy policy.
         """
         app_analyses = {}
         app_statuses = {}
@@ -318,15 +319,16 @@ class ComplianceEngine:
         for app_num in range(1, 14):
             app_def = self.app_requirements.get_app(app_num)
             app_name = app_def.get("name", "Unknown")
+            gap_info = self.CONSOLIDATED_GAPS.get(app_num, {})
 
             analysis = APPAnalysis(
                 app_number=app_num,
                 app_name=app_name,
                 status=ComplianceStatus.NOT_ADDRESSED.value,
-                findings=["No privacy policy exists"],
-                gaps=["Entire APP not addressed"],
-                recommended_language=GAP_RECOMMENDATIONS.get_gap_recommendation(
-                    app_num, "no_privacy_policy"
+                findings=["Not addressed. You need a privacy policy."],
+                gaps=[gap_info.get('full', f"APP {app_num} not addressed")],
+                recommended_language=self._get_specific_recommendation(
+                    app_num, ComplianceStatus.NON_COMPLIANT, [], ["missing"], sector
                 ),
                 priority=self.scoring_rules.get_priority_for_app(app_num),
                 confidence=1.0,
@@ -335,13 +337,8 @@ class ComplianceEngine:
             app_analyses[app_num] = analysis
             app_statuses[app_num] = ComplianceStatus.NOT_ADDRESSED
 
-        # ADM check (also not addressed)
-        adm_analysis = ADMAnalysis(
-            uses_adm="UNKNOWN",
-            adm_disclosed=False,
-            examples_found=[],
-            recommendation="A privacy policy must be created before ADM transparency can be assessed.",
-        )
+        # ADM check
+        adm_analysis = self._analyze_adm("", sector)
 
         # Build summary
         summary = {
@@ -366,17 +363,11 @@ class ComplianceEngine:
             for analysis in app_analyses.values()
         ]
 
-        # Get sector guidance
         sector_risk = SectorRiskAssessment.get_risk_profile(sector)
 
-        # Generate next steps
-        next_steps = [
-            "CRITICAL: Create a comprehensive privacy policy addressing all 13 APPs",
-            "Refer to sector-specific guidance for priority requirements",
-            "Include all required privacy notices and contact information",
-            "Establish access and correction request procedures",
-            "Implement security measures for personal information",
-        ]
+        next_steps = self._generate_next_steps(
+            ComplianceStatus.NON_COMPLIANT.value, sector, app_statuses
+        )
 
         return ComplianceReport(
             business_name=business_name,
@@ -766,6 +757,63 @@ class ComplianceEngine:
 
         return found
 
+    # Consolidated gap descriptions: one clear summary per APP instead of
+    # repeating near-identical descriptions for each missing keyword.
+    CONSOLIDATED_GAPS = {
+        1: {
+            'full': "No privacy policy with contact details and complaint process",
+            'partial': "Missing privacy contact details or complaint process",
+        },
+        2: {
+            'full': "No statement on anonymous or pseudonymous dealings",
+            'partial': "Doesn't explain when anonymity is or isn't practical",
+        },
+        3: {
+            'full': "No description of what personal information is collected or why",
+            'partial': "Collection practices described but incomplete",
+        },
+        4: {
+            'full': "No process for handling unsolicited personal information",
+            'partial': "Unsolicited information process is incomplete",
+        },
+        5: {
+            'full': "No collection notice (what you collect, why, who gets it)",
+            'partial': "Collection notice is missing key details",
+        },
+        6: {
+            'full': "No explanation of how personal information is used or shared",
+            'partial': "Use and disclosure practices need more detail",
+        },
+        7: {
+            'full': "No direct marketing policy or opt-out mechanism",
+            'partial': "Marketing opt-out process is incomplete",
+        },
+        8: {
+            'full': "No disclosure about overseas data transfers",
+            'partial': "Overseas disclosure missing countries or safeguards",
+        },
+        9: {
+            'full': "No policy on handling government identifiers (TFN, licence, Medicare)",
+            'partial': "Government identifier handling needs more detail",
+        },
+        10: {
+            'full': "No commitment to data accuracy, currency, or retention",
+            'partial': "Data quality commitments are incomplete",
+        },
+        11: {
+            'full': "No security measures, breach plan, or data disposal process described",
+            'partial': "Security section missing breach response or disposal process",
+        },
+        12: {
+            'full': "No process for individuals to access their personal information",
+            'partial': "Access request process missing timeframes or details",
+        },
+        13: {
+            'full': "No process for correcting inaccurate personal information",
+            'partial': "Correction process missing details or timeframes",
+        },
+    }
+
     def _identify_gaps(
         self,
         app_num: int,
@@ -773,14 +821,19 @@ class ComplianceEngine:
         expected_phrases: List[str],
     ) -> List[str]:
         """
-        Identify which expected phrases were not found,
-        returning human-readable gap descriptions.
+        Return a single consolidated gap description per APP instead of
+        one per missing keyword. Avoids redundant bullet points.
         """
         missing = [p for p in expected_phrases if p not in found_phrases]
-        return [
-            APPRequirements.get_gap_description(app_num, phrase)
-            for phrase in missing
-        ]
+        if not missing:
+            return []
+
+        gap_info = self.CONSOLIDATED_GAPS.get(app_num, {})
+        # If all phrases are missing, use 'full' description
+        if len(missing) == len(expected_phrases):
+            return [gap_info.get('full', f"APP {app_num} not addressed in policy")]
+        else:
+            return [gap_info.get('partial', f"APP {app_num} partially addressed")]
 
     def _determine_gap_type(self, app_num: int, gaps: List[str]) -> str:
         """

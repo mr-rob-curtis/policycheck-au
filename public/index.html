@@ -751,8 +751,10 @@
             const compliantCount = allApps.filter(app => app.status === 'COMPLIANT').length;
             const partialCount = allApps.filter(app => app.status === 'PARTIALLY_COMPLIANT').length;
             const nonCompliantCount = allApps.filter(app => app.status === 'NON_COMPLIANT' || app.status === 'NOT_ADDRESSED').length;
-            document.getElementById('result-subtitle').textContent =
-                `${compliantCount} compliant, ${partialCount} partial, ${nonCompliantCount} gaps across 13 APPs`;
+            const subtitle = !data.policy_found
+                ? 'No privacy policy found on your website'
+                : `${compliantCount} compliant, ${partialCount} partial, ${nonCompliantCount} gaps across 13 APPs`;
+            document.getElementById('result-subtitle').textContent = subtitle;
 
             // Show action plan first if there are next steps
             const nextSteps = a.next_steps || [];
@@ -816,6 +818,9 @@
                         ${rec ? `<p class="issue-explanation" style="margin-top: 10px; padding: 10px 14px; background: var(--gray-50); border-radius: 6px; font-size: 13px;">
                             <strong>What to do:</strong> ${escapeHtml(rec)}
                         </p>` : ''}
+                        <div style="margin-top: 12px;">
+                            <a href="/report/${data.slug || ''}" style="display:inline-block;padding:8px 18px;background:var(--teal);color:white;border-radius:6px;font-size:13px;font-weight:600;text-decoration:none;">Update Your Privacy Policy</a>
+                        </div>
                     </div>
                 `;
             }).join('');
