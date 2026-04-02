@@ -1,1 +1,248 @@
-{"url": "https://example.com", "sector": "Other", "business_name": "Test Biz", "policy_found": true, "policy_url": "https://example.com/privacy", "policy_excerpt": "Privacy policy text here.", "analysis": {"business_name": "Test Biz", "sector": "Other", "overall_score": 65, "overall_status": "Partially Compliant", "analysis_date": "2026-04-01", "analysis_mode": "rule_based", "apps": [{"app_number": 1, "status": "COMPLIANT"}], "adm_check": {"uses_adm": "NO"}, "summary": {"compliant_count": 1}, "sector_risk_profile": {}, "next_steps": ["Review APP 2"]}, "slug": "test-biz"}
+{
+  "url": "https://example.com",
+  "sector": "Other",
+  "business_name": "Test Biz",
+  "policy_found": true,
+  "policy_url": "https://example.com/privacy",
+  "policy_excerpt": "Privacy policy text here.",
+  "analysis": {
+    "business_name": "Test Biz",
+    "sector": "Other",
+    "overall_score": 18,
+    "overall_status": "NON_COMPLIANT",
+    "analysis_date": "2026-04-02T22:03:28.609351",
+    "analysis_mode": "rule_based",
+    "apps": [
+      {
+        "app_number": 1,
+        "app_name": "Open and transparent management of personal information",
+        "status": "PARTIALLY_COMPLIANT",
+        "findings": [
+          "Covers: privacy policy. Missing: Missing privacy contact details or complaint process"
+        ],
+        "gaps": [
+          "Missing privacy contact details or complaint process"
+        ],
+        "recommendations": [
+          "Add a named privacy contact with phone and email. Include a clear complaint process that mentions the OAIC as escalation."
+        ],
+        "recommended_language": "Add a named privacy contact with phone and email. Include a clear complaint process that mentions the OAIC as escalation.",
+        "priority": "CRITICAL"
+      },
+      {
+        "app_number": 2,
+        "app_name": "Anonymity and pseudonymity",
+        "status": "NON_COMPLIANT",
+        "findings": [
+          "Not addressed in your policy. You need to add: No statement on anonymous or pseudonymous dealings"
+        ],
+        "gaps": [
+          "No statement on anonymous or pseudonymous dealings"
+        ],
+        "recommendations": [
+          "Add a statement about whether customers can interact anonymously. Most businesses in your sector need to verify identity, so explain why."
+        ],
+        "recommended_language": "Add a statement about whether customers can interact anonymously. Most businesses in your sector need to verify identity, so explain why.",
+        "priority": "MEDIUM"
+      },
+      {
+        "app_number": 3,
+        "app_name": "Collection of solicited personal information",
+        "status": "NON_COMPLIANT",
+        "findings": [
+          "Not addressed in your policy. You need to add: No description of what personal information is collected or why"
+        ],
+        "gaps": [
+          "No description of what personal information is collected or why"
+        ],
+        "recommendations": [
+          "Document what personal information you collect, why it's necessary for your business, and how you ensure it's accurate."
+        ],
+        "recommended_language": "Document what personal information you collect, why it's necessary for your business, and how you ensure it's accurate.",
+        "priority": "HIGH"
+      },
+      {
+        "app_number": 4,
+        "app_name": "Dealing with unsolicited personal information",
+        "status": "NON_COMPLIANT",
+        "findings": [
+          "Not addressed in your policy. You need to add: No process for handling unsolicited personal information"
+        ],
+        "gaps": [
+          "No process for handling unsolicited personal information"
+        ],
+        "recommendations": [
+          "Add a section explaining what happens when you receive personal information you didn't ask for."
+        ],
+        "recommended_language": "Add a section explaining what happens when you receive personal information you didn't ask for.",
+        "priority": "MEDIUM"
+      },
+      {
+        "app_number": 5,
+        "app_name": "Notification of the collection of personal information",
+        "status": "NON_COMPLIANT",
+        "findings": [
+          "Not addressed in your policy. You need to add: No collection notice (what you collect, why, who gets it)"
+        ],
+        "gaps": [
+          "No collection notice (what you collect, why, who gets it)"
+        ],
+        "recommendations": [
+          "Add a collection notice explaining: what you collect, why, who you share it with, whether it goes overseas, and how to access or correct it."
+        ],
+        "recommended_language": "Add a collection notice explaining: what you collect, why, who you share it with, whether it goes overseas, and how to access or correct it.",
+        "priority": "CRITICAL"
+      },
+      {
+        "app_number": 6,
+        "app_name": "Use or disclosure of personal information",
+        "status": "NON_COMPLIANT",
+        "findings": [
+          "Not addressed in your policy. You need to add: No explanation of how personal information is used or shared"
+        ],
+        "gaps": [
+          "No explanation of how personal information is used or shared"
+        ],
+        "recommendations": [
+          "Explain how you use personal information, who you share it with, and under what circumstances. List the types of third parties."
+        ],
+        "recommended_language": "Explain how you use personal information, who you share it with, and under what circumstances. List the types of third parties.",
+        "priority": "HIGH"
+      },
+      {
+        "app_number": 7,
+        "app_name": "Direct marketing",
+        "status": "NON_COMPLIANT",
+        "findings": [
+          "Not addressed in your policy. You need to add: No direct marketing policy or opt-out mechanism"
+        ],
+        "gaps": [
+          "No direct marketing policy or opt-out mechanism"
+        ],
+        "recommendations": [
+          "Add a direct marketing section. Explain what marketing you send, how to opt out, and commit to honouring opt-out requests promptly."
+        ],
+        "recommended_language": "Add a direct marketing section. Explain what marketing you send, how to opt out, and commit to honouring opt-out requests promptly.",
+        "priority": "MEDIUM"
+      },
+      {
+        "app_number": 8,
+        "app_name": "Cross-border disclosure of personal information",
+        "status": "NON_COMPLIANT",
+        "findings": [
+          "Not addressed in your policy. You need to add: No disclosure about overseas data transfers"
+        ],
+        "gaps": [
+          "No disclosure about overseas data transfers"
+        ],
+        "recommendations": [
+          "Disclose whether personal information is stored or processed overseas. If you use cloud services (almost every business does), this likely applies to you."
+        ],
+        "recommended_language": "Disclose whether personal information is stored or processed overseas. If you use cloud services (almost every business does), this likely applies to you.",
+        "priority": "MEDIUM"
+      },
+      {
+        "app_number": 9,
+        "app_name": "Adoption, use or disclosure of government related identifiers",
+        "status": "NON_COMPLIANT",
+        "findings": [
+          "Not addressed in your policy. You need to add: No policy on handling government identifiers (TFN, licence, Medicare)"
+        ],
+        "gaps": [
+          "No policy on handling government identifiers (TFN, licence, Medicare)"
+        ],
+        "recommendations": [
+          "If you collect government IDs (driver's licence for verification, TFN for tax), explain how you protect them and that you don't use them as your customer identifier."
+        ],
+        "recommended_language": "If you collect government IDs (driver's licence for verification, TFN for tax), explain how you protect them and that you don't use them as your customer identifier.",
+        "priority": "MEDIUM"
+      },
+      {
+        "app_number": 10,
+        "app_name": "Quality of personal information",
+        "status": "NON_COMPLIANT",
+        "findings": [
+          "Not addressed in your policy. You need to add: No commitment to data accuracy, currency, or retention"
+        ],
+        "gaps": [
+          "No commitment to data accuracy, currency, or retention"
+        ],
+        "recommendations": [
+          "Add commitments to keeping personal information accurate, up-to-date, and relevant. Include a data retention policy."
+        ],
+        "recommended_language": "Add commitments to keeping personal information accurate, up-to-date, and relevant. Include a data retention policy.",
+        "priority": "LOW"
+      },
+      {
+        "app_number": 11,
+        "app_name": "Security of personal information",
+        "status": "NON_COMPLIANT",
+        "findings": [
+          "Not addressed in your policy. You need to add: No security measures, breach plan, or data disposal process described"
+        ],
+        "gaps": [
+          "No security measures, breach plan, or data disposal process described"
+        ],
+        "recommendations": [
+          "Add a security section covering: how you protect data (encryption, access controls), what happens in a breach, and how you dispose of data you no longer need."
+        ],
+        "recommended_language": "Add a security section covering: how you protect data (encryption, access controls), what happens in a breach, and how you dispose of data you no longer need.",
+        "priority": "CRITICAL"
+      },
+      {
+        "app_number": 12,
+        "app_name": "Access to personal information",
+        "status": "NON_COMPLIANT",
+        "findings": [
+          "Not addressed in your policy. You need to add: No process for individuals to access their personal information"
+        ],
+        "gaps": [
+          "No process for individuals to access their personal information"
+        ],
+        "recommendations": [
+          "Add an access rights section. Individuals have the right to request a copy of their personal information. Explain how to make a request and your 30-day response commitment."
+        ],
+        "recommended_language": "Add an access rights section. Individuals have the right to request a copy of their personal information. Explain how to make a request and your 30-day response commitment.",
+        "priority": "HIGH"
+      },
+      {
+        "app_number": 13,
+        "app_name": "Correction of personal information",
+        "status": "NON_COMPLIANT",
+        "findings": [
+          "Not addressed in your policy. You need to add: No process for correcting inaccurate personal information"
+        ],
+        "gaps": [
+          "No process for correcting inaccurate personal information"
+        ],
+        "recommendations": [
+          "Add a correction section. Individuals can request corrections to inaccurate information. Explain the process and that correction requests are free."
+        ],
+        "recommended_language": "Add a correction section. Individuals can request corrections to inaccurate information. Explain the process and that correction requests are free.",
+        "priority": "HIGH"
+      }
+    ],
+    "adm_check": {
+      "uses_adm": "UNKNOWN",
+      "adm_disclosed": false,
+      "examples_found": [],
+      "recommendation": "New rule from 10 December 2026 about automated decision-making.  If you do use automated systems (e.g., credit scoring, eligibility decisions), you'll need to disclose this and offer customers the right to request human review."
+    },
+    "summary": {
+      "compliant_count": 0,
+      "partial_count": 1,
+      "non_compliant_count": 12,
+      "not_addressed_count": 0
+    },
+    "sector_risk_profile": {},
+    "next_steps": [
+      "Week 1-2: Fix critical gaps first: Collection Notice (APP 5), Security (APP 11)",
+      "Week 3-4: Address important gaps: Solicited Collection (APP 3), Use & Disclosure (APP 6), Access Rights (APP 12), Correction (APP 13)",
+      "Week 5-6: Complete remaining gaps: Anonymity (APP 2), Unsolicited Collection (APP 4), Marketing (APP 7), Overseas Disclosure (APP 8), Government ID (APP 9), Data Quality (APP 10)",
+      "Document your security measures: how you store data, who can access it, and your breach response plan",
+      "Add a collection notice explaining what you collect, why, and who you share it with",
+      "10 Dec 2026: Check if the new automated decision-making transparency rules apply to your business"
+    ]
+  },
+  "slug": "test-biz"
+}

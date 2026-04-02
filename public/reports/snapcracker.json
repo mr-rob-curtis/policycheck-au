@@ -9,7 +9,7 @@
     "sector": "technology",
     "overall_score": 0,
     "overall_status": "NON_COMPLIANT",
-    "analysis_date": "2026-04-02T14:41:40.864075",
+    "analysis_date": "2026-04-02T22:03:28.606887",
     "analysis_mode": "rule_based",
     "apps": [
       {
@@ -17,15 +17,15 @@
         "app_name": "Open and transparent management of personal information",
         "status": "NOT_ADDRESSED",
         "findings": [
-          "No privacy policy exists"
+          "Not addressed. You need a privacy policy."
         ],
         "gaps": [
-          "Entire APP not addressed"
+          "No privacy policy with contact details and complaint process"
         ],
         "recommendations": [
-          "\nRECOMMENDED: \"We are committed to protecting your privacy. This Privacy Policy sets out how\nwe collect, use, disclose, and manage personal information in accordance with the Australian\nPrivacy Act 1988 (Cth).\"\n"
+          "Publish a privacy policy that names your privacy contact, explains what information you collect and why, and includes a complaint process."
         ],
-        "recommended_language": "\nRECOMMENDED: \"We are committed to protecting your privacy. This Privacy Policy sets out how\nwe collect, use, disclose, and manage personal information in accordance with the Australian\nPrivacy Act 1988 (Cth).\"\n",
+        "recommended_language": "Publish a privacy policy that names your privacy contact, explains what information you collect and why, and includes a complaint process.",
         "priority": "CRITICAL"
       },
       {
@@ -33,13 +33,15 @@
         "app_name": "Anonymity and pseudonymity",
         "status": "NOT_ADDRESSED",
         "findings": [
-          "No privacy policy exists"
+          "Not addressed. You need a privacy policy."
         ],
         "gaps": [
-          "Entire APP not addressed"
+          "No statement on anonymous or pseudonymous dealings"
         ],
-        "recommendations": [],
-        "recommended_language": "",
+        "recommendations": [
+          "Add a statement about whether customers can interact anonymously. Most businesses in your sector need to verify identity, so explain why."
+        ],
+        "recommended_language": "Add a statement about whether customers can interact anonymously. Most businesses in your sector need to verify identity, so explain why.",
         "priority": "MEDIUM"
       },
       {
@@ -47,13 +49,15 @@
         "app_name": "Collection of solicited personal information",
         "status": "NOT_ADDRESSED",
         "findings": [
-          "No privacy policy exists"
+          "Not addressed. You need a privacy policy."
         ],
         "gaps": [
-          "Entire APP not addressed"
+          "No description of what personal information is collected or why"
         ],
-        "recommendations": [],
-        "recommended_language": "",
+        "recommendations": [
+          "Document what personal information you collect, why it's necessary for your business, and how you ensure it's accurate."
+        ],
+        "recommended_language": "Document what personal information you collect, why it's necessary for your business, and how you ensure it's accurate.",
         "priority": "HIGH"
       },
       {
@@ -61,13 +65,15 @@
         "app_name": "Dealing with unsolicited personal information",
         "status": "NOT_ADDRESSED",
         "findings": [
-          "No privacy policy exists"
+          "Not addressed. You need a privacy policy."
         ],
         "gaps": [
-          "Entire APP not addressed"
+          "No process for handling unsolicited personal information"
         ],
-        "recommendations": [],
-        "recommended_language": "",
+        "recommendations": [
+          "Add a section explaining what happens when you receive personal information you didn't ask for."
+        ],
+        "recommended_language": "Add a section explaining what happens when you receive personal information you didn't ask for.",
         "priority": "MEDIUM"
       },
       {
@@ -75,13 +81,15 @@
         "app_name": "Notification of the collection of personal information",
         "status": "NOT_ADDRESSED",
         "findings": [
-          "No privacy policy exists"
+          "Not addressed. You need a privacy policy."
         ],
         "gaps": [
-          "Entire APP not addressed"
+          "No collection notice (what you collect, why, who gets it)"
         ],
-        "recommendations": [],
-        "recommended_language": "",
+        "recommendations": [
+          "Add a collection notice explaining: what you collect, why, who you share it with, whether it goes overseas, and how to access or correct it."
+        ],
+        "recommended_language": "Add a collection notice explaining: what you collect, why, who you share it with, whether it goes overseas, and how to access or correct it.",
         "priority": "CRITICAL"
       },
       {
@@ -89,13 +97,15 @@
         "app_name": "Use or disclosure of personal information",
         "status": "NOT_ADDRESSED",
         "findings": [
-          "No privacy policy exists"
+          "Not addressed. You need a privacy policy."
         ],
         "gaps": [
-          "Entire APP not addressed"
+          "No explanation of how personal information is used or shared"
         ],
-        "recommendations": [],
-        "recommended_language": "",
+        "recommendations": [
+          "Explain how you use personal information, who you share it with, and under what circumstances. List the types of third parties."
+        ],
+        "recommended_language": "Explain how you use personal information, who you share it with, and under what circumstances. List the types of third parties.",
         "priority": "HIGH"
       },
       {
@@ -103,13 +113,15 @@
         "app_name": "Direct marketing",
         "status": "NOT_ADDRESSED",
         "findings": [
-          "No privacy policy exists"
+          "Not addressed. You need a privacy policy."
         ],
         "gaps": [
-          "Entire APP not addressed"
+          "No direct marketing policy or opt-out mechanism"
         ],
-        "recommendations": [],
-        "recommended_language": "",
+        "recommendations": [
+          "Add a direct marketing section. Explain what marketing you send, how to opt out, and commit to honouring opt-out requests promptly."
+        ],
+        "recommended_language": "Add a direct marketing section. Explain what marketing you send, how to opt out, and commit to honouring opt-out requests promptly.",
         "priority": "MEDIUM"
       },
       {
@@ -117,13 +129,15 @@
         "app_name": "Cross-border disclosure of personal information",
         "status": "NOT_ADDRESSED",
         "findings": [
-          "No privacy policy exists"
+          "Not addressed. You need a privacy policy."
         ],
         "gaps": [
-          "Entire APP not addressed"
+          "No disclosure about overseas data transfers"
         ],
-        "recommendations": [],
-        "recommended_language": "",
+        "recommendations": [
+          "Disclose whether personal information is stored or processed overseas. If you use cloud services (almost every business does), this likely applies to you."
+        ],
+        "recommended_language": "Disclose whether personal information is stored or processed overseas. If you use cloud services (almost every business does), this likely applies to you.",
         "priority": "MEDIUM"
       },
       {
@@ -131,13 +145,15 @@
         "app_name": "Adoption, use or disclosure of government related identifiers",
         "status": "NOT_ADDRESSED",
         "findings": [
-          "No privacy policy exists"
+          "Not addressed. You need a privacy policy."
         ],
         "gaps": [
-          "Entire APP not addressed"
+          "No policy on handling government identifiers (TFN, licence, Medicare)"
         ],
-        "recommendations": [],
-        "recommended_language": "",
+        "recommendations": [
+          "If you collect government IDs (driver's licence for verification, TFN for tax), explain how you protect them and that you don't use them as your customer identifier."
+        ],
+        "recommended_language": "If you collect government IDs (driver's licence for verification, TFN for tax), explain how you protect them and that you don't use them as your customer identifier.",
         "priority": "MEDIUM"
       },
       {
@@ -145,13 +161,15 @@
         "app_name": "Quality of personal information",
         "status": "NOT_ADDRESSED",
         "findings": [
-          "No privacy policy exists"
+          "Not addressed. You need a privacy policy."
         ],
         "gaps": [
-          "Entire APP not addressed"
+          "No commitment to data accuracy, currency, or retention"
         ],
-        "recommendations": [],
-        "recommended_language": "",
+        "recommendations": [
+          "Add commitments to keeping personal information accurate, up-to-date, and relevant. Include a data retention policy."
+        ],
+        "recommended_language": "Add commitments to keeping personal information accurate, up-to-date, and relevant. Include a data retention policy.",
         "priority": "LOW"
       },
       {
@@ -159,13 +177,15 @@
         "app_name": "Security of personal information",
         "status": "NOT_ADDRESSED",
         "findings": [
-          "No privacy policy exists"
+          "Not addressed. You need a privacy policy."
         ],
         "gaps": [
-          "Entire APP not addressed"
+          "No security measures, breach plan, or data disposal process described"
         ],
-        "recommendations": [],
-        "recommended_language": "",
+        "recommendations": [
+          "Add a security section covering: how you protect data (encryption, access controls), what happens in a breach, and how you dispose of data you no longer need."
+        ],
+        "recommended_language": "Add a security section covering: how you protect data (encryption, access controls), what happens in a breach, and how you dispose of data you no longer need.",
         "priority": "CRITICAL"
       },
       {
@@ -173,13 +193,15 @@
         "app_name": "Access to personal information",
         "status": "NOT_ADDRESSED",
         "findings": [
-          "No privacy policy exists"
+          "Not addressed. You need a privacy policy."
         ],
         "gaps": [
-          "Entire APP not addressed"
+          "No process for individuals to access their personal information"
         ],
-        "recommendations": [],
-        "recommended_language": "",
+        "recommendations": [
+          "Add an access rights section. Individuals have the right to request a copy of their personal information. Explain how to make a request and your 30-day response commitment."
+        ],
+        "recommended_language": "Add an access rights section. Individuals have the right to request a copy of their personal information. Explain how to make a request and your 30-day response commitment.",
         "priority": "HIGH"
       },
       {
@@ -187,13 +209,15 @@
         "app_name": "Correction of personal information",
         "status": "NOT_ADDRESSED",
         "findings": [
-          "No privacy policy exists"
+          "Not addressed. You need a privacy policy."
         ],
         "gaps": [
-          "Entire APP not addressed"
+          "No process for correcting inaccurate personal information"
         ],
-        "recommendations": [],
-        "recommended_language": "",
+        "recommendations": [
+          "Add a correction section. Individuals can request corrections to inaccurate information. Explain the process and that correction requests are free."
+        ],
+        "recommended_language": "Add a correction section. Individuals can request corrections to inaccurate information. Explain the process and that correction requests are free.",
         "priority": "HIGH"
       }
     ],
@@ -201,7 +225,7 @@
       "uses_adm": "UNKNOWN",
       "adm_disclosed": false,
       "examples_found": [],
-      "recommendation": "A privacy policy must be created before ADM transparency can be assessed."
+      "recommendation": "New rule from 10 December 2026: Tech companies commonly use algorithms that affect users. Content filtering, account suspension, and recommendation systems may all qualify. Common examples in your sector: content moderation, algorithmic recommendations, automated account decisions. If this applies, your policy must explain: what automated systems you use, what personal information feeds into them, how customers can request a human review, and how they can object to the decision."
     },
     "summary": {
       "compliant_count": 0,
@@ -211,11 +235,13 @@
     },
     "sector_risk_profile": {},
     "next_steps": [
-      "CRITICAL: Create a comprehensive privacy policy addressing all 13 APPs",
-      "Refer to sector-specific guidance for priority requirements",
-      "Include all required privacy notices and contact information",
-      "Establish access and correction request procedures",
-      "Implement security measures for personal information"
+      "Week 1-2: Fix critical gaps first: Openness (APP 1), Collection Notice (APP 5), Security (APP 11)",
+      "Week 3-4: Address important gaps: Solicited Collection (APP 3), Use & Disclosure (APP 6), Access Rights (APP 12), Correction (APP 13)",
+      "Week 5-6: Complete remaining gaps: Anonymity (APP 2), Unsolicited Collection (APP 4), Marketing (APP 7), Overseas Disclosure (APP 8), Government ID (APP 9), Data Quality (APP 10)",
+      "Add a named privacy contact with phone number and email address to your policy",
+      "Document your security measures: how you store data, who can access it, and your breach response plan",
+      "Add a collection notice explaining what you collect, why, and who you share it with",
+      "10 Dec 2026 deadline: New automated decision-making rules likely apply to you. Tech companies commonly use algorithms that affect users. Content filtering, account suspension, and recommendation systems may all qualify."
     ]
   }
 }
