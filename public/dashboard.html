@@ -370,16 +370,9 @@
             <div class="card">
                 <h2>Quick Scan</h2>
                 <div class="scan-row">
-                    <input type="url" id="scan-url" placeholder="https://example.com.au">
-                    <input type="text" id="scan-name" placeholder="Business name" style="width:180px">
-                    <select id="scan-sector" style="width:160px">
-                        <option value="Other">Sector</option>
-                        <option value="real_estate">Real Estate</option>
-                        <option value="pharmacy">Pharmacy</option>
-                        <option value="legal">Legal</option>
-                        <option value="accounting">Accounting</option>
-                        <option value="finance">Finance</option>
-                    </select>
+                    <input type="url" id="scan-url" placeholder="https://example.com.au" style="flex:1">
+                    <input type="hidden" id="scan-name" value="">
+                    <input type="hidden" id="scan-sector" value="Other">
                     <button id="scan-btn" onclick="runScan()">Scan</button>
                 </div>
             </div>
@@ -397,16 +390,9 @@
             <h1>All Scans</h1>
             <div class="card">
                 <div class="scan-row" style="margin-bottom:16px">
-                    <input type="url" id="scan-url-2" placeholder="https://example.com.au">
-                    <input type="text" id="scan-name-2" placeholder="Business name" style="width:180px">
-                    <select id="scan-sector-2" style="width:160px">
-                        <option value="Other">Sector</option>
-                        <option value="real_estate">Real Estate</option>
-                        <option value="pharmacy">Pharmacy</option>
-                        <option value="legal">Legal</option>
-                        <option value="accounting">Accounting</option>
-                        <option value="finance">Finance</option>
-                    </select>
+                    <input type="url" id="scan-url-2" placeholder="https://example.com.au" style="flex:1">
+                    <input type="hidden" id="scan-name-2" value="">
+                    <input type="hidden" id="scan-sector-2" value="Other">
                     <button id="scan-btn-2" onclick="runScan2()">Scan</button>
                 </div>
                 <table>
@@ -521,9 +507,7 @@
             btn.textContent = 'Scanning...';
 
             try {
-                const res = await fetch('/api/scan?url=' + encodeURIComponent(url)
-                    + '&business_name=' + encodeURIComponent(name)
-                    + '&sector=' + encodeURIComponent(sector));
+                const res = await fetch('/api/scan?url=' + encodeURIComponent(url));
                 const data = await res.json();
 
                 if (data.error) {
@@ -543,7 +527,7 @@
                     id: Date.now().toString(),
                     url: data.url,
                     business_name: data.business_name || new URL(data.url).hostname,
-                    sector: sector,
+                    sector: data.sector || 'Other',
                     score: data.analysis?.overall_score || 0,
                     status: data.analysis?.overall_status || 'UNKNOWN',
                     criticalCount: criticalCount,

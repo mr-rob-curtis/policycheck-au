@@ -65,6 +65,23 @@ class PrivacyPolicyScraper:
         'legal'
     ]
 
+    # Sector keyword patterns for auto-detection
+    SECTOR_KEYWORDS = {
+        'real_estate': ['real estate', 'property', 'rental', 'tenant', 'landlord', 'lease', 'letting', 'realestate', 'property management'],
+        'pharmacy': ['pharmacy', 'pharmacist', 'prescription', 'dispensary', 'chemist', 'medications'],
+        'legal': ['law firm', 'lawyer', 'solicitor', 'barrister', 'legal services', 'conveyancing', 'attorney'],
+        'accounting': ['accountant', 'accounting', 'tax agent', 'bookkeep', 'tax return', 'bas agent', 'chartered accountant', 'cpa'],
+        'finance': ['financial', 'mortgage', 'broker', 'lending', 'credit', 'insurance', 'wealth management', 'financial planning'],
+        'dental': ['dentist', 'dental', 'orthodont', 'oral health'],
+        'automotive': ['car dealer', 'motor dealer', 'vehicle', 'automotive', 'car sales', 'used cars', 'new cars'],
+        'hospitality': ['restaurant', 'cafe', 'hotel', 'motel', 'accommodation', 'pub', 'bar', 'club', 'licensed venue'],
+        'retail': ['shop', 'store', 'retail', 'ecommerce', 'e-commerce', 'jeweller', 'fashion'],
+        'healthcare': ['medical', 'doctor', 'clinic', 'health', 'hospital', 'gp ', 'general practice', 'physiotherapy', 'chiropractic'],
+        'education': ['school', 'university', 'college', 'education', 'training', 'tutor'],
+        'construction': ['builder', 'construction', 'plumber', 'electrician', 'trades', 'renovation'],
+        'technology': ['software', 'technology', 'saas', 'app', 'digital', 'web development', 'it services'],
+    }
+
     # Polite user agent
     USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36'
 
@@ -337,6 +354,83 @@ class PrivacyPolicyScraper:
             logger.warning(f"Error parsing HTML for links: {e}")
             return None
 
+    def _extract_site_info(self, html: str, url: str) -> Dict:
+        """
+        Auto-detect business name and sector from homepage HTML.
+
+        Args:
+            html: Homepage HTML content
+            url: Homepage URL (used as fallback for business name)
+
+        Returns:
+            Dict with 'business_name' and 'sector' keys
+        """
+        import re
+
+        soup = BeautifulSoup(html, 'html.parser')
+        business_name = None
+
+        # 1. og:site_name meta tag
+        og_site = soup.find('meta', property='og:site_name')
+        if og_site and og_site.get('content', '').strip():
+            business_name = og_site['content'].strip()
+
+        # 2. og:title meta tag (cleaned)
+        if not business_name:
+            og_title = soup.find('meta', property='og:title')
+            if og_title and og_title.get('content', '').strip():
+                name = og_title['content'].strip()
+                name = re.sub(r'\s*[\-\|–—]\s*Home\s*$', '', name, flags=re.IGNORECASE)
+                if name.strip():
+                    business_name = name.strip()
+
+        # 3. <title> tag (cleaned)
+        if not business_name:
+            title_tag = soup.find('title')
+            if title_tag and title_tag.get_text(strip=True):
+                name = title_tag.get_text(strip=True)
+                name = re.sub(r'\s*[\-\|–—]\s*Home\s*$', '', name, flags=re.IGNORECASE)
+                name = re.sub(r'^Welcome\s+to\s+', '', name, flags=re.IGNORECASE)
+                name = re.sub(r'\s*[\-\|–—]\s*Official\s+Site\s*$', '', name, flags=re.IGNORECASE)
+                if name.strip():
+                    business_name = name.strip()
+
+        # 4. Domain name fallback
+        if not business_name:
+            parsed = urlparse(url)
+            domain = parsed.hostname or ''
+            domain = re.sub(r'^www\.', '', domain)
+            domain = re.sub(r'\.(com\.au|com|net\.au|org\.au|net|org|au)$', '', domain)
+            business_name = domain.capitalize() if domain else 'Unknown'
+
+        # Sector detection via keyword matching on visible text
+        # Remove script/style elements before extracting text
+        for tag in soup(["script", "style"]):
+            tag.decompose()
+        page_text = soup.get_text(separator=' ').lower()
+
+        sector_scores = {}
+        for sector, keywords in self.SECTOR_KEYWORDS.items():
+            count = 0
+            for keyword in keywords:
+                count += page_text.count(keyword)
+            if count > 0:
+                sector_scores[sector] = count
+
+        if sector_scores:
+            best_sector = max(sector_scores, key=sector_scores.get)
+            if sector_scores[best_sector] >= 2:
+                sector = best_sector
+            else:
+                sector = 'Other'
+        else:
+            sector = 'Other'
+
+        return {
+            'business_name': business_name,
+            'sector': sector,
+        }
+
     def _extract_policy_text(self, html: str) -> str:
         """
         Extract main text content from privacy policy HTML.
@@ -409,6 +503,11 @@ class PrivacyPolicyScraper:
             result['error'] = 'UNABLE_TO_FETCH_HOMEPAGE'
             logger.warning(f"Could not fetch homepage: {url}")
             return result
+
+        # Auto-detect business info from homepage
+        site_info = self._extract_site_info(html, url)
+        result['detected_business_name'] = site_info['business_name']
+        result['detected_sector'] = site_info['sector']
 
         # Look for privacy policy links in homepage
         policy_url = self._find_privacy_link_in_html(html, url)

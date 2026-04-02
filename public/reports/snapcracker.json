@@ -1,1 +1,221 @@
-{"url": "https://snapcracker.com", "sector": "Other", "business_name": "Snapcracker", "policy_found": false, "policy_url": null, "policy_excerpt": null, "analysis": {"business_name": "Snapcracker", "sector": "Other", "overall_score": 0, "overall_status": "NON_COMPLIANT", "analysis_date": "2026-04-02T13:46:55.507394", "analysis_mode": "rule_based", "apps": [{"app_number": 1, "app_name": "Open and transparent management of personal information", "status": "NOT_ADDRESSED", "findings": ["No privacy policy exists"], "gaps": ["Entire APP not addressed"], "recommendations": ["\nRECOMMENDED: \"We are committed to protecting your privacy. This Privacy Policy sets out how\nwe collect, use, disclose, and manage personal information in accordance with the Australian\nPrivacy Act 1988 (Cth).\"\n"], "recommended_language": "\nRECOMMENDED: \"We are committed to protecting your privacy. This Privacy Policy sets out how\nwe collect, use, disclose, and manage personal information in accordance with the Australian\nPrivacy Act 1988 (Cth).\"\n", "priority": "CRITICAL"}, {"app_number": 2, "app_name": "Anonymity and pseudonymity", "status": "NOT_ADDRESSED", "findings": ["No privacy policy exists"], "gaps": ["Entire APP not addressed"], "recommendations": [], "recommended_language": "", "priority": "MEDIUM"}, {"app_number": 3, "app_name": "Collection of solicited personal information", "status": "NOT_ADDRESSED", "findings": ["No privacy policy exists"], "gaps": ["Entire APP not addressed"], "recommendations": [], "recommended_language": "", "priority": "HIGH"}, {"app_number": 4, "app_name": "Dealing with unsolicited personal information", "status": "NOT_ADDRESSED", "findings": ["No privacy policy exists"], "gaps": ["Entire APP not addressed"], "recommendations": [], "recommended_language": "", "priority": "MEDIUM"}, {"app_number": 5, "app_name": "Notification of the collection of personal information", "status": "NOT_ADDRESSED", "findings": ["No privacy policy exists"], "gaps": ["Entire APP not addressed"], "recommendations": [], "recommended_language": "", "priority": "CRITICAL"}, {"app_number": 6, "app_name": "Use or disclosure of personal information", "status": "NOT_ADDRESSED", "findings": ["No privacy policy exists"], "gaps": ["Entire APP not addressed"], "recommendations": [], "recommended_language": "", "priority": "HIGH"}, {"app_number": 7, "app_name": "Direct marketing", "status": "NOT_ADDRESSED", "findings": ["No privacy policy exists"], "gaps": ["Entire APP not addressed"], "recommendations": [], "recommended_language": "", "priority": "MEDIUM"}, {"app_number": 8, "app_name": "Cross-border disclosure of personal information", "status": "NOT_ADDRESSED", "findings": ["No privacy policy exists"], "gaps": ["Entire APP not addressed"], "recommendations": [], "recommended_language": "", "priority": "MEDIUM"}, {"app_number": 9, "app_name": "Adoption, use or disclosure of government related identifiers", "status": "NOT_ADDRESSED", "findings": ["No privacy policy exists"], "gaps": ["Entire APP not addressed"], "recommendations": [], "recommended_language": "", "priority": "MEDIUM"}, {"app_number": 10, "app_name": "Quality of personal information", "status": "NOT_ADDRESSED", "findings": ["No privacy policy exists"], "gaps": ["Entire APP not addressed"], "recommendations": [], "recommended_language": "", "priority": "LOW"}, {"app_number": 11, "app_name": "Security of personal information", "status": "NOT_ADDRESSED", "findings": ["No privacy policy exists"], "gaps": ["Entire APP not addressed"], "recommendations": [], "recommended_language": "", "priority": "CRITICAL"}, {"app_number": 12, "app_name": "Access to personal information", "status": "NOT_ADDRESSED", "findings": ["No privacy policy exists"], "gaps": ["Entire APP not addressed"], "recommendations": [], "recommended_language": "", "priority": "HIGH"}, {"app_number": 13, "app_name": "Correction of personal information", "status": "NOT_ADDRESSED", "findings": ["No privacy policy exists"], "gaps": ["Entire APP not addressed"], "recommendations": [], "recommended_language": "", "priority": "HIGH"}], "adm_check": {"uses_adm": "UNKNOWN", "adm_disclosed": false, "examples_found": [], "recommendation": "A privacy policy must be created before ADM transparency can be assessed."}, "summary": {"compliant_count": 0, "partial_count": 0, "non_compliant_count": 0, "not_addressed_count": 13}, "sector_risk_profile": {}, "next_steps": ["CRITICAL: Create a comprehensive privacy policy addressing all 13 APPs", "Refer to sector-specific guidance for priority requirements", "Include all required privacy notices and contact information", "Establish access and correction request procedures", "Implement security measures for personal information"]}, "slug": "snapcracker"}
+{
+  "url": "https://snapcracker.com",
+  "sector": "technology",
+  "business_name": "Snapcracker",
+  "policy_found": false,
+  "slug": "snapcracker",
+  "analysis": {
+    "business_name": "Snapcracker",
+    "sector": "technology",
+    "overall_score": 0,
+    "overall_status": "NON_COMPLIANT",
+    "analysis_date": "2026-04-02T14:41:40.864075",
+    "analysis_mode": "rule_based",
+    "apps": [
+      {
+        "app_number": 1,
+        "app_name": "Open and transparent management of personal information",
+        "status": "NOT_ADDRESSED",
+        "findings": [
+          "No privacy policy exists"
+        ],
+        "gaps": [
+          "Entire APP not addressed"
+        ],
+        "recommendations": [
+          "\nRECOMMENDED: \"We are committed to protecting your privacy. This Privacy Policy sets out how\nwe collect, use, disclose, and manage personal information in accordance with the Australian\nPrivacy Act 1988 (Cth).\"\n"
+        ],
+        "recommended_language": "\nRECOMMENDED: \"We are committed to protecting your privacy. This Privacy Policy sets out how\nwe collect, use, disclose, and manage personal information in accordance with the Australian\nPrivacy Act 1988 (Cth).\"\n",
+        "priority": "CRITICAL"
+      },
+      {
+        "app_number": 2,
+        "app_name": "Anonymity and pseudonymity",
+        "status": "NOT_ADDRESSED",
+        "findings": [
+          "No privacy policy exists"
+        ],
+        "gaps": [
+          "Entire APP not addressed"
+        ],
+        "recommendations": [],
+        "recommended_language": "",
+        "priority": "MEDIUM"
+      },
+      {
+        "app_number": 3,
+        "app_name": "Collection of solicited personal information",
+        "status": "NOT_ADDRESSED",
+        "findings": [
+          "No privacy policy exists"
+        ],
+        "gaps": [
+          "Entire APP not addressed"
+        ],
+        "recommendations": [],
+        "recommended_language": "",
+        "priority": "HIGH"
+      },
+      {
+        "app_number": 4,
+        "app_name": "Dealing with unsolicited personal information",
+        "status": "NOT_ADDRESSED",
+        "findings": [
+          "No privacy policy exists"
+        ],
+        "gaps": [
+          "Entire APP not addressed"
+        ],
+        "recommendations": [],
+        "recommended_language": "",
+        "priority": "MEDIUM"
+      },
+      {
+        "app_number": 5,
+        "app_name": "Notification of the collection of personal information",
+        "status": "NOT_ADDRESSED",
+        "findings": [
+          "No privacy policy exists"
+        ],
+        "gaps": [
+          "Entire APP not addressed"
+        ],
+        "recommendations": [],
+        "recommended_language": "",
+        "priority": "CRITICAL"
+      },
+      {
+        "app_number": 6,
+        "app_name": "Use or disclosure of personal information",
+        "status": "NOT_ADDRESSED",
+        "findings": [
+          "No privacy policy exists"
+        ],
+        "gaps": [
+          "Entire APP not addressed"
+        ],
+        "recommendations": [],
+        "recommended_language": "",
+        "priority": "HIGH"
+      },
+      {
+        "app_number": 7,
+        "app_name": "Direct marketing",
+        "status": "NOT_ADDRESSED",
+        "findings": [
+          "No privacy policy exists"
+        ],
+        "gaps": [
+          "Entire APP not addressed"
+        ],
+        "recommendations": [],
+        "recommended_language": "",
+        "priority": "MEDIUM"
+      },
+      {
+        "app_number": 8,
+        "app_name": "Cross-border disclosure of personal information",
+        "status": "NOT_ADDRESSED",
+        "findings": [
+          "No privacy policy exists"
+        ],
+        "gaps": [
+          "Entire APP not addressed"
+        ],
+        "recommendations": [],
+        "recommended_language": "",
+        "priority": "MEDIUM"
+      },
+      {
+        "app_number": 9,
+        "app_name": "Adoption, use or disclosure of government related identifiers",
+        "status": "NOT_ADDRESSED",
+        "findings": [
+          "No privacy policy exists"
+        ],
+        "gaps": [
+          "Entire APP not addressed"
+        ],
+        "recommendations": [],
+        "recommended_language": "",
+        "priority": "MEDIUM"
+      },
+      {
+        "app_number": 10,
+        "app_name": "Quality of personal information",
+        "status": "NOT_ADDRESSED",
+        "findings": [
+          "No privacy policy exists"
+        ],
+        "gaps": [
+          "Entire APP not addressed"
+        ],
+        "recommendations": [],
+        "recommended_language": "",
+        "priority": "LOW"
+      },
+      {
+        "app_number": 11,
+        "app_name": "Security of personal information",
+        "status": "NOT_ADDRESSED",
+        "findings": [
+          "No privacy policy exists"
+        ],
+        "gaps": [
+          "Entire APP not addressed"
+        ],
+        "recommendations": [],
+        "recommended_language": "",
+        "priority": "CRITICAL"
+      },
+      {
+        "app_number": 12,
+        "app_name": "Access to personal information",
+        "status": "NOT_ADDRESSED",
+        "findings": [
+          "No privacy policy exists"
+        ],
+        "gaps": [
+          "Entire APP not addressed"
+        ],
+        "recommendations": [],
+        "recommended_language": "",
+        "priority": "HIGH"
+      },
+      {
+        "app_number": 13,
+        "app_name": "Correction of personal information",
+        "status": "NOT_ADDRESSED",
+        "findings": [
+          "No privacy policy exists"
+        ],
+        "gaps": [
+          "Entire APP not addressed"
+        ],
+        "recommendations": [],
+        "recommended_language": "",
+        "priority": "HIGH"
+      }
+    ],
+    "adm_check": {
+      "uses_adm": "UNKNOWN",
+      "adm_disclosed": false,
+      "examples_found": [],
+      "recommendation": "A privacy policy must be created before ADM transparency can be assessed."
+    },
+    "summary": {
+      "compliant_count": 0,
+      "partial_count": 0,
+      "non_compliant_count": 0,
+      "not_addressed_count": 13
+    },
+    "sector_risk_profile": {},
+    "next_steps": [
+      "CRITICAL: Create a comprehensive privacy policy addressing all 13 APPs",
+      "Refer to sector-specific guidance for priority requirements",
+      "Include all required privacy notices and contact information",
+      "Establish access and correction request procedures",
+      "Implement security measures for personal information"
+    ]
+  }
+}

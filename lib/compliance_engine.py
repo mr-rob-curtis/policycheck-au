@@ -254,31 +254,33 @@ class ComplianceEngine:
             gaps = []
         elif coverage_percentage >= 75:
             status = ComplianceStatus.COMPLIANT
-            findings = [f"Found {phrase_match_count} key indicators addressing {int(coverage_percentage)}% of requirements"]
+            found_summary = ", ".join(found_phrases[:5])
+            findings = [f"Policy adequately addresses {app_name}. Key topics found: {found_summary}"]
             gaps = []
         elif coverage_percentage >= 25:
             # PARTIALLY_COMPLIANT: covers 25-75% of requirements
             status = ComplianceStatus.PARTIALLY_COMPLIANT
-            findings = [f"Found {phrase_match_count} key indicators addressing {int(coverage_percentage)}% of requirements"]
+            found_summary = ", ".join(found_phrases[:3])
             gaps = self._identify_gaps(app_num, found_phrases, original_phrases)
+            gap_summary = ", ".join(gaps[:2]) if gaps else "minor details"
+            findings = [f"Covers: {found_summary}. Missing: {gap_summary}"]
         else:
             # Only NON_COMPLIANT if coverage is <25% AND no topic indicators found
             topic_detected = self._detect_topic_presence(app_num, policy_text)
             if topic_detected:
                 status = ComplianceStatus.PARTIALLY_COMPLIANT
-                findings = [f"Policy addresses topic of APP {app_num} but lacks specific requirement details ({int(coverage_percentage)}% coverage)"]
+                findings = [f"Policy touches on {app_name} topics but lacks specific commitments and processes"]
                 gaps = self._identify_gaps(app_num, found_phrases, original_phrases)
             else:
                 status = ComplianceStatus.NON_COMPLIANT
-                findings = [f"Only {phrase_match_count} of {expected_phrase_count} key requirements found ({int(coverage_percentage)}% coverage)"]
                 gaps = self._identify_gaps(app_num, found_phrases, original_phrases)
+                if gaps:
+                    findings = [f"Not addressed in your policy. You need to add: {', '.join(gaps[:3])}"]
+                else:
+                    findings = [f"APP {app_num} ({app_name}) is not covered in your policy"]
 
-        # Get recommended language
-        gap_type = self._determine_gap_type(app_num, gaps)
-        recommended = GAP_RECOMMENDATIONS.get_gap_recommendation(app_num, gap_type)
-        if not recommended:
-            # Fallback recommendation
-            recommended = f"Review APP {app_num} ({app_name}) requirements and update policy to address identified gaps."
+        # Get specific recommendation
+        recommended = self._get_specific_recommendation(app_num, status, found_phrases, gaps, sector)
 
         # Determine priority
         priority = self.scoring_rules.get_priority_for_app(app_num)
@@ -687,7 +689,7 @@ class ComplianceEngine:
         missing = [p for p in expected_phrases if p not in found_phrases]
         return [
             APPRequirements.get_gap_description(app_num, phrase)
-            for phrase in missing[:3]
+            for phrase in missing
         ]
 
     def _determine_gap_type(self, app_num: int, gaps: List[str]) -> str:
@@ -710,36 +712,148 @@ class ComplianceEngine:
         # Default to generic gap type
         return "no_privacy_policy"
 
+    def _get_specific_recommendation(self, app_num, status, found_phrases, gaps, sector):
+        """Generate specific, actionable recommendation based on what was found/missing."""
+        app_def = self.app_requirements.get_app(app_num)
+        app_name = app_def.get("name", "Unknown")
+        sector_note = APPRequirements.get_sector_note(app_num, sector)
+
+        if status == ComplianceStatus.COMPLIANT:
+            return ""
+
+        # Build specific recommendation based on what's missing
+        specific_recs = {
+            1: {
+                "partial": "Add a named privacy contact with phone and email. Include a clear complaint process that mentions the OAIC as escalation.",
+                "missing": "Publish a privacy policy that names your privacy contact, explains what information you collect and why, and includes a complaint process.",
+            },
+            2: {
+                "partial": "Add a clear statement explaining when customers can and cannot deal with you anonymously.",
+                "missing": "Add a statement about whether customers can interact anonymously. Most businesses in your sector need to verify identity, so explain why.",
+            },
+            3: {
+                "partial": "Specify exactly what personal information you collect (names, addresses, financial details, etc.) and why each type is necessary.",
+                "missing": "Document what personal information you collect, why it's necessary for your business, and how you ensure it's accurate.",
+            },
+            4: {
+                "partial": "Add a process for handling personal information you receive without requesting it. Explain how you decide whether to keep or destroy it.",
+                "missing": "Add a section explaining what happens when you receive personal information you didn't ask for.",
+            },
+            5: {
+                "partial": "Your collection notice needs to cover: why you collect, who you share with, overseas transfers, and how to complain.",
+                "missing": "Add a collection notice explaining: what you collect, why, who you share it with, whether it goes overseas, and how to access or correct it.",
+            },
+            6: {
+                "partial": "Be specific about which third parties receive personal information and for what purpose. Name categories (e.g., 'cloud hosting providers', 'payment processors').",
+                "missing": "Explain how you use personal information, who you share it with, and under what circumstances. List the types of third parties.",
+            },
+            7: {
+                "partial": "Add a clear opt-out mechanism. Every marketing email needs an unsubscribe link, and you must honour requests within 5 business days.",
+                "missing": "Add a direct marketing section. Explain what marketing you send, how to opt out, and commit to honouring opt-out requests promptly.",
+            },
+            8: {
+                "partial": "Name the countries where data is sent or stored, and explain what protections are in place for each.",
+                "missing": "Disclose whether personal information is stored or processed overseas. If you use cloud services (almost every business does), this likely applies to you.",
+            },
+            9: {
+                "partial": "Explain how you handle government identifiers (TFN, driver's licence, Medicare). You must not use these as your own customer ID.",
+                "missing": "If you collect government IDs (driver's licence for verification, TFN for tax), explain how you protect them and that you don't use them as your customer identifier.",
+            },
+            10: {
+                "partial": "Commit to specific data quality practices: verifying information at collection, updating records when notified, and deleting data you no longer need.",
+                "missing": "Add commitments to keeping personal information accurate, up-to-date, and relevant. Include a data retention policy.",
+            },
+            11: {
+                "partial": "Describe your specific security measures: encryption, access controls, staff training, and breach response plan.",
+                "missing": "Add a security section covering: how you protect data (encryption, access controls), what happens in a breach, and how you dispose of data you no longer need.",
+            },
+            12: {
+                "partial": "Clarify the access request process: how to request, expected response time (30 days), any fees, and grounds for refusal.",
+                "missing": "Add an access rights section. Individuals have the right to request a copy of their personal information. Explain how to make a request and your 30-day response commitment.",
+            },
+            13: {
+                "partial": "Add detail on your correction process: how to request corrections, that there's no fee, and your 30-day response commitment.",
+                "missing": "Add a correction section. Individuals can request corrections to inaccurate information. Explain the process and that correction requests are free.",
+            },
+        }
+
+        rec_set = specific_recs.get(app_num, {})
+        if status == ComplianceStatus.PARTIALLY_COMPLIANT:
+            rec = rec_set.get("partial", f"Address the identified gaps in APP {app_num}.")
+        else:
+            rec = rec_set.get("missing", f"Add APP {app_num} ({app_name}) coverage to your policy.")
+
+        # Add sector note if available
+        if sector_note:
+            rec += f" For your sector: {sector_note.lower()}"
+
+        return rec
+
     def _generate_next_steps(
         self,
         overall_status: str,
         sector: str,
         app_statuses: Dict[int, ComplianceStatus],
     ) -> List[str]:
-        """
-        Generate prioritized next steps based on compliance status
-        """
+        """Generate specific, prioritized action steps based on actual gaps."""
         steps = []
 
-        if overall_status == ComplianceStatus.NON_COMPLIANT.value:
-            steps.append("CRITICAL: Conduct urgent privacy policy review and update")
-            steps.append("Engage privacy consultant or lawyer with Privacy Act expertise")
-            steps.append("Prioritize critical APPs: 1 (Openness), 5 (Collection Notice), 11 (Security)")
-        elif overall_status == ComplianceStatus.PARTIALLY_COMPLIANT.value:
-            steps.append("Update privacy policy to address identified gaps")
-            steps.append("Prioritize gaps in high-risk APPs for your sector")
-            steps.append("Implement missing security and access/correction procedures")
-        else:
-            steps.append("Monitor for changes in Privacy Act requirements")
-            steps.append("Review policy annually for compliance with new obligations")
+        # Group APPs by status
+        critical_gaps = []
+        important_gaps = []
+        minor_gaps = []
 
-        # Add ADM requirement reminder
-        steps.append("Prepare for 10 December 2026 ADM transparency requirement")
+        priority_map = {app: self.scoring_rules.get_priority_for_app(app) for app in range(1, 14)}
 
-        # Add sector-specific steps
-        sector_guidance = SectorSpecificGuidance.get_guidance(sector)
-        if sector_guidance:
-            steps.append(f"Review sector-specific guidance for {sector}")
+        for app_num, status in app_statuses.items():
+            if status in (ComplianceStatus.COMPLIANT, ComplianceStatus.PARTIALLY_COMPLIANT):
+                continue
+
+            app_def = self.app_requirements.get_app(app_num)
+            app_name = app_def.get("short_name", app_def.get("name", f"APP {app_num}"))
+            priority = priority_map[app_num]
+
+            if priority == "CRITICAL":
+                critical_gaps.append((app_num, app_name))
+            elif priority == "HIGH":
+                important_gaps.append((app_num, app_name))
+            else:
+                minor_gaps.append((app_num, app_name))
+
+        # Week 1-2: Critical gaps
+        if critical_gaps:
+            names = ", ".join(f"{name} (APP {num})" for num, name in critical_gaps)
+            steps.append(f"Week 1-2: Fix critical gaps first: {names}")
+
+        # Week 3-4: Important gaps
+        if important_gaps:
+            names = ", ".join(f"{name} (APP {num})" for num, name in important_gaps)
+            steps.append(f"Week 3-4: Address important gaps: {names}")
+
+        # Week 5-6: Minor gaps
+        if minor_gaps:
+            names = ", ".join(f"{name} (APP {num})" for num, name in minor_gaps)
+            steps.append(f"Week 5-6: Complete remaining gaps: {names}")
+
+        # Specific actionable items based on common missing items
+        if app_statuses.get(1) in (ComplianceStatus.NON_COMPLIANT, ComplianceStatus.NOT_ADDRESSED):
+            steps.append("Add a named privacy contact with phone number and email address to your policy")
+
+        if app_statuses.get(11) in (ComplianceStatus.NON_COMPLIANT, ComplianceStatus.NOT_ADDRESSED):
+            steps.append("Document your security measures: how you store data, who can access it, and your breach response plan")
+
+        if app_statuses.get(5) in (ComplianceStatus.NON_COMPLIANT, ComplianceStatus.NOT_ADDRESSED):
+            steps.append("Add a collection notice explaining what you collect, why, and who you share it with")
+
+        # Always add ADM reminder
+        steps.append("Prepare for the 10 December 2026 automated decision-making transparency requirement")
+
+        # If everything looks good
+        if not critical_gaps and not important_gaps and not minor_gaps:
+            steps = [
+                "Your policy covers the key requirements. Review it annually to stay current.",
+                "Prepare for the 10 December 2026 automated decision-making transparency requirement",
+            ]
 
         return steps
 

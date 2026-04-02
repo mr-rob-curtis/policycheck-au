@@ -43,6 +43,12 @@ def _run_scan(url, sector, business_name):
         scraper = PrivacyPolicyScraper(timeout=8, rate_limit_delay=0)
         scrape_result = scraper.scrape_privacy_policy(url)
 
+        # Use auto-detected business name and sector if not provided
+        if not business_name:
+            business_name = scrape_result.get('detected_business_name', '') or ''
+        if not sector or sector == 'Other':
+            sector = scrape_result.get('detected_sector', 'Other') or 'Other'
+
         policy_text = scrape_result.get('policy_text') if scrape_result['policy_found'] else None
 
         # Treat empty/whitespace-only text as no policy found

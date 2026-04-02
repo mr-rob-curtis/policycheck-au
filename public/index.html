@@ -169,27 +169,6 @@
         .scanner-input button:hover { background: var(--teal-dark); }
         .scanner-input button:disabled { opacity: 0.65; cursor: not-allowed; }
 
-        .scanner-fields {
-            display: flex;
-            gap: 10px;
-            margin-top: 10px;
-        }
-        .scanner-fields input, .scanner-fields select {
-            flex: 1;
-            border: 1.5px solid var(--gray-200);
-            border-radius: 8px;
-            padding: 11px 14px;
-            font-size: 14px;
-            font-family: var(--font-sans);
-            outline: none;
-            transition: border-color 0.15s;
-            background: var(--white);
-            color: var(--navy);
-        }
-        .scanner-fields input:focus, .scanner-fields select:focus {
-            border-color: var(--teal);
-        }
-        .scanner-fields select { cursor: pointer; color: var(--slate); }
         .scanner-note {
             text-align: center;
             margin-top: 14px;
@@ -544,7 +523,6 @@
             .trust-grid { grid-template-columns: 1fr; }
             .scanner-input { flex-direction: column; }
             .scanner-input button { border-radius: 0; }
-            .scanner-fields { flex-direction: column; }
             .authority-stats { flex-direction: column; gap: 24px; }
         }
     </style>
@@ -572,21 +550,8 @@
             <input type="url" id="url-input" placeholder="Enter your website URL" autocomplete="url">
             <button id="scan-btn" onclick="startScan()">Check compliance</button>
         </div>
-        <div class="scanner-fields">
-            <input type="text" id="business-name" placeholder="Business name (optional)">
-            <select id="sector-select">
-                <option value="Other">Select your sector</option>
-                <option value="real_estate">Real Estate</option>
-                <option value="pharmacy">Pharmacy</option>
-                <option value="legal">Legal</option>
-                <option value="accounting">Accounting</option>
-                <option value="finance">Finance</option>
-                <option value="dental">Dental</option>
-                <option value="automotive">Automotive</option>
-                <option value="hospitality">Hospitality</option>
-                <option value="retail">Retail</option>
-            </select>
-        </div>
+        <input type="hidden" id="business-name" value="">
+        <input type="hidden" id="sector-select" value="Other">
         <p class="scanner-note">Analyses your published privacy policy against all 13 Australian Privacy Principles. No signup required.</p>
         <div class="error-msg" id="error-msg"></div>
     </section>
@@ -718,9 +683,6 @@
                 return;
             }
 
-            const businessName = document.getElementById('business-name').value.trim();
-            const sector = document.getElementById('sector-select').value;
-
             const btn = document.getElementById('scan-btn');
             btn.disabled = true;
             btn.textContent = 'Scanning...';
@@ -743,7 +705,7 @@
             }, 4000);
 
             try {
-                const params = new URLSearchParams({ url, sector, business_name: businessName });
+                const params = new URLSearchParams({ url });
                 const res = await fetch('/api/scan?' + params);
                 const data = await res.json();
 
@@ -783,29 +745,57 @@
 
             const bname = data.business_name || new URL(data.url).hostname;
             document.getElementById('result-title').textContent = bname;
-            document.getElementById('result-subtitle').textContent =
-                score < 40 ? 'Significant compliance gaps identified' :
-                score < 70 ? 'Several areas require attention' :
-                'Good coverage, some gaps to address';
 
-            // Sort apps: ones with gaps first, by priority
-            const apps = (a.apps || []).filter(app => app.gaps && app.gaps.length > 0);
+            // Count statuses for subtitle
+            const allApps = a.apps || [];
+            const compliantCount = allApps.filter(app => app.status === 'COMPLIANT').length;
+            const partialCount = allApps.filter(app => app.status === 'PARTIALLY_COMPLIANT').length;
+            const nonCompliantCount = allApps.filter(app => app.status === 'NON_COMPLIANT' || app.status === 'NOT_ADDRESSED').length;
+            document.getElementById('result-subtitle').textContent =
+                `${compliantCount} compliant, ${partialCount} partial, ${nonCompliantCount} gaps across 13 APPs`;
+
+            // Show action plan first if there are next steps
+            const nextSteps = a.next_steps || [];
+            const actionPlanHtml = nextSteps.length > 0 ? `
+                <div class="issue-card" style="border-left: 3px solid var(--teal); background: var(--teal-subtle);">
+                    <h3 style="color: var(--teal-dark); margin-bottom: 12px;">Your Action Plan</h3>
+                    <ul style="list-style: none; padding: 0; margin: 0;">
+                        ${nextSteps.map(step => `<li style="padding: 6px 0; font-size: 14px; color: var(--navy); border-bottom: 1px solid rgba(13,148,136,0.1);">
+                            ${escapeHtml(step)}
+                        </li>`).join('')}
+                    </ul>
+                </div>
+            ` : '';
+
+            // Sort apps: non-compliant first, then partial, by priority
+            const apps = allApps.filter(app => app.status !== 'COMPLIANT');
             const priorityOrder = { CRITICAL: 0, HIGH: 1, MEDIUM: 2, LOW: 3 };
-            apps.sort((a, b) => (priorityOrder[a.priority] || 3) - (priorityOrder[b.priority] || 3));
+            const statusOrder = { NON_COMPLIANT: 0, NOT_ADDRESSED: 0, PARTIALLY_COMPLIANT: 1 };
+            apps.sort((a, b) => {
+                const sd = (statusOrder[a.status] || 2) - (statusOrder[b.status] || 2);
+                if (sd !== 0) return sd;
+                return (priorityOrder[a.priority] || 3) - (priorityOrder[b.priority] || 3);
+            });
 
             const container = document.getElementById('revealed-issue-container');
             const blurredItems = document.getElementById('blurred-items');
             const blurredContainer = document.getElementById('blurred-container');
 
-            // Show first 2 fully revealed
+            // Show action plan + first 2 issue cards
             const revealed = apps.slice(0, 2);
-            container.innerHTML = revealed.map(app => {
-                const priorityClass = app.priority === 'CRITICAL' ? 'badge-critical' : 'badge-high';
-                const priorityLabel = app.priority === 'CRITICAL' ? 'Compliance gap' : 'Needs attention';
-                const gapList = app.gaps.slice(0, 3).map(g => g.replace('Missing: ', '')).join(', ');
+            container.innerHTML = actionPlanHtml + revealed.map((app, idx) => {
+                const isNonCompliant = app.status === 'NON_COMPLIANT' || app.status === 'NOT_ADDRESSED';
+                const priorityClass = isNonCompliant ? 'badge-critical' : 'badge-high';
+                const priorityLabel = isNonCompliant ? 'Fix now' : 'Needs work';
+
+                // Use the specific finding from the engine
+                const finding = (app.findings && app.findings[0]) || '';
+
+                // Use the specific recommendation
+                const rec = (app.recommendations && app.recommendations[0]) || '';
 
                 let quoteHtml = '';
-                if (app === revealed[0] && data.policy_excerpt && data.policy_url) {
+                if (idx === 0 && data.policy_excerpt && data.policy_url) {
                     const excerpt = data.policy_excerpt.length > 200
                         ? data.policy_excerpt.substring(0, 200) + '...'
                         : data.policy_excerpt;
@@ -819,14 +809,13 @@
 
                 return `
                     <div class="issue-card">
-                        <span class="issue-badge ${priorityClass}">${priorityLabel}</span>
-                        <h3>APP ${app.app_number}: ${app.app_name}</h3>
+                        <span class="issue-badge ${priorityClass}">${priorityLabel} &middot; ${app.priority}</span>
+                        <h3>APP ${app.app_number}: ${escapeHtml(app.app_name)}</h3>
                         ${quoteHtml}
-                        <p class="issue-explanation">
-                            Your policy does not adequately address: <strong>${gapList}</strong>.
-                            Under the Privacy Act, this is an obligation that needs to be met
-                            ${app.priority === 'CRITICAL' ? ' before the 1 July deadline' : ''}.
-                        </p>
+                        <p class="issue-explanation">${escapeHtml(finding)}</p>
+                        ${rec ? `<p class="issue-explanation" style="margin-top: 10px; padding: 10px 14px; background: var(--gray-50); border-radius: 6px; font-size: 13px;">
+                            <strong>What to do:</strong> ${escapeHtml(rec)}
+                        </p>` : ''}
                     </div>
                 `;
             }).join('');
