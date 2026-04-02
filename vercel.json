@@ -1,15 +1,14 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "version": 2,
+  "outputDirectory": "public",
   "functions": {
     "api/webhook.py": {
       "maxDuration": 300
     }
   },
-  "routes": [
-    { "src": "/api/(.+)", "dest": "/api/$1.py" },
-    { "src": "/dashboard", "dest": "/public/dashboard.html" },
-    { "src": "/report/([a-z0-9-]+)", "dest": "/public/report.html" },
-    { "src": "/(.*)", "dest": "/public/$1" }
+  "rewrites": [
+    { "source": "/dashboard", "destination": "/dashboard.html" },
+    { "source": "/report/:slug", "destination": "/report.html" }
   ]
 }
