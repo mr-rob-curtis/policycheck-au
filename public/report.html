@@ -408,20 +408,24 @@
             }
             const slug = match[1];
 
-            // Try: 1) API storage, 2) static JSON file, 3) localStorage
+            // Try: 1) static JSON file, 2) API storage, 3) localStorage
+            // Static files are always up-to-date with latest engine format.
             let scan = null;
             try {
-                const res = await fetch('/api/report_data?slug=' + encodeURIComponent(slug));
+                const res = await fetch('/reports/' + encodeURIComponent(slug) + '.json');
                 if (res.ok) {
                     scan = await res.json();
                 }
             } catch (e) {}
 
-            if (!scan) {
+            if (!scan || !(scan.analysis?.apps?.length > 0)) {
                 try {
-                    const res = await fetch('/reports/' + encodeURIComponent(slug) + '.json');
+                    const res = await fetch('/api/report_data?slug=' + encodeURIComponent(slug));
                     if (res.ok) {
-                        scan = await res.json();
+                        const apiData = await res.json();
+                        if (apiData?.analysis?.apps?.length > 0) {
+                            scan = apiData;
+                        }
                     }
                 } catch (e) {}
             }
