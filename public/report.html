@@ -275,6 +275,26 @@
         .tag-action { background: #fef3c7; color: #92400e; }
         .tag-done { background: var(--green-bg); color: var(--green); }
 
+        .guide-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 8px;
+        }
+        .guide-link {
+            font-size: 12px;
+            color: var(--teal);
+            text-decoration: none;
+            padding: 3px 10px;
+            background: var(--teal-bg);
+            border-radius: 4px;
+            transition: background 0.15s;
+        }
+        .guide-link:hover {
+            background: #ccfbf1;
+            text-decoration: underline;
+        }
+
         /* Action plan */
         .action-plan {
             background: var(--white);
@@ -549,6 +569,68 @@
             13: 'Create a correction request process (respond within 30 days)',
         };
 
+        // Contextual help guides per APP - plain-English questions a business owner would ask
+        const CONTEXTUAL_GUIDES = {
+            1: [
+                { q: 'What does a good complaint process look like?', id: 'complaint-process' },
+                { q: 'Who should be our privacy contact?', id: 'privacy-contact' },
+            ],
+            2: [
+                { q: 'When can customers deal with us anonymously?', id: 'anonymity' },
+            ],
+            3: [
+                { q: 'What counts as "personal information"?', id: 'personal-information' },
+                { q: 'How do I know what\'s "reasonably necessary" to collect?', id: 'reasonably-necessary' },
+            ],
+            4: [
+                { q: 'What is "unsolicited" information and what do I do with it?', id: 'unsolicited-info' },
+            ],
+            5: [
+                { q: 'What goes in a collection notice?', id: 'collection-notice' },
+                { q: 'When do I need to give the notice?', id: 'notice-timing' },
+            ],
+            6: [
+                { q: 'What counts as a "secondary purpose"?', id: 'secondary-purpose' },
+                { q: 'Do I need consent every time I share data?', id: 'sharing-consent' },
+            ],
+            7: [
+                { q: 'What are my obligations for email marketing?', id: 'email-marketing' },
+                { q: 'How quickly must I process opt-outs?', id: 'opt-out-timing' },
+            ],
+            8: [
+                { q: 'How do I know if I send data overseas?', id: 'overseas-data' },
+                { q: 'Does using cloud software count as overseas transfer?', id: 'cloud-overseas' },
+            ],
+            9: [
+                { q: 'Which government IDs do I need to worry about?', id: 'government-ids' },
+            ],
+            10: [
+                { q: 'How long should I keep personal information?', id: 'data-retention' },
+                { q: 'What does a retention policy look like?', id: 'retention-policy' },
+            ],
+            11: [
+                { q: 'What security measures does a small business need?', id: 'security-basics' },
+                { q: 'What is a data breach response plan?', id: 'breach-plan' },
+                { q: 'Do I need to encrypt customer data?', id: 'encryption' },
+            ],
+            12: [
+                { q: 'What happens when someone asks for their data?', id: 'access-request' },
+                { q: 'Can I charge a fee for access requests?', id: 'access-fees' },
+            ],
+            13: [
+                { q: 'What if someone asks me to correct their information?', id: 'correction-request' },
+            ],
+        };
+
+        function renderGuideLinks(appNum) {
+            const guides = CONTEXTUAL_GUIDES[appNum];
+            if (!guides || guides.length === 0) return '';
+            const links = guides.map(g =>
+                `<a href="/guides/${g.id}" class="guide-link">${esc(g.q)}</a>`
+            ).join('');
+            return `<div class="guide-links">${links}</div>`;
+        }
+
         async function loadReport() {
             const path = window.location.pathname;
             const match = path.match(/\/report\/([a-z0-9-]+)/);
@@ -689,6 +771,7 @@
                             <div class="check-content">
                                 <div class="check-title">APP ${app.app_number}: ${esc(app.app_name)}</div>
                                 <div class="check-desc">${esc(rec)}</div>
+                                ${renderGuideLinks(app.app_number)}
                             </div>
                             <span class="check-tag tag-policy">Policy update</span>
                         </div>
@@ -715,6 +798,7 @@
                             <div class="check-content">
                                 <div class="check-title">APP ${app.app_number}: ${esc(app.app_name)}</div>
                                 <div class="check-desc">${esc(operationalNote || rec)}</div>
+                                ${renderGuideLinks(app.app_number)}
                             </div>
                             <span class="check-tag tag-action">Action needed</span>
                         </div>
