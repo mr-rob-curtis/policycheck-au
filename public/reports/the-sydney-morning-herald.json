@@ -1,32 +1,34 @@
 {
-  "url": "https://example.com",
-  "sector": "Other",
-  "business_name": "Test",
+  "business_name": "The Sydney Morning Herald",
+  "url": "https://smh.com.au",
+  "slug": "the-sydney-morning-herald",
+  "sector": "Technology",
   "policy_found": true,
-  "policy_url": "https://example.com/privacy",
-  "policy_excerpt": "We collect data.",
+  "policy_url": "https://www.smh.com.au/privacy-policy",
+  "policy_excerpt": "We collect personal information when you use our website and apps. We use cookies and similar technologies. We share information with advertising partners and analytics providers. You can opt out of marketing. We store data in Australia and overseas including the United States. We take reasonable steps to protect your information. You can request access to your information by contacting our privacy officer.",
+  "scanned_at": "2026-04-03T10:00:00Z",
   "analysis": {
-    "business_name": "Test",
-    "sector": "Other",
-    "overall_score": 18,
-    "overall_status": "NON_COMPLIANT",
-    "analysis_date": "2026-04-03T16:23:16.823848",
+    "business_name": "The Sydney Morning Herald",
+    "sector": "Technology",
+    "overall_score": 45,
+    "overall_status": "PARTIALLY_COMPLIANT",
+    "analysis_date": "2026-04-03T16:24:11.243584",
     "analysis_mode": "rule_based",
     "apps": [
       {
         "app_number": 1,
         "app_name": "Open and transparent management of personal information",
-        "status": "NON_COMPLIANT",
+        "status": "PARTIALLY_COMPLIANT",
         "findings": [
-          "Not addressed in your policy. You need to add: No privacy policy with contact details and complaint process"
+          "Covers: personal information, privacy officer. Missing: Missing privacy contact details or complaint process"
         ],
         "gaps": [
-          "No privacy policy with contact details and complaint process"
+          "Missing privacy contact details or complaint process"
         ],
         "recommendations": [
-          "Publish a privacy policy that names your privacy contact, explains what information you collect and why, and includes a complaint process."
+          "Add a named privacy contact with phone and email. Include a clear complaint process that mentions the OAIC as escalation."
         ],
-        "recommended_language": "Publish a privacy policy that names your privacy contact, explains what information you collect and why, and includes a complaint process.",
+        "recommended_language": "Add a named privacy contact with phone and email. Include a clear complaint process that mentions the OAIC as escalation.",
         "priority": "CRITICAL"
       },
       {
@@ -80,65 +82,65 @@
       {
         "app_number": 5,
         "app_name": "Notification of the collection of personal information",
-        "status": "NON_COMPLIANT",
+        "status": "PARTIALLY_COMPLIANT",
         "findings": [
-          "Not addressed in your policy. You need to add: No collection notice (what you collect, why, who gets it)"
+          "Covers: overseas, access. Missing: Collection notice is missing key details"
         ],
         "gaps": [
-          "No collection notice (what you collect, why, who gets it)"
+          "Collection notice is missing key details"
         ],
         "recommendations": [
-          "Add a collection notice explaining: what you collect, why, who you share it with, whether it goes overseas, and how to access or correct it."
+          "Your collection notice needs to cover: why you collect, who you share with, overseas transfers, and how to complain."
         ],
-        "recommended_language": "Add a collection notice explaining: what you collect, why, who you share it with, whether it goes overseas, and how to access or correct it.",
+        "recommended_language": "Your collection notice needs to cover: why you collect, who you share with, overseas transfers, and how to complain.",
         "priority": "CRITICAL"
       },
       {
         "app_number": 6,
         "app_name": "Use or disclosure of personal information",
-        "status": "NON_COMPLIANT",
+        "status": "PARTIALLY_COMPLIANT",
         "findings": [
-          "Not addressed in your policy. You need to add: No explanation of how personal information is used or shared"
+          "Covers: use, share, share. Missing: Use and disclosure practices need more detail"
         ],
         "gaps": [
-          "No explanation of how personal information is used or shared"
+          "Use and disclosure practices need more detail"
         ],
         "recommendations": [
-          "Explain how you use personal information, who you share it with, and under what circumstances. List the types of third parties."
+          "Be specific about which third parties receive personal information and for what purpose. Name categories (e.g., 'cloud hosting providers', 'payment processors')."
         ],
-        "recommended_language": "Explain how you use personal information, who you share it with, and under what circumstances. List the types of third parties.",
+        "recommended_language": "Be specific about which third parties receive personal information and for what purpose. Name categories (e.g., 'cloud hosting providers', 'payment processors').",
         "priority": "HIGH"
       },
       {
         "app_number": 7,
         "app_name": "Direct marketing",
-        "status": "NON_COMPLIANT",
+        "status": "PARTIALLY_COMPLIANT",
         "findings": [
-          "Not addressed in your policy. You need to add: No direct marketing policy or opt-out mechanism"
+          "Covers: marketing, opt out of. Missing: Marketing opt-out process is incomplete"
         ],
         "gaps": [
-          "No direct marketing policy or opt-out mechanism"
+          "Marketing opt-out process is incomplete"
         ],
         "recommendations": [
-          "Add a direct marketing section. Explain what marketing you send, how to opt out, and commit to honouring opt-out requests promptly."
+          "Add a clear opt-out mechanism. Every marketing email needs an unsubscribe link, and you must honour requests within 5 business days."
         ],
-        "recommended_language": "Add a direct marketing section. Explain what marketing you send, how to opt out, and commit to honouring opt-out requests promptly.",
+        "recommended_language": "Add a clear opt-out mechanism. Every marketing email needs an unsubscribe link, and you must honour requests within 5 business days.",
         "priority": "MEDIUM"
       },
       {
         "app_number": 8,
         "app_name": "Cross-border disclosure of personal information",
-        "status": "NON_COMPLIANT",
+        "status": "PARTIALLY_COMPLIANT",
         "findings": [
-          "Not addressed in your policy. You need to add: No disclosure about overseas data transfers"
+          "Covers: overseas, overseas. Missing: Overseas disclosure missing countries or safeguards"
         ],
         "gaps": [
-          "No disclosure about overseas data transfers"
+          "Overseas disclosure missing countries or safeguards"
         ],
         "recommendations": [
-          "Disclose whether personal information is stored or processed overseas. If you use cloud services (almost every business does), this likely applies to you."
+          "Name the countries where data is sent or stored, and explain what protections are in place for each."
         ],
-        "recommended_language": "Disclose whether personal information is stored or processed overseas. If you use cloud services (almost every business does), this likely applies to you.",
+        "recommended_language": "Name the countries where data is sent or stored, and explain what protections are in place for each.",
         "priority": "MEDIUM"
       },
       {
@@ -160,17 +162,17 @@
       {
         "app_number": 10,
         "app_name": "Quality of personal information",
-        "status": "NON_COMPLIANT",
+        "status": "PARTIALLY_COMPLIANT",
         "findings": [
-          "Not addressed in your policy. You need to add: No commitment to data accuracy, currency, or retention"
+          "Covers: reasonable steps. Missing: No commitment to data accuracy, currency, or retention"
         ],
         "gaps": [
           "No commitment to data accuracy, currency, or retention"
         ],
         "recommendations": [
-          "Add commitments to keeping personal information accurate, up-to-date, and relevant. Include a data retention policy."
+          "Commit to specific data quality practices: verifying information at collection, updating records when notified, and deleting data you no longer need."
         ],
-        "recommended_language": "Add commitments to keeping personal information accurate, up-to-date, and relevant. Include a data retention policy.",
+        "recommended_language": "Commit to specific data quality practices: verifying information at collection, updating records when notified, and deleting data you no longer need.",
         "priority": "LOW"
       },
       {
@@ -192,17 +194,17 @@
       {
         "app_number": 12,
         "app_name": "Access to personal information",
-        "status": "NON_COMPLIANT",
+        "status": "PARTIALLY_COMPLIANT",
         "findings": [
-          "Not addressed in your policy. You need to add: No process for individuals to access their personal information"
+          "Covers: access, request, access to your. Missing: Access request process missing timeframes or details"
         ],
         "gaps": [
-          "No process for individuals to access their personal information"
+          "Access request process missing timeframes or details"
         ],
         "recommendations": [
-          "Add an access rights section. Individuals have the right to request a copy of their personal information. Explain how to make a request and your 30-day response commitment."
+          "Clarify the access request process: how to request, expected response time (30 days), any fees, and grounds for refusal."
         ],
-        "recommended_language": "Add an access rights section. Individuals have the right to request a copy of their personal information. Explain how to make a request and your 30-day response commitment.",
+        "recommended_language": "Clarify the access request process: how to request, expected response time (30 days), any fees, and grounds for refusal.",
         "priority": "HIGH"
       },
       {
@@ -226,24 +228,21 @@
       "uses_adm": "UNKNOWN",
       "adm_disclosed": false,
       "examples_found": [],
-      "recommendation": "New rule from 10 December 2026 about automated decision-making.  If you do use automated systems (e.g., credit scoring, eligibility decisions), you'll need to disclose this and offer customers the right to request human review."
+      "recommendation": "New rule from 10 December 2026: Tech companies commonly use algorithms that affect users. Content filtering, account suspension, and recommendation systems may all qualify. Common examples in your sector: content moderation, algorithmic recommendations, automated account decisions. If this applies, your policy must explain: what automated systems you use, what personal information feeds into them, how customers can request a human review, and how they can object to the decision."
     },
     "summary": {
       "compliant_count": 0,
-      "partial_count": 1,
-      "non_compliant_count": 12,
+      "partial_count": 8,
+      "non_compliant_count": 5,
       "not_addressed_count": 0
     },
     "sector_risk_profile": {},
     "next_steps": [
-      "Week 1-2: Fix critical gaps first: Openness (APP 1), Collection Notice (APP 5), Security (APP 11)",
-      "Week 3-4: Address important gaps: Use & Disclosure (APP 6), Access Rights (APP 12), Correction (APP 13)",
-      "Week 5-6: Complete remaining gaps: Anonymity (APP 2), Unsolicited Collection (APP 4), Marketing (APP 7), Overseas Disclosure (APP 8), Government ID (APP 9), Data Quality (APP 10)",
-      "Add a named privacy contact with phone number and email address to your policy",
+      "Week 1-2: Fix critical gaps first: Security (APP 11)",
+      "Week 3-4: Address important gaps: Correction (APP 13)",
+      "Week 5-6: Complete remaining gaps: Anonymity (APP 2), Unsolicited Collection (APP 4), Government ID (APP 9)",
       "Document your security measures: how you store data, who can access it, and your breach response plan",
-      "Add a collection notice explaining what you collect, why, and who you share it with",
-      "10 Dec 2026: Check if the new automated decision-making transparency rules apply to your business"
+      "10 Dec 2026 deadline: New automated decision-making rules likely apply to you. Tech companies commonly use algorithms that affect users. Content filtering, account suspension, and recommendation systems may all qualify."
     ]
-  },
-  "slug": "test"
+  }
 }
